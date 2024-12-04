@@ -8,7 +8,7 @@
     "prestart": "npm install",
     "start": "node index.js",
     "dev": "nodemon index.js --watch .",
-    "test": "echo 'No tests specified!' & exit 0"
+    "test": "c8 ava"
   },
   "keywords": [
     "swagger"
@@ -24,7 +24,9 @@
   },
   "devDependencies": {
     "@iamnapo/prettier-config": "^1.0.3",
-    "ava": "^5.2.0",
+    "ava": "^5.3.1",
+    "got": "^11.8.3",
+    "c8": "^8.0.1",
     "eslint": "^8.34.0",
     "eslint-config-iamnapo": "^28.2.0",
     "nodemon": "^2.0.20",
@@ -40,7 +42,6 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "got": "^12.5.2",
     "helmet": "^6.0.1",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.2",
