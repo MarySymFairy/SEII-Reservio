@@ -8,7 +8,7 @@
     "prestart": "npm install",
     "start": "node index.js",
     "dev": "nodemon index.js --watch .",
-    "test": "echo 'No tests specified!' & exit 0"
+    "test": "c8 ava"
   },
   "keywords": [
     "swagger"
