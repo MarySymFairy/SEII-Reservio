@@ -114,8 +114,6 @@ test("GET /reservations - Retrieve reservations with invalid query parameters (e
     t.is(response.body.message, "Invalid query parameter");
 });
 
-
-
 // Error case: Add reservation with invalid data types
 test("Post /reservations - Add reservation with invalid data types (error case)", async t => {
     const body = {
