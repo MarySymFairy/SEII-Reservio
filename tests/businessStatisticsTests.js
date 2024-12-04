@@ -27,6 +27,7 @@ test("GET /business-statistics - Retrieve business statistics (happy path)", asy
     });
 });
 
+
 // Error case: Retrieve business statistics with invalid owner-id ??
 test("GET /business-statistics - Retrieve business statistics with invalid owner-id (error case)", async t => {
     const { body, statusCode } = await t.context.got.get('business-statistics?owner-id=9999');
