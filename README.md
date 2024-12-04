@@ -1,5 +1,4 @@
-[![reservio logo](https://github.com/user-attachments/assets/b5974171-210d-468a-8814-d618e321fa99)
-<img height="300" width="300" alt="Reservio Logo" />
+<img height="300" width="300" alt="Reservio Logo" src="https://github.com/user-attachments/assets/b5974171-210d-468a-8814-d618e321fa99" />
 
 # Software-Engineering-II-Project in ECE AUTH
 
