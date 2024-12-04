@@ -1,4 +1,4 @@
-#![reservio logo](https://github.com/user-attachments/assets/b5974171-210d-468a-8814-d618e321fa99)
+![reservio logo](https://github.com/user-attachments/assets/b5974171-210d-468a-8814-d618e321fa99)
  Swagger generated server
 
 ## Overview
