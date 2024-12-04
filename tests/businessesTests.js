@@ -4,7 +4,6 @@ const got = require('got');
 const listen = require('test-listen');
 const app = require('../index.js');
 
-
 test.before(async t => {
     t.context.server = http.createServer(app);
     const server = t.context.server.listen();

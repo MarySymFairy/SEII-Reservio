@@ -4,9 +4,6 @@ info:
   description: Software Engineering II Course Reservio API
   contact: {}
   version: 1.0.0
-servers:
-- url: https://virtserver.swaggerhub.com/MMAMOUGI_1/RESERVIO_API/1.0.0
-  description: SwaggerHub API Auto Mocking
 security:
 - BasicAuth: []
 tags:
