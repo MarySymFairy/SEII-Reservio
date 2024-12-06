@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "The backend of Reservio for SE-II AUTH course",
   "repository": "github:MarySymFairy/Reservio-II",
+  "type":"module",
   "main": "index.js",
   "scripts": {
     "prestart": "npm install",
