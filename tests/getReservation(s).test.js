@@ -35,9 +35,13 @@ test("GET /reservations/:id - Get nonexistent reservation", async (t) => {
     t.is(error.response.body.message, "Reservation not found.");
 });
 
-
-
-
+// GET /reservations/:id - Get reservation with invalid ID format
+test("GET /reservations/:id - Get reservation with invalid ID format", async (t) => {
+    const invalidId = 'abc123';
+    const error = await t.throwsAsync(() => t.context.got.get(`reservations/${invalidId}`));
+    t.is(error.response.statusCode, 400);
+    t.is(error.response.body.message, "Invalid reservation ID format.");
+});
 
 
 //GET ALL-----------------------------------------------------------------------------
@@ -49,9 +53,18 @@ t.true(Array.isArray(body));
 t.true(body.length > 0);
 });
 
-// Error case: Get reservations with invalid query parameters ???
+// Error case: Get reservations with invalid query parameters
 test("GET /reservations - Retrieve reservations with invalid query parameters (error case)", async (t) => {
 const response = await t.context.got.get("reservations", { searchParams: { invalidParam: "test" }});
 t.is(response.statusCode, 400);
 t.is(response.body.message, "Invalid query parameter");
+});
+
+// GET /reservations - Retrieve all reservations (no reservations found)
+test("GET /reservations - Retrieve all reservations (no reservations found)", async (t) => {
+    // Assuming the database is empty for this test
+    const { body, statusCode } = await t.context.got.get("reservations");
+    t.is(statusCode, 200);
+    t.true(Array.isArray(body));
+    t.is(body.length, 0);
 });
