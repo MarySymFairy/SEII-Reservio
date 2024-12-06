@@ -1,9 +1,10 @@
 'use strict';
 
-var path = require('path');
-var http = require('http');
 
-var oas3Tools = require('oas3-tools');
+import path from 'path';  // Use 'import' instead of 'require'
+import http from 'http';  // Use 'import' instead of 'require'
+import oas3Tools from 'oas3-tools';  // Use 'import' instead of 'require'
+
 var serverPort = 8080;
 
 // swaggerRouter configuration
