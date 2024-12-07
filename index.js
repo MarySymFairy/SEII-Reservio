@@ -1,9 +1,14 @@
 'use strict';
 
-import path from 'path';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
 import http from 'http';
-
 import oas3Tools from 'oas3-tools';
+
+// Get the current directory equivalent of `__dirname` in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 var serverPort = 8080;
 
 // swaggerRouter configuration
