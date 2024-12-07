@@ -1,14 +1,9 @@
 'use strict';
 
-import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import http from 'http';
-import oas3Tools from 'oas3-tools';
+const path = require('path');
+const http = require('http');
 
-// Get the current directory equivalent of `__dirname` in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
+const oas3Tools = require('oas3-tools');
 var serverPort = 8080;
 
 // swaggerRouter configuration
