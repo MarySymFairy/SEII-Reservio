@@ -2,19 +2,25 @@ const http = require("node:http");
 
 const test = require("ava");
 const got = require("got");
+const listen = require("test-listen");
 
 const app = require('../index.js');
 
+// Initialize the test environment
 test.before(async (t) => {
     t.context.server = http.createServer(app);
-    const server = t.context.server.listen();
-    const {port} = server.address();
-    t.context.got = got.extend({responseType: 'json', prefixUrl: `http://localhost:${port}`});
-});
-
-test.after.always((t) => {
+    t.context.prefixUrl = await listen(t.context.server);
+    t.context.got = got.extend({
+      prefixUrl: t.context.prefixUrl,
+      responseType: "json",
+      throwHttpErrors: false,
+    });
+  });
+  
+  // Cleanup after tests
+  test.after.always((t) => {
     t.context.server.close();
-});
+  });
 
 
 //PUT--------------------------------------------------------------------------------
