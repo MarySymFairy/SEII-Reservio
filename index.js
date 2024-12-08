@@ -1,6 +1,7 @@
 'use strict';
 
 const path = require('path');
+const __dirname = path.resolve();
 const http = require('http');
 const oas3Tools = require('oas3-tools');
 
