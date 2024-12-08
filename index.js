@@ -18,9 +18,11 @@ var options = {
 var expressAppConfig = oas3Tools.expressAppConfig(path.join(__dirname, 'api/openapi.yaml'), options);
 var app = expressAppConfig.getApp();
 
-if (NODE_ENV !== "test") {
+
     // Initialize the Swagger middleware
+if(require.main === module){ 
     http.createServer(app).listen(serverPort, function () {
+        // console.log("WHY NOT???");
         console.log('Your server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
         console.log('Swagger-ui is available on http://localhost:%d/docs', serverPort);
     });
