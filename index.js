@@ -2,27 +2,25 @@
 
 const path = require('path');
 const http = require('http');
-
 const oas3Tools = require('oas3-tools');
-var serverPort = 8080;
+
+const serverPort = 8080;
 
 // swaggerRouter configuration
-var options = {
+const options = {
     routing: {
         controllers: path.join(dirname, './controllers')
     },
 };
 
-var expressAppConfig = oas3Tools.expressAppConfig(path.join(dirname, 'api/openapi.yaml'), options);
-var app = expressAppConfig.getApp();
+const expressAppConfig = oas3Tools.expressAppConfig(path.join(dirname, 'api/openapi.yaml'), options);
+const app = expressAppConfig.getApp();
 
-// Export the app for use in other files (e.g., tests)
-module.exports = app;
-
-// Start the server only if the file is executed directly
 if (require.main === module) {
     http.createServer(app).listen(serverPort, function () {
         console.log('Your server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
         console.log('Swagger-ui is available on http://localhost:%d/docs', serverPort);
     });
 }
+
+module.exports = app;
