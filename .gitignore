@@ -68,3 +68,6 @@ typings/
 .npmrc
 
 src/assets/uploads/*
+
+# .gitignore content
+package-lock.json

@@ -197,4 +197,3 @@ test("DELETE /businesses/:id - Unauthorized access", async (t) => {
     t.is(error.response.statusCode, 401);
     t.is(error.response.body.message, "Unauthorized");
 });
-
