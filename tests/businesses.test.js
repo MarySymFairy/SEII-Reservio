@@ -21,7 +21,8 @@ test.after.always(t => {
 
 // Happy path: Retrieve All Businesses
 test("GET /businesses - Retrieve all businesses", async t => {
-    const { body, statusCode } = await t.context.got.get('businesses');
+    // category-name is a required parameter
+    const { body, statusCode } = await t.context.got.get('businesses?category-name=breakfast');
     t.is(statusCode, 200);
     t.true(Array.isArray(body));
     t.true(body.length > 0);
