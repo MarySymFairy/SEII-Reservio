@@ -1,20 +1,22 @@
 const http = require('http');
 const test = require('ava');
 const got = require('got');
+const listen = require('test-listen');
 const app = require('../index.js');
 
 test.before(async (t) => {
-  t.context.server = http.createServer(app);
-  const server = t.context.server.listen();
-  const { port } = server.address();
-  t.context.got = got.extend({
-    responseType: 'json',
-    prefixUrl: `http://localhost:${port}`,
-  });
+    t.context.server = http.createServer(app);
+    t.context.prefixUrl = await listen(t.context.server);
+    t.context.got = got.extend({
+        http2: true,
+        throwHttpErrors: false,
+        responseType: "json",
+        prefixUrl: t.context.prefixUrl,
+    });
 });
 
 test.after.always((t) => {
-  t.context.server.close();
+    t.context.server.close();
 });
 
 // GET /business-reservations - Retrieve all reservations
