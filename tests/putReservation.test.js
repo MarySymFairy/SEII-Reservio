@@ -97,3 +97,51 @@ test("PUT /reservations/:id - Modify reservation with invalid ID format", async 
         t.is(error.response.statusCode, 403);
         t.is(error.response.body.message, "You are not authorized to modify this reservation.");
     });   
+
+// Error case: Modify reservation with invalid data types
+test("PUT /reservations/:id - Modify reservation with invalid data types", async (t) => {
+    const body = { numberOfPeople: "four" }; // Should be a number
+    const error = await t.throwsAsync(() => 
+        t.context.got.put("reservations/1", { json: body })
+    );
+    t.is(error.response.statusCode, 400);
+    t.is(error.response.body.message, "Invalid data types for fields.");
+});
+
+// Error case: Modify reservation with expired reservation date
+test("PUT /reservations/:id - Modify reservation with expired date", async (t) => {
+    const body = { reservationYear: 2020, reservationMonth: 1, reservationDay: 1 };
+    const error = await t.throwsAsync(() => 
+        t.context.got.put("reservations/1", { json: body })
+    );
+    t.is(error.response.statusCode, 409);
+    t.is(error.response.body.message, "Cannot modify reservation to an expired date.");
+});
+
+// Error case: Modify reservation without authentication
+test("PUT /reservations/:id - Modify reservation without authentication", async (t) => {
+    const body = { numberOfPeople: 5 };
+    const error = await t.throwsAsync(() => 
+        t.context.got.put("reservations/1", { json: body, headers: { Authorization: "" } })
+    );
+    t.is(error.response.statusCode, 401);
+    t.is(error.response.body.message, "Authentication required.");
+});
+
+// Error case: Modify reservation without userId
+test("PUT /reservations/:id - Modify reservation without userId", async (t) => {
+    const body = { numberOfPeople: 5 };
+    const reservationId = 1;
+    const { body: response, statusCode } = await t.context.got.put(`reservations/${reservationId}`, { json: body, throwHttpErrors: false });
+    t.is(statusCode, 400);
+    t.is(response.message, "userId is required.");
+});
+
+// Error case: Modify reservation without reservationId
+test("PUT /reservations/:id - Modify reservation without reservationId", async (t) => {
+    const body = { userId: 1, numberOfPeople: 5 };
+    const reservationId = ''; // Missing reservationId in path
+    const { body: response, statusCode } = await t.context.got.put(`reservations/${reservationId}`, { json: body, throwHttpErrors: false });
+    t.is(statusCode, 400);
+    t.is(response.message, "reservationId is required.");
+});
