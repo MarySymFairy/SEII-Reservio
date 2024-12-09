@@ -6,7 +6,7 @@ const app = require("../index.js");
 
 test.before(async (t) => {
   t.context.server = http.createServer(app);
-  const server = t.context.server.listen(0);
+  const server = t.context.server.listen();
   const { port } = server.address();
   t.context.got = got.extend({
     responseType: "json",

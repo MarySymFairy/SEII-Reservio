@@ -9,26 +9,30 @@
  * businessId Integer Business-id of the business that the reservation is made for
  * returns Reservation
  **/
-exports.addReservation = function(body,userId,businessId) {
+exports.addReservation = function(body, userId, businessId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+    if (!body || !userId || !businessId) {
+      return reject(new Error("Invalid input parameters"));
     }
+
+    // Example reservation data
+    var reservation = {
+      "reservation-id": 0,
+      "user-id": userId,
+      "reservationTime": body.reservationTime,
+      "businessName": body.businessName,
+      "reservationYear": body.reservationYear,
+      "reservationDay": body.reservationDay,
+      "business-id": businessId,
+      "reservationMonth": body.reservationMonth,
+      "numberOfPeople": body.numberOfPeople,
+      "username": body.username
+    };
+
+    // Simulate async operation (e.g., database interaction)
+    setTimeout(() => {
+      resolve(reservation);
+    }, 1000);
   });
 }
 
@@ -41,17 +45,23 @@ exports.addReservation = function(body,userId,businessId) {
  * reservationId Integer ID of reservation to delete
  * returns Reservation deleted.
  **/
-exports.deleteReservation = function(userId,reservationId) {
+exports.deleteReservation = function(userId, reservationId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "message" : "message"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+    if (!userId || !reservationId) {
+      return reject(new Error("Invalid input parameters"));
     }
+
+    // Example deleted reservation data
+    var deletedReservation = {
+      "reservation-id": reservationId,
+      "user-id": userId,
+      "status": "deleted"
+    };
+
+    // Simulate async operation (e.g., database interaction)
+    setTimeout(() => {
+      resolve(deletedReservation);
+    }, 1000);
   });
 }
 
@@ -66,17 +76,31 @@ exports.deleteReservation = function(userId,reservationId) {
  * numberOfPeople Integer The arranged number of people that will be in the reservation
  * returns inline_response_200
  **/
-exports.getAvailability = function(businessId,reservationDay,reservationMonth,reservationYear,numberOfPeople) {
+exports.getAvailability = function(businessId, reservationDay, reservationMonth, reservationYear, numberOfPeople) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "availableHours" : [ "18:00", "18:00" ]
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+    if (!businessId || !reservationDay || !reservationMonth || !reservationYear || !numberOfPeople) {
+      return reject(new Error("Invalid input parameters"));
     }
+
+    // Example available hours data
+    var availableHours = [
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+      "18:00",
+      "19:00",
+      "20:00"
+    ];
+
+    // Simulate async operation (e.g., database interaction)
+    setTimeout(() => {
+      resolve(availableHours);
+    }, 1000);
   });
 }
 
@@ -89,25 +113,32 @@ exports.getAvailability = function(businessId,reservationDay,reservationMonth,re
  **/
 exports.getBusinessesByCategory = function(categoryName) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = [ {
-  "owner-id" : 6,
-  "businessName" : "businessName",
-  "businessCategory" : "Breakfast",
-  "keyword" : "keyword",
-  "business-id" : 0
-}, {
-  "owner-id" : 6,
-  "businessName" : "businessName",
-  "businessCategory" : "Breakfast",
-  "keyword" : "keyword",
-  "business-id" : 0
-} ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+    if (!categoryName) {
+      return reject(new Error("Invalid input parameters"));
     }
+
+    var examples = {};
+    examples['application/json'] = [
+      {
+        "owner-id": 6,
+        "businessName": "businessName",
+        "businessCategory": "Breakfast",
+        "keyword": "keyword",
+        "business-id": 0
+      },
+      {
+        "owner-id": 6,
+        "businessName": "businessName",
+        "businessCategory": "Breakfast",
+        "keyword": "keyword",
+        "business-id": 0
+      }
+    ];
+
+    // Simulate async operation (e.g., database interaction)
+    setTimeout(() => {
+      resolve(examples['application/json']);
+    }, 1000);
   });
 }
 
@@ -121,37 +152,30 @@ exports.getBusinessesByCategory = function(categoryName) {
  * reservationId Long ID of the reservation to modify
  * returns List
  **/
-exports.modifyReservation = function(body,userId,reservationId) {
+exports.modifyReservation = function(body, userId, reservationId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = [ {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
-}, {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
-} ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+    if (!body || !userId || !reservationId) {
+      return reject(new Error("Invalid input parameters"));
     }
+
+    // Example modified reservation data
+    var modifiedReservation = {
+      "reservation-id": reservationId,
+      "user-id": userId,
+      "reservationTime": body.reservationTime,
+      "businessName": body.businessName,
+      "reservationYear": body.reservationYear,
+      "reservationDay": body.reservationDay,
+      "business-id": body.businessId,
+      "reservationMonth": body.reservationMonth,
+      "numberOfPeople": body.numberOfPeople,
+      "username": body.username
+    };
+
+    // Simulate async operation (e.g., database interaction)
+    setTimeout(() => {
+      resolve(modifiedReservation);
+    }, 1000);
   });
 }
 
@@ -163,17 +187,19 @@ exports.modifyReservation = function(body,userId,reservationId) {
  * reservationId Integer Retrieve the ID of the reservation
  * returns You have a reservation in 2 hours
  **/
-exports.notifyUser = function(userId,reservationId) {
+exports.notifyUser = function(userId, reservationId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "message" : "message"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+    if (!userId || !reservationId) {
+      return reject(new Error("Invalid input parameters"));
     }
+
+    // Example notification message
+    var notificationMessage = `User ${userId}, you have a reservation (ID: ${reservationId}) in 2 hours.`;
+
+    // Simulate async operation (e.g., sending notification)
+    setTimeout(() => {
+      resolve(notificationMessage);
+    }, 1000);
   });
 }
 
@@ -184,27 +210,34 @@ exports.notifyUser = function(userId,reservationId) {
  * keyword String The keyword to search for businesses.
  * returns List
  **/
-exports.searchBusinessByKeyword = function(keyword) {
+exports.searchBusiness = function(keyword) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = [ {
-  "owner-id" : 6,
-  "businessName" : "businessName",
-  "businessCategory" : "Breakfast",
-  "keyword" : "keyword",
-  "business-id" : 0
-}, {
-  "owner-id" : 6,
-  "businessName" : "businessName",
-  "businessCategory" : "Breakfast",
-  "keyword" : "keyword",
-  "business-id" : 0
-} ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+    if (!keyword) {
+      return reject(new Error("Invalid input parameters"));
     }
+
+    var examples = {};
+    examples['application/json'] = [
+      {
+        "owner-id": 6,
+        "businessName": "businessName",
+        "businessCategory": "Breakfast",
+        "keyword": keyword,
+        "business-id": 0
+      },
+      {
+        "owner-id": 6,
+        "businessName": "businessName",
+        "businessCategory": "Breakfast",
+        "keyword": keyword,
+        "business-id": 0
+      }
+    ];
+
+    // Simulate async operation (e.g., database interaction)
+    setTimeout(() => {
+      resolve(examples['application/json']);
+    }, 1000);
   });
 }
 
@@ -212,30 +245,81 @@ exports.searchBusinessByKeyword = function(keyword) {
 /**
  * FR10: The logged in user must be able to view his reservations. 
  *
+ * userId Integer Retrieve the ID of the user
+ * returns List of reservations
+ **/
+exports.viewReservations = function(userId) {
+  return new Promise(function(resolve, reject) {
+    if (!userId) {
+      return reject(new Error("Invalid input parameters"));
+    }
+
+    var examples = {};
+    examples['application/json'] = [
+      {
+        "reservation-id": 0,
+        "user-id": userId,
+        "reservationTime": "18:00",
+        "businessName": "businessName",
+        "reservationYear": 2024,
+        "reservationDay": 25,
+        "business-id": 123,
+        "reservationMonth": 12,
+        "numberOfPeople": 4,
+        "username": "username"
+      },
+      {
+        "reservation-id": 1,
+        "user-id": userId,
+        "reservationTime": "19:00",
+        "businessName": "businessName",
+        "reservationYear": 2024,
+        "reservationDay": 26,
+        "business-id": 123,
+        "reservationMonth": 12,
+        "numberOfPeople": 2,
+        "username": "username"
+      }
+    ];
+
+    // Simulate async operation (e.g., database interaction)
+    setTimeout(() => {
+      resolve(examples['application/json']);
+    }, 1000);
+  });
+}
+
+/**
+ * FR10: The logged in user must be able to view a single reservation.
+ *
  * reservationId Integer Reservation-id of the reservation submitted to the system
  * userId Integer User-id of the logged in user that made the reservation
  * returns Reservation
  **/
-exports.viewAReservation = function(reservationId,userId) {
+exports.viewAReservation = function(reservationId, userId) {
   return new Promise(function(resolve, reject) {
+    if (!reservationId || !userId) {
+      return reject(new Error("Invalid input parameters"));
+    }
+
     var examples = {};
     examples['application/json'] = {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
+      "reservation-id": reservationId,
+      "user-id": userId,
+      "reservationTime": "18:00",
+      "businessName": "businessName",
+      "reservationYear": 2024,
+      "reservationDay": 25,
+      "business-id": 123,
+      "reservationMonth": 12,
+      "numberOfPeople": 4,
+      "username": "username"
+    };
+
+    // Simulate async operation (e.g., database interaction)
+    setTimeout(() => {
+      resolve(examples['application/json']);
+    }, 1000);
   });
 }
 
@@ -249,35 +333,44 @@ exports.viewAReservation = function(reservationId,userId) {
  * year Integer Reservation year
  * returns List
  **/
-exports.viewBusinessReservations = function(ownerId,day,month,year) {
+exports.viewBusinessReservations = function(ownerId, day, month, year) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = [ {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 5,
-  "reservationDay" : 1,
-  "people" : 2,
-  "reservationMonth" : 5,
-  "username" : "username"
-}, {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 5,
-  "reservationDay" : 1,
-  "people" : 2,
-  "reservationMonth" : 5,
-  "username" : "username"
-} ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+    if (!ownerId || !day || !month || !year) {
+      return reject(new Error("Invalid input parameters"));
     }
+
+    var examples = {};
+    examples['application/json'] = [
+      {
+        "reservation-id": 0,
+        "user-id": 1,
+        "reservationTime": "18:00",
+        "businessName": "businessName",
+        "reservationYear": year,
+        "reservationDay": day,
+        "business-id": 123,
+        "reservationMonth": month,
+        "numberOfPeople": 4,
+        "username": "username"
+      },
+      {
+        "reservation-id": 1,
+        "user-id": 2,
+        "reservationTime": "19:00",
+        "businessName": "businessName",
+        "reservationYear": year,
+        "reservationDay": day,
+        "business-id": 123,
+        "reservationMonth": month,
+        "numberOfPeople": 2,
+        "username": "username"
+      }
+    ];
+
+    // Simulate async operation (e.g., database interaction)
+    setTimeout(() => {
+      resolve(examples['application/json']);
+    }, 1000);
   });
 }
 
@@ -290,60 +383,53 @@ exports.viewBusinessReservations = function(ownerId,day,month,year) {
  **/
 exports.viewBusinessStatistics = function(ownerId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = [ {
-  "month" : 0,
-  "numberOfReservations" : 6
-}, {
-  "month" : 0,
-  "numberOfReservations" : 6
-} ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+    if (!ownerId) {
+      return reject(new Error("Invalid input parameters"));
     }
+
+    // Example statistics data
+    var statistics = [
+      { "month": 0, "numberOfReservations": 6 },
+      { "month": 1, "numberOfReservations": 8 },
+      { "month": 2, "numberOfReservations": 10 },
+      { "month": 3, "numberOfReservations": 12 },
+      { "month": 4, "numberOfReservations": 14 },
+      { "month": 5, "numberOfReservations": 16 },
+      { "month": 6, "numberOfReservations": 18 },
+      { "month": 7, "numberOfReservations": 20 },
+      { "month": 8, "numberOfReservations": 22 },
+      { "month": 9, "numberOfReservations": 24 },
+      { "month": 10, "numberOfReservations": 26 },
+      { "month": 11, "numberOfReservations": 28 }
+    ];
+
+    // Simulate async operation (e.g., database interaction)
+    setTimeout(() => {
+      resolve(statistics);
+    }, 1000);
   });
 }
+// exports.viewBusinessStatistics = function(ownerId) {
+//   return new Promise(function(resolve, reject) {
+//     if (!ownerId) {
+//       return reject(new Error("Invalid input parameters"));
+//     }
+
+//     // Example statistics data
+//     var statistics = {
+//       "totalReservations": 100,
+//       "totalCustomers": 250,
+//       "averageReservationSize": 2.5,
+//       "mostPopularTime": "18:00",
+//       "mostPopularDay": "Saturday"
+//     };
+
+//     // Simulate async operation (e.g., database interaction)
+//     setTimeout(() => {
+//       resolve(statistics);
+//     }, 1000);
+//   });
+// }
 
 
-/**
- * FR10: The logged in user must be able to view his reservations. 
- *
- * userId Integer User-id of the logged in user that made the reservation
- * returns List
- **/
-exports.viewReservations = function(userId) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = [ {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
-}, {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
-} ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
-  });
-}
 
