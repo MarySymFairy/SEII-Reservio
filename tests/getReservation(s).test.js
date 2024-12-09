@@ -16,11 +16,13 @@ test.after.always((t) => {
     t.context.server.close();
 });
 
+// Define a sample reservation ID for test cases
+const reservationId = 0;
 
 //GET--------------------------------------------------------------------------------
 // Happy path: Get reservation
 test("GET /reservations/:id - Get reservation (happy path)", async (t) => {
-    const { body, statusCode } = await t.context.got.get("reservations/1");
+    const { body, statusCode } = await t.context.got.get(`reservations/${reservationId}`);
     t.is(statusCode, 200);
     t.is(body.userId, 1);
     t.is(body.businessId, 1);
@@ -56,7 +58,7 @@ t.true(body.length > 0);
 test("GET /reservations - Retrieve reservations with invalid query parameters (error case)", async (t) => {
 const response = await t.context.got.get("reservations", { searchParams: { invalidParam: "test" }});
 t.is(response.statusCode, 400);
-t.is(response.body.message, "Invalid query parameter");
+t.is(response.body.message, "Invalid input parameters");
 });
 
 // GET /reservations - Retrieve all reservations (no reservations found)

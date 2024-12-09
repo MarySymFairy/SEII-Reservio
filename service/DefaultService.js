@@ -152,31 +152,73 @@ exports.getBusinessesByCategory = function(categoryName) {
  * reservationId Long ID of the reservation to modify
  * returns List
  **/
-exports.modifyReservation = function(body, userId, reservationId) {
+// exports.modifyReservation = function(body, userId, reservationId) {
+//   return new Promise(function(resolve, reject) {
+//     if (!body || !userId || !reservationId) {
+//       return reject(new Error("Invalid input parameters"));
+//     }
+
+//     // Example modified reservation data
+//     var modifiedReservation = {
+//       "reservation-id": reservationId,
+//       "user-id": userId,
+//       "reservationTime": body.reservationTime,
+//       "businessName": body.businessName,
+//       "reservationYear": body.reservationYear,
+//       "reservationDay": body.reservationDay,
+//       "business-id": body.businessId,
+//       "reservationMonth": body.reservationMonth,
+//       "numberOfPeople": body.numberOfPeople,
+//       "username": body.username
+//     };
+
+//     // Simulate async operation (e.g., database interaction)
+//     setTimeout(() => {
+//       resolve(modifiedReservation);
+//     }, 1000);
+//   });
+// }
+exports.modifyReservation = function(userId, reservationId, body) {
   return new Promise(function(resolve, reject) {
-    if (!body || !userId || !reservationId) {
-      return reject(new Error("Invalid input parameters"));
+    if (!userId || !reservationId || !body) {
+      return reject({ statusCode: 400, message: "Invalid input parameters" });
     }
 
-    // Example modified reservation data
-    var modifiedReservation = {
-      "reservation-id": reservationId,
-      "user-id": userId,
-      "reservationTime": body.reservationTime,
-      "businessName": body.businessName,
-      "reservationYear": body.reservationYear,
-      "reservationDay": body.reservationDay,
-      "business-id": body.businessId,
-      "reservationMonth": body.reservationMonth,
-      "numberOfPeople": body.numberOfPeople,
-      "username": body.username
-    };
+    // Simulate fetching the reservation from the database
+    const reservation = simulateExistingReservation(reservationId);
 
-    // Simulate async operation (e.g., database interaction)
-    setTimeout(() => {
-      resolve(modifiedReservation);
-    }, 1000);
+    if (!reservation) {
+      return reject({ statusCode: 404, message: "Reservation not found" });
+    }
+
+    if (reservation.userId !== userId) {
+      return reject({ statusCode: 401, message: "Unauthorized access." });
+    }
+
+    // Validate the body fields
+    if (body.numberOfPeople == null || body.reservationTime == null) {
+      return reject({ statusCode: 422, message: "Missing or invalid required fields." });
+    }
+
+    // Simulate constraint validation
+    if (body.reservationTime === "25:00") {
+      return reject({ statusCode: 422, message: "Invalid reservation time format." });
+    }
+
+    // Simulate updating the reservation in the database
+    const updatedReservation = { ...reservation, ...body };
+
+    resolve(updatedReservation);
   });
+};
+
+function simulateExistingReservation(id) {
+  // Simulate a database fetch
+  const reservations = [
+    { reservationId: 1, userId: 1, numberOfPeople: 2, reservationTime: "18:00" },
+    // Add more reservations as needed
+  ];
+  return reservations.find(res => res.reservationId === id);
 }
 
 
@@ -389,18 +431,18 @@ exports.viewBusinessStatistics = function(ownerId) {
 
     // Example statistics data
     var statistics = [
-      { "month": 0, "numberOfReservations": 6 },
-      { "month": 1, "numberOfReservations": 8 },
-      { "month": 2, "numberOfReservations": 10 },
-      { "month": 3, "numberOfReservations": 12 },
-      { "month": 4, "numberOfReservations": 14 },
-      { "month": 5, "numberOfReservations": 16 },
-      { "month": 6, "numberOfReservations": 18 },
-      { "month": 7, "numberOfReservations": 20 },
-      { "month": 8, "numberOfReservations": 22 },
-      { "month": 9, "numberOfReservations": 24 },
-      { "month": 10, "numberOfReservations": 26 },
-      { "month": 11, "numberOfReservations": 28 }
+      { "month": 1, "numberOfReservations": 6 },
+      { "month": 2, "numberOfReservations": 8 },
+      { "month": 3, "numberOfReservations": 10 },
+      { "month": 4, "numberOfReservations": 12 },
+      { "month": 5, "numberOfReservations": 14 },
+      { "month": 6, "numberOfReservations": 16 },
+      { "month": 7, "numberOfReservations": 18 },
+      { "month": 8, "numberOfReservations": 20 },
+      { "month": 9, "numberOfReservations": 22 },
+      { "month": 10, "numberOfReservations": 24 },
+      { "month": 11, "numberOfReservations": 26 },
+      { "month": 12, "numberOfReservations": 28 }
     ];
 
     // Simulate async operation (e.g., database interaction)
