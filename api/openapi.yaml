@@ -110,7 +110,8 @@ paths:
         schema:
           type: integer
           format: int32
-          minimum: 0
+          minimum: 1
+          maximum: 31
       - name: reservationMonth
         in: query
         description: The arranged reservation month
@@ -120,7 +121,8 @@ paths:
         schema:
           type: integer
           format: int32
-          minimum: 0
+          minimum: 1
+          maximum: 12
       - name: reservationYear
         in: query
         description: The arranged reservation year
@@ -140,7 +142,8 @@ paths:
         schema:
           type: integer
           format: int32
-          minimum: 0
+          minimum: 1
+          maximum: 100
       responses:
         "200":
           description: "A list of reservation hours matching the reservation details\
@@ -429,7 +432,8 @@ paths:
         schema:
           type: integer
           format: int32
-          minimum: 0
+          minimum: 1
+          maximum: 31
       - name: month
         in: query
         description: Reservation month
@@ -439,7 +443,8 @@ paths:
         schema:
           type: integer
           format: int32
-          minimum: 0
+          minimum: 1
+          maximum: 12
       - name: year
         in: query
         description: Reservation year
@@ -584,12 +589,14 @@ components:
           type: integer
           description: The arranged reservation day
           format: int32
-          minimum: 0
+          minimum: 1
+          maximum: 31
         reservationMonth:
           type: integer
           description: The arranged reservation month
           format: int32
-          minimum: 0
+          minimum: 1
+          maximum: 12
         reservationYear:
           type: integer
           description: The arranged reservation year
@@ -599,7 +606,8 @@ components:
           type: integer
           description: The arranged number of people that will be in the reservation
           format: int32
-          minimum: 0
+          minimum: 1
+          maximum: 100
         username:
           type: string
           description: The username of the person creating the reservation
@@ -650,12 +658,14 @@ components:
           type: integer
           description: The arranged reservation day
           format: int32
-          minimum: 0
+          minimum: 1
+          maximum: 31
         reservationMonth:
           type: integer
           description: The arranged reservation month
           format: int32
-          minimum: 0
+          minimum: 1
+          maximum: 12
         reservationYear:
           type: integer
           description: The arranged reservation year
@@ -665,7 +675,8 @@ components:
           type: integer
           description: The arranged number of people that will be in the reservation
           format: int32
-          minimum: 0
+          minimum: 1
+          maximum: 100
         username:
           type: string
           description: The username of the person creating the reservation
@@ -694,7 +705,8 @@ components:
           type: integer
           description: The arranged reservation month
           format: int32
-          minimum: 0
+          minimum: 1
+          maximum: 12
         numberOfReservations:
           type: integer
           description: The sum of the reservations made in a specific month
