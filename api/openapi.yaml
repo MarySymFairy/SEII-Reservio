@@ -4,8 +4,6 @@ info:
   description: Software Engineering II Course Reservio API
   contact: {}
   version: 1.0.0
-security:
-- BasicAuth: []
 tags:
 - name: business
   description: Operations about Businesses
@@ -345,7 +343,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: Reservation deleted.
+                $ref: '#/components/schemas/Reservation deleted.'
         default:
           description: Unexpected error
           content:

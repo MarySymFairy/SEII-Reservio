@@ -1,9 +1,9 @@
-import http from "node:http";
+const http = require("http");
 
-import test from "ava";
-import got from "got";
+const test = require("ava");
+const got = require("got");
 
-import app from '../index.js';
+const app = require('../index.js');
 
 test.before(async (t) => {
     t.context.server = http.createServer(app);
