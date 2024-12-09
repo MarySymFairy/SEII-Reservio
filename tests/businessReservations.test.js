@@ -20,6 +20,8 @@ test.after.always((t) => {
 });
 
 // GET /business-reservations - Retrieve all reservations
+
+//Happy path: Retrieve all reservations 
 test("GET /business-reservations - Retrieve all reservations (happy path)", async (t) => {
     const { body, statusCode } = await t.context.got.get("business-reservations");
     t.is(statusCode, 200);
