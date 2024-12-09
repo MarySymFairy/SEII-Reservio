@@ -585,8 +585,7 @@ components:
           type: string
           description: The arranged time of the reservation
           format: time
-          minimum: 00:00
-          maximum: 23:59
+          pattern: '^([0-1][0-9]|2[0-3]):[0-5][0-9]$'
         reservationDay:
           type: integer
           description: The arranged reservation day
@@ -656,8 +655,7 @@ components:
           type: string
           description: The arranged time of the reservation
           format: time
-          minimum: 00:00
-          maximum: 23:59
+          pattern: '^([0-1][0-9]|2[0-3]):[0-5][0-9]$'
         reservationDay:
           type: integer
           description: The arranged reservation day
