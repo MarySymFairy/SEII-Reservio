@@ -33,7 +33,7 @@ test("GET /businesses - Get businesses by category", async t => {
   const { body, statusCode } = await t.context.got.get('businesses?category-name=breakfast');
   t.is(statusCode, 200);
   t.true(Array.isArray(body));
-  t.is(body[0].businessCategory, "breakfast");
+  t.is(body[0].category-name, "breakfast");
 });
 
 // Error case: Get businesses by invalid category
