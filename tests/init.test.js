@@ -19,7 +19,7 @@ test.after.always(t => {
 ////GET /businesses //////////////////////////////////////////////////////////////////////////////////////////
 //Happy path: Retrieve all businesses
 test("GET /user/{userID}/businesses - Retrieve all businesses", async t => {
-    const { body, statusCode } = await t.context.got.get('user/1/businesses?category-name=breakfast');
+    const { body, statusCode } = await t.context.got.get('user/1/businesses?category-name=Breakfast');
     t.is(statusCode, 200);
     t.true(Array.isArray(body));
     t.true(body.length > 0);
@@ -34,7 +34,7 @@ test("GET /user/{userID}/businesses - Get businesses by invalid category", async
 });
 //Happy path: Search business by keyword
 test("GET /user/{userID}/businesses/search - Search business by keyword", async t => {
-    const { body, statusCode } = await t.context.got("user/1/businesses/search?keyword=keyword");
+    const { body, statusCode } = await t.context.got("user/1/businesses/search?keyword='keyword'");
     t.is(statusCode, 200);
     t.true(Array.isArray(body));
     t.is(body[0].keyword, "keyword");
