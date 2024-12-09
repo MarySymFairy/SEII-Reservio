@@ -312,7 +312,7 @@ paths:
         required: true
       responses:
         "200":
-          description: Reservation updated successfully
+          description: "Updated reservation (numberOfPeople, date, time)"
           content:
             application/json:
               schema:
@@ -320,14 +320,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/Reservation'
                 x-content-type: application/json
-        '400':
-          description: Invalid input parameters
-        '401':
-          description: Unauthorized access
-        '404':
-          description: Reservation not found
-        '422':
-          description: Validation error
         default:
           description: Unexpected error
           content:
@@ -723,7 +715,7 @@ components:
           format: int32
           minimum: 0
       example:
-        month: 1
+        month: 0
         numberOfReservations: 6
     Error:
       required:
