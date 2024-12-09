@@ -180,13 +180,12 @@ exports.getBusinessesByCategory = function(categoryName) {
 // }
 exports.modifyReservation = function(userId, reservationId, body) {
   return new Promise(function(resolve, reject) {
+    console.log("modifyReservation called with:", { userId, reservationId, body });
     if (!userId || !reservationId || !body) {
       return reject({ statusCode: 400, message: "Invalid input parameters" });
     }
 
-    // Simulate fetching the reservation from the database
     const reservation = simulateExistingReservation(reservationId);
-
     if (!reservation) {
       return reject({ statusCode: 404, message: "Reservation not found" });
     }
@@ -195,19 +194,15 @@ exports.modifyReservation = function(userId, reservationId, body) {
       return reject({ statusCode: 401, message: "Unauthorized access." });
     }
 
-    // Validate the body fields
     if (body.numberOfPeople == null || body.reservationTime == null) {
       return reject({ statusCode: 422, message: "Missing or invalid required fields." });
     }
 
-    // Simulate constraint validation
     if (body.reservationTime === "25:00") {
       return reject({ statusCode: 422, message: "Invalid reservation time format." });
     }
 
-    // Simulate updating the reservation in the database
     const updatedReservation = { ...reservation, ...body };
-
     resolve(updatedReservation);
   });
 };
