@@ -585,6 +585,8 @@ components:
           type: string
           description: The arranged time of the reservation
           format: time
+          minimum: 00:00
+          maximum: 23:59
         reservationDay:
           type: integer
           description: The arranged reservation day
@@ -654,6 +656,8 @@ components:
           type: string
           description: The arranged time of the reservation
           format: time
+          minimum: 00:00
+          maximum: 23:59
         reservationDay:
           type: integer
           description: The arranged reservation day
