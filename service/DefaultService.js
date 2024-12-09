@@ -152,69 +152,74 @@ exports.getBusinessesByCategory = function(categoryName) {
  * reservationId Long ID of the reservation to modify
  * returns List
  **/
-// exports.modifyReservation = function(body, userId, reservationId) {
+exports.modifyReservation = function(body, userId, reservationId) {
+  return new Promise(function(resolve, reject) {
+    if (!body || !userId || !reservationId) {
+      return reject(new Error("Invalid input parameters"));
+    }
+
+    // Example modified reservation data
+    var modifiedReservation = {
+      "reservation-id": reservationId,
+      "user-id": userId,
+      "reservationTime": body.reservationTime,
+      "businessName": body.businessName,
+      "reservationYear": body.reservationYear,
+      "reservationDay": body.reservationDay,
+      "business-id": body.businessId,
+      "reservationMonth": body.reservationMonth,
+      "numberOfPeople": body.numberOfPeople,
+      "username": body.username
+    };
+
+    // Simulate async operation (e.g., database interaction)
+    setTimeout(() => {
+      resolve(modifiedReservation);
+    }, 1000);
+  });
+}
+// exports.modifyReservation = function(userId, reservationId, body) {
 //   return new Promise(function(resolve, reject) {
-//     if (!body || !userId || !reservationId) {
+//     if (!userId || !reservationId || !body) {
 //       return reject(new Error("Invalid input parameters"));
 //     }
 
-//     // Example modified reservation data
-//     var modifiedReservation = {
-//       "reservation-id": reservationId,
-//       "user-id": userId,
-//       "reservationTime": body.reservationTime,
-//       "businessName": body.businessName,
-//       "reservationYear": body.reservationYear,
-//       "reservationDay": body.reservationDay,
-//       "business-id": body.businessId,
-//       "reservationMonth": body.reservationMonth,
-//       "numberOfPeople": body.numberOfPeople,
-//       "username": body.username
-//     };
+//     // Simulate fetching the reservation from the database
+//     const reservation = simulateExistingReservation(reservationId);
 
-//     // Simulate async operation (e.g., database interaction)
-//     setTimeout(() => {
-//       resolve(modifiedReservation);
-//     }, 1000);
+//     if (!reservation) {
+//       return reject(new Error("Reservation not found"));
+//     }
+
+//     if (reservation.userId !== userId) {
+//       return reject(new Error("Unauthorized access."));
+//     }
+
+//     // Validate the body fields
+//     if (body.numberOfPeople == null || body.reservationTime == null) {
+//       return reject(new Error("Missing or invalid required fields."));
+//     }
+
+//     // Simulate constraint validation
+//     if (body.reservationTime === "25:00") {
+//       return reject(new Error("Invalid reservation time format."));
+//     }
+
+//     // Simulate updating the reservation in the database
+//     const updatedReservation = { ...reservation, ...body };
+
+//     resolve(updatedReservation);
 //   });
+// };
+
+// function simulateExistingReservation(id) {
+//   // Simulate a database fetch
+//   const reservations = [
+//     { reservationId: 1, userId: 1, numberOfPeople: 2, reservationTime: "18:00" },
+//     // Add more reservations as needed
+//   ];
+//   return reservations.find(res => res.reservationId === id);
 // }
-exports.modifyReservation = function(userId, reservationId, body) {
-  return new Promise(function(resolve, reject) {
-    console.log("modifyReservation called with:", { userId, reservationId, body });
-    if (!userId || !reservationId || !body) {
-      return reject({ statusCode: 400, message: "Invalid input parameters" });
-    }
-
-    const reservation = simulateExistingReservation(reservationId);
-    if (!reservation) {
-      return reject({ statusCode: 404, message: "Reservation not found" });
-    }
-
-    if (reservation.userId !== userId) {
-      return reject({ statusCode: 401, message: "Unauthorized access." });
-    }
-
-    if (body.numberOfPeople == null || body.reservationTime == null) {
-      return reject({ statusCode: 422, message: "Missing or invalid required fields." });
-    }
-
-    if (body.reservationTime === "25:00") {
-      return reject({ statusCode: 422, message: "Invalid reservation time format." });
-    }
-
-    const updatedReservation = { ...reservation, ...body };
-    resolve(updatedReservation);
-  });
-};
-
-function simulateExistingReservation(id) {
-  // Simulate a database fetch
-  const reservations = [
-    { reservationId: 1, userId: 1, numberOfPeople: 2, reservationTime: "18:00" },
-    // Add more reservations as needed
-  ];
-  return reservations.find(res => res.reservationId === id);
-}
 
 
 /**

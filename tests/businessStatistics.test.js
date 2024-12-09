@@ -30,14 +30,14 @@
 
 // // Error case: Retrieve business statistics with invalid owner-id
 // test("GET /business-statistics - Retrieve business statistics with invalid owner-id (error case)", async t => {
-//     const { body, statusCode } = await t.context.got.get('business-statistics?owner-id=9999');
+//     const { body, statusCode } = await t.context.got.get('business-statistics?owner-id=99999999999999999999999999999999');
 //     t.is(statusCode, 404);
 //     t.is(body.message, "Business owner not found.");
 // });
 
 // // Error case: Missing owner-id
 // test("GET /business-statistics - Retrieve business statistics with missing owner-id (error case)", async t => {
-//     const { body, statusCode } = await t.context.got.get('business-statistics');
+//     const { body, statusCode } = await t.context.got.get('business-statistics?owner-id=');
 //     t.is(statusCode, 400);
 //     t.is(body.message, "Missing or invalid owner-id parameter.");
 // });
