@@ -99,7 +99,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       - name: reservationDay
         in: query
         description: The arranged reservation day
@@ -108,7 +109,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       - name: reservationMonth
         in: query
         description: The arranged reservation month
@@ -117,7 +119,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       - name: reservationYear
         in: query
         description: The arranged reservation year
@@ -126,7 +129,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       - name: numberOfPeople
         in: query
         description: The arranged number of people that will be in the reservation
@@ -135,7 +139,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       responses:
         "200":
           description: "A list of reservation hours matching the reservation details\
@@ -165,7 +170,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       responses:
         "200":
           description: An array with the reservations made by that logged in user
@@ -196,7 +202,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       - name: business-id
         in: query
         description: Business-id of the business that the reservation is made for
@@ -205,7 +212,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       requestBody:
         description: Submit reservation to the system
         content:
@@ -241,7 +249,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       - name: user-id
         in: query
         description: User-id of the logged in user that made the reservation
@@ -250,7 +259,8 @@ paths:
         explode: true
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       responses:
         "200":
           description: Reservation information
@@ -279,7 +289,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       - name: reservation-id
         in: path
         description: ID of the reservation to modify
@@ -327,7 +338,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       - name: reservation-id
         in: path
         description: ID of reservation to delete
@@ -336,7 +348,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       responses:
         "200":
           description: Reservation deleted
@@ -365,7 +378,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       - name: reservation-id
         in: path
         description: Retrieve the ID of the reservation
@@ -374,7 +388,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       responses:
         "200":
           description: Notification send successfully
@@ -403,7 +418,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       - name: day
         in: query
         description: Reservation day
@@ -412,7 +428,8 @@ paths:
         explode: true
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       - name: month
         in: query
         description: Reservation month
@@ -421,7 +438,8 @@ paths:
         explode: true
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       - name: year
         in: query
         description: Reservation year
@@ -430,7 +448,8 @@ paths:
         explode: true
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       responses:
         "200":
           description: An array with the reservations made in the business of the
@@ -464,7 +483,8 @@ paths:
         explode: false
         schema:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
       responses:
         "200":
           description: A schematic with the statistics of the reservations made in
@@ -498,7 +518,8 @@ components:
         business-id:
           type: integer
           description: The unique id of the business
-          format: uint32
+          format: int32
+          minimum: 0
         businessName:
           type: string
         businessCategory:
@@ -513,7 +534,8 @@ components:
         owner-id:
           type: integer
           description: The unique id of the business owner
-          format: uint32
+          format: int32
+          minimum: 0
         keyword:
           type: string
           description: "The keyword that the business can be found with, during the\
@@ -542,15 +564,18 @@ components:
         reservation-id:
           type: integer
           description: The unique id of the reservation
-          format: uint32
+          format: int32
+          minimum: 0
         user-id:
           type: integer
           description: The unique id of the user
-          format: uint32
+          format: int32
+          minimum: 0
         business-id:
           type: integer
           description: The unique id of the business
-          format: uint32
+          format: int32
+          minimum: 0
         reservationTime:
           type: string
           description: The arranged time of the reservation
@@ -558,19 +583,23 @@ components:
         reservationDay:
           type: integer
           description: The arranged reservation day
-          format: uint32
+          format: int32
+          minimum: 0
         reservationMonth:
           type: integer
           description: The arranged reservation month
-          format: uint32
+          format: int32
+          minimum: 0
         reservationYear:
           type: integer
           description: The arranged reservation year
-          format: uint32
+          format: int32
+          minimum: 0
         numberOfPeople:
           type: integer
           description: The arranged number of people that will be in the reservation
-          format: uint32
+          format: int32
+          minimum: 0
         username:
           type: string
           description: The username of the person creating the reservation
@@ -606,11 +635,13 @@ components:
         reservation-id:
           type: integer
           description: The unique id of the reservation
-          format: uint32
+          format: int32
+          minimum: 0
         user-id:
           type: integer
           description: The unique id of the user
-          format: uint32
+          format: int32
+          minimum: 0
         reservationTime:
           type: string
           description: The arranged time of the reservation
@@ -618,19 +649,23 @@ components:
         reservationDay:
           type: integer
           description: The arranged reservation day
-          format: uint32
+          format: int32
+          minimum: 0
         reservationMonth:
           type: integer
           description: The arranged reservation month
-          format: uint32
+          format: int32
+          minimum: 0
         reservationYear:
           type: integer
           description: The arranged reservation year
-          format: uint32
+          format: int32
+          minimum: 0
         people:
           type: integer
           description: The arranged number of people that will be in the reservation
-          format: uint32
+          format: int32
+          minimum: 0
         username:
           type: string
           description: The username of the person creating the reservation
@@ -658,11 +693,13 @@ components:
         month:
           type: integer
           description: The arranged reservation month
-          format: uint32
+          format: int32
+          minimum: 0
         numberOfReservations:
           type: integer
           description: The sum of the reservations made in a specific month
-          format: uint32
+          format: int32
+          minimum: 0
       example:
         month: 0
         numberOfReservations: 6
@@ -674,7 +711,8 @@ components:
       properties:
         code:
           type: integer
-          format: uint32
+          format: int32
+          minimum: 0
         message:
           type: string
     inline_response_200:
