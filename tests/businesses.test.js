@@ -30,7 +30,7 @@ test("GET /businesses - Retrieve all businesses", async t => {
 
 // Happy path: Get business by category
 test("GET /businesses/search - Get businesses by category", async t => {
-  const { body, statusCode } = await t.context.got.get('businesses?category-name=breakfast');
+  const { body, statusCode } = await t.context.got.get('businesses/search?category-name=breakfast');
   t.is(statusCode, 200);
   t.true(Array.isArray(body));
   t.is(body[0].category-name, "breakfast");
@@ -45,7 +45,7 @@ test("GET /businesses - Get businesses by invalid category", async t => {
 
 // Happy path: Search business by keyword
 test("GET /businesses/search - Search business by keyword", async t => {
-  const { body, statusCode } = await t.context.got.get('businesses?keyword=keyword');
+  const { body, statusCode } = await t.context.got.get('businesses/search?keyword=keyword');
   t.is(statusCode, 200);
   t.true(Array.isArray(body));
   t.is(body[0].keyword, "keyword");
