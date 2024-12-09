@@ -30,10 +30,10 @@ test("GET /businesses - Retrieve all businesses", async t => {
 
 // Happy path: Get business by category
 test("GET /businesses - Get businesses by category", async t => {
-  const { body, statusCode } = await t.context.got("businesses?category-name=Breakfast");
+  const { body, statusCode } = await t.context.got("businesses?category-name=breakfast");
   t.is(statusCode, 200);
   t.true(Array.isArray(body));
-  t.is(body[0].businessCategory, "Breakfast");
+  t.is(body[0].businessCategory, "breakfast");
 });
 
 // Error case: Get businesses by invalid category
