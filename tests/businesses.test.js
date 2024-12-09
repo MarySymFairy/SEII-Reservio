@@ -1,8 +1,9 @@
-import http from "node:http";
-import test from "ava";
-import got from "got";
-// const listen = require('test-listen');
-import app from '../index.js';
+const http = require("http");
+
+const test = require("ava");
+const got = require("got");
+
+const app = require('../index.js');
 
 test.before(async t => {
     t.context.server = http.createServer(app);
@@ -20,7 +21,8 @@ test.after.always(t => {
 
 // Happy path: Retrieve All Businesses
 test("GET /businesses - Retrieve all businesses", async t => {
-    const { body, statusCode } = await t.context.got.get('businesses');
+    // category-name is a required parameter
+    const { body, statusCode } = await t.context.got.get('businesses?category-name=breakfast');
     t.is(statusCode, 200);
     t.true(Array.isArray(body));
     t.true(body.length > 0);
@@ -196,4 +198,3 @@ test("DELETE /businesses/:id - Unauthorized access", async (t) => {
     t.is(error.response.statusCode, 401);
     t.is(error.response.body.message, "Unauthorized");
 });
-
