@@ -30,7 +30,7 @@ test("GET /businesses - Retrieve all businesses", async t => {
 
 // Happy path: Get business by category
 test("GET /businesses - Get businesses by category", async t => {
-  const { body, statusCode } = await t.context.got("businesses?category-name=breakfast");
+  const { body, statusCode } = await t.context.got.get("businesses?category-name=breakfast");
   t.is(statusCode, 200);
   t.true(Array.isArray(body));
   t.is(body[0].businessCategory, "breakfast");
@@ -38,14 +38,14 @@ test("GET /businesses - Get businesses by category", async t => {
 
 // Error case: Get businesses by invalid category
 test("GET /businesses - Get businesses by invalid category", async t => {
-  const error = await t.throwsAsync(() => t.context.got("businesses?category-name=InvalidCategory"));
+  const error = await t.throwsAsync(() => t.context.got.get("businesses?category-name=InvalidCategory"));
   t.is(error.response.statusCode, 404);
   t.is(error.response.body.message, "Category not found.");
 });
 
 // Happy path: Search business by keyword
 test("GET /businesses/search - Search business by keyword", async t => {
-  const { body, statusCode } = await t.context.got("businesses/search?keyword=keyword");
+  const { body, statusCode } = await t.context.got.get("businesses/search?keyword=keyword");
   t.is(statusCode, 200);
   t.true(Array.isArray(body));
   t.is(body[0].keyword, "keyword");
@@ -53,7 +53,7 @@ test("GET /businesses/search - Search business by keyword", async t => {
 
 // Error case: Search business by invalid keyword
 test("GET /businesses/search - Search business by invalid keyword", async t => {
-  const error = await t.throwsAsync(() => t.context.got("businesses/search?keyword=InvalidKeyword"));
+  const error = await t.throwsAsync(() => t.context.got.get("businesses/search?keyword=InvalidKeyword"));
   t.is(error.response.statusCode, 404);
   t.is(error.response.body.message, "No businesses found.");
 });
@@ -61,7 +61,7 @@ test("GET /businesses/search - Search business by invalid keyword", async t => {
 //Error case: Empty Keyword
 test("GET /businesses/search - Empty keyword", async (t) => {
     const error = await t.throwsAsync(() =>
-        t.context.got("businesses/search?keyword=")
+        t.context.got.get("businesses/search?keyword=")
     );
     t.is(error.response.statusCode, 400);
     t.is(error.response.body.message, "Keyword cannot be empty");
@@ -69,14 +69,14 @@ test("GET /businesses/search - Empty keyword", async (t) => {
 
 // Error case: Get businesses with invalid query parameter
 test("GET /businesses - Invalid query parameters", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got("businesses?invalidParam=value"));
+    const error = await t.throwsAsync(() => t.context.got.get("businesses?invalidParam=value"));
     t.is(error.response.statusCode, 400);
     t.is(error.response.body.message, "Invalid query parameter");
 });
 
 //Error case: Nonexistent Resource
 test("GET /businesses/:id - Nonexistent business", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got("businesses/99999"));
+    const error = await t.throwsAsync(() => t.context.got.get("businesses/99999"));
     t.is(error.response.statusCode, 404);
     t.is(error.response.body.message, "Business not found");
 });
