@@ -1,6 +1,5 @@
 const test = require('ava');
-const { getBusinessesByCategory } = require('../DefaultService');
-
+const { getBusinessesByCategory } = require('../services/DefaultService');
 test('getBusinessesByCategory returns businesses for a valid category', async t => {
   const categoryName = 'Breakfast';
   const businesses = await getBusinessesByCategory(categoryName);
