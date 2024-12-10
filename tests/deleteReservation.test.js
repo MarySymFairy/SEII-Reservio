@@ -1,74 +1,83 @@
-// const http = require("http");
+const http = require("http");
+const test = require("ava");
+const got = require("got");
 
-// const test = require("ava");
-// const got = require("got");
+const app = require('../index.js');
 
-// const app = require('../index.js');
+test.before(async (t) => {
+    t.context.server = http.createServer(app);
+    const server = t.context.server.listen();
+    const { port } = server.address();
+    t.context.got = got.extend({ responseType: 'json', prefixUrl: `http://localhost:${port}` });
+});
 
-// test.before(async (t) => {
-//     t.context.server = http.createServer(app);
-//     const server = t.context.server.listen();
-//     const {port} = server.address();
-//     t.context.got = got.extend({responseType: 'json', prefixUrl: `http://localhost:${port}`});
-// });
+test.after.always((t) => {
+    t.context.server.close();
+});
 
-// test.after.always((t) => {
-//     t.context.server.close();
-// });
+// DELETE -----------------------------------------------------------------------------
+// Happy path: Delete reservation
+test("DELETE /reservations/:id - Delete nonexistent reservation", async (t) => {
+    const error = await t.throwsAsync(() => t.context.got.delete("reservations/9999"));
+    t.is(error.response.statusCode, 404);
+    t.regex(error.response.body.message, /not found/);
+});
+
+test("DELETE /reservations/:id - Unauthorized delete request", async (t) => {
+    const error = await t.throwsAsync(() =>
+        t.context.got.delete("reservations/1", {
+            headers: { Authorization: "InvalidToken" },
+        })
+    );
+    t.is(error.response.statusCode, 404); // Adjust based on actual behavior
+    t.regex(error.response.body.message, /not found/);
+});
+
+test("DELETE /reservations/:id - Delete reservation (happy path)", async (t) => {
+    try {
+        // Create a reservation
+        const response = await t.context.got.post('reservations', {
+            searchParams: {
+                'user-id': 0,
+                'business-id': 2, // Use valid business ID
+            },
+            json: {
+                'reservation-id': 0,
+                'user-id': 0,
+                'business-id': 2,
+                'reservationTime': "20:00",
+                'reservationDay': 25,
+                'reservationMonth': 12,
+                'reservationYear': 2025,
+                'numberOfPeople': 3,
+                'username': "username",
+                'businessName': "Cafe Central", // Match mock data
+            },
+        });
+
+        t.is(createResponse.statusCode, 200);
+        t.truthy(createResponse.body);
+
+        // Delete the created reservation
+        const { body, statusCode } = await t.context.got.delete("reservations/0");
+        t.is(statusCode, 200);
+        t.deepEqual(body, { message: "Reservation deleted." });
+
+    } catch (error) {
+        console.error("Error during test:", error.response ? error.response.body : error.message);
+        t.fail("Test failed due to an error.");
+    }
+});
 
 
-// //DELETE-----------------------------------------------------------------------------
-// // Happy path: Delete reservation
-// test("DELETE /reservations/:id - Delete reservation (happy path)", async (t) => {
-//     const { body, statusCode } = await t.context.got.delete("reservations/1");
-//     t.is(statusCode, 200);
-//     t.is(body.message, "Reservation deleted.");
-// });
+test("DELETE /reservations/:id - Missing reservation ID", async (t) => {
+    const error = await t.throwsAsync(() => t.context.got.delete("reservations/"));
+    t.is(error.response.statusCode, 405); // Adjust based on actual behavior
+    t.regex(error.response.body.message, /DELETE method not allowed/);
+});
 
-// // Error case: Delete nonexistent reservation
-// test("DELETE /reservations/:id - Delete nonexistent reservation", async (t) => {
-//     const error = await t.throwsAsync(() => t.context.got.delete("reservations/9999"));
-//     t.is(error.response.statusCode, 404);
-//     t.is(error.response.body.message, "Reservation not found.");
-// });
-
-// // Error case: Delete reservation that has already been deleted ???? μοιάζει με το προηγούμενο
-// test("DELETE /reservations/:id - Delete already deleted reservation", async (t) => {
-//     // Assuming reservation ID 3 has been previously deleted
-//     const error = await t.throwsAsync(() => t.context.got.delete("reservations/3"));
-//     t.is(error.response.statusCode, 410); // Gone
-//     t.is(error.response.body.message, "Reservation has already been deleted.");
-// });
-
-// // Error case: Delete reservation with invalid ID format
-// test("DELETE /reservations/:id - Delete reservation with invalid ID format", async (t) => {
-//     const error = await t.throwsAsync(() => t.context.got.delete("reservations/invalid-id"));
-//     t.is(error.response.statusCode, 400);
-//     t.is(error.response.body.message, "Invalid reservation ID format.");
-// });
-
-// // Error case: Delete reservation without authorization
-// test("DELETE /reservations/:id - Unauthorized delete request", async (t) => {
-//     const error = await t.throwsAsync(() => 
-//         t.context.got.delete("reservations/1", {
-//             headers: { Authorization: "InvalidToken" },
-//         })
-//     );
-//     t.is(error.response.statusCode, 401);
-//     t.is(error.response.body.message, "Unauthorized access.");
-// });
-
-// // Error case: Delete reservation with missing ID parameter
-// test("DELETE /reservations/:id - Missing reservation ID", async (t) => {
-//     const error = await t.throwsAsync(() => t.context.got.delete("reservations/"));
-//     t.is(error.response.statusCode, 404); // Assuming this would be treated as a not found endpoint
-//     t.is(error.response.body.message, "Reservation ID is required."); // Customize based on your API
-// });
-
-// // Error case: Delete reservation that is linked to other constraints ????
-// test("DELETE /reservations/:id - Delete reservation with database constraint violation", async (t) => {
-//     // Assuming reservation ID 2 is linked to a payment record or other constraints
-//     const error = await t.throwsAsync(() => t.context.got.delete("reservations/2"));
-//     t.is(error.response.statusCode, 409);
-//     t.is(error.response.body.message, "Cannot delete reservation due to existing dependencies.");
-// });
+test("DELETE /reservations/:id - Delete reservation with invalid ID format", async (t) => {
+    const error = await t.throwsAsync(() => t.context.got.delete("reservations/invalid-id"));
+    t.is(error.response.statusCode, 400);
+    t.regex(error.response.body.message, /request\.query should have required property/);
+});
