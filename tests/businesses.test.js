@@ -28,25 +28,6 @@ test("GET /businesses - Retrieve all businesses", async t => {
     t.true(body.length > 0);
 });
 
-test('Get businesses by category - Happy path', async () => {
-  const response = await server.inject({
-    method: 'GET',
-    url: '/businesses?category-name=breakfast'
-  });
-
-  expect(response.statusCode).toBe(200);
-  expect(response.body).toEqual(
-    expect.arrayContaining([
-      expect.objectContaining({
-        'business-id': expect.any(Number),
-        businessName: expect.any(String),
-        businessCategory: 'Breakfast',
-        owner-id: expect.any(Number),
-        keyword: expect.any(String),
-      })
-    ])
-  );
-});
 
 // Happy path: Get business by category
 // test("GET /businesses/search - Get businesses by category", async t => {
