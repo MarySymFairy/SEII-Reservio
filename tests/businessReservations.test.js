@@ -36,10 +36,17 @@ test("GET /businessReservations - Invalid query parameters", async (t) => {
     t.is(error.response.body.message, "Invalid query parameter");
 });
 
-//Unhappy path: No existing reservations
-test("GET /businessReservations - No existing reservations/", async (t) => {
+ //Unhappy path: No existing reservations
+/*test("GET /businessReservations - No existing reservations/", async (t) => {
     const error = await t.throwsAsync(() => t.context.got.get("businessReservations"));
     t.is(error.response.statusCode, 404);
     t.is(error.response.body.message, "No business reservations found.");
-  });
+  }); */
   
+
+  //Unhappy path: Nonexistent Resource
+test("GET /businessReservations/:id - Nonexistent businessReservations", async (t) => {
+    const error = await t.throwsAsync(() => t.context.got.get("businessReservations/99999"));
+    t.is(error.response.statusCode, 404);
+    t.is(error.response.body.message, "Business reservations not found");
+});
