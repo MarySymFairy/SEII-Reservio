@@ -238,15 +238,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       x-swagger-router-controller: Default
-  /reservations/{reservation-id}:
+  /reservations/{reservationId}:
     get:
       description: |
         FR10: The logged in user must be able to view his reservations.
-      operationId: ViewAReservation
+      operationId: viewAReservation
       parameters:
-      - name: reservation-id
+      - name: reservationId
         in: path
-        description: Reservation-id of the reservation submitted to the system
+        description: ReservationId of the reservation submitted to the system
         required: true
         style: simple
         explode: false
@@ -367,7 +367,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       x-swagger-router-controller: Default
-  /reservations/{reservation-id}/notification:
+  /reservations/{reservationId}/notification:
     get:
       description: "FR9: The system must be able to notify the logged in user for\
         \ his reservation at the reservation date."
