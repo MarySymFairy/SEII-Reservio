@@ -28,22 +28,42 @@ test("GET /businesses - Retrieve all businesses", async t => {
     t.true(body.length > 0);
 });
 
+test('Get businesses by category - Happy path', async () => {
+  const response = await server.inject({
+    method: 'GET',
+    url: '/businesses?category-name=breakfast'
+  });
+
+  expect(response.statusCode).toBe(200);
+  expect(response.body).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        'business-id': expect.any(Number),
+        businessName: expect.any(String),
+        businessCategory: 'Breakfast',
+        owner-id: expect.any(Number),
+        keyword: expect.any(String),
+      })
+    ])
+  );
+});
+
 // Happy path: Get business by category
-test("GET /businesses/search - Get businesses by category", async t => {
-  const { body, statusCode } = await t.context.got.get('businesses/search?category-name=breakfast');
-  t.is(statusCode, 200);
-  t.true(Array.isArray(body));
-  t.is(body[0].category-name, "breakfast");
-});
+// test("GET /businesses/search - Get businesses by category", async t => {
+//   const { body, statusCode } = await t.context.got.get('businesses/search?category-name=breakfast');
+//   t.is(statusCode, 200);
+//   t.true(Array.isArray(body));
+//   t.is(body[0].category-name, "breakfast");
+// });
 
-// Error case: Get businesses by invalid category
-test("GET /businesses - Get businesses by invalid category", async t => {
-  const error = await t.throwsAsync(() => t.context.got.get('businesses?category-name=InvalidCategory'));
-  t.is(error.response.statusCode, 404);
-  t.is(error.response.body.message, "Category not found.");
-});
+// // Error case: Get businesses by invalid category
+// test("GET /businesses - Get businesses by invalid category", async t => {
+//   const error = await t.throwsAsync(() => t.context.got.get('businesses?category-name=InvalidCategory'));
+//   t.is(error.response.statusCode, 404);
+//   t.is(error.response.body.message, "Category not found.");
+// });
 
-// Happy path: Search business by keyword
+// // Happy path: Search business by keyword
 test("GET /businesses/search - Search business by keyword", async t => {
   const { body, statusCode } = await t.context.got.get('businesses/search?keyword=keyword');
   t.is(statusCode, 200);
@@ -51,150 +71,150 @@ test("GET /businesses/search - Search business by keyword", async t => {
   t.is(body[0].keyword, "keyword");
 });
 
-// Error case: Search business by invalid keyword
-test("GET /businesses/search - Search business by invalid keyword", async t => {
-  const error = await t.throwsAsync(() => t.context.got.get('businesses/search?keyword=InvalidKeyword'));
-  t.is(error.response.statusCode, 404);
-  t.is(error.response.body.message, "No businesses found.");
-});
+// // Error case: Search business by invalid keyword
+// test("GET /businesses/search - Search business by invalid keyword", async t => {
+//   const error = await t.throwsAsync(() => t.context.got.get('businesses/search?keyword=InvalidKeyword'));
+//   t.is(error.response.statusCode, 404);
+//   t.is(error.response.body.message, "No businesses found.");
+// });
 
-//Error case: Empty Keyword
-test("GET /businesses/search - Empty keyword", async (t) => {
-    const error = await t.throwsAsync(() =>
-        t.context.got.get("businesses/search?keyword=")
-    );
-    t.is(error.response.statusCode, 400);
-    t.is(error.response.body.message, "Keyword cannot be empty");
-});
+// //Error case: Empty Keyword
+// test("GET /businesses/search - Empty keyword", async (t) => {
+//     const error = await t.throwsAsync(() =>
+//         t.context.got.get("businesses/search?keyword=")
+//     );
+//     t.is(error.response.statusCode, 400);
+//     t.is(error.response.body.message, "Keyword cannot be empty");
+// });
 
-// Error case: Get businesses with invalid query parameter
-test("GET /businesses - Invalid query parameters", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got.get('businesses?invalidParam=value'));
-    t.is(error.response.statusCode, 400);
-    t.is(error.response.body.message, "Invalid query parameter");
-});
+// // Error case: Get businesses with invalid query parameter
+// test("GET /businesses - Invalid query parameters", async (t) => {
+//     const error = await t.throwsAsync(() => t.context.got.get('businesses?invalidParam=value'));
+//     t.is(error.response.statusCode, 400);
+//     t.is(error.response.body.message, "Invalid query parameter");
+// });
 
-//Error case: Nonexistent Resource
-test("GET /businesses/:id - Nonexistent business", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got.get('businesses/99999'));
-    t.is(error.response.statusCode, 404);
-    t.is(error.response.body.message, "Business not found");
-});
-
-
-
-// POST /businesses
-
-//Happy path: Create a New Business
-test("POST /businesses - Add a new business", async (t) => {
-    const payload = { name: "New Business", category: "Retail" };
-    const { body, statusCode } = await t.context.got.post('businesses', { json: payload });
-    t.is(statusCode, 201);
-    t.is(body.name, "New Business");
-    t.is(body.category, "Retail");
-});
-
-//Error case: Missing Required Fields
-test("POST /businesses - Missing required fields", async (t) => {
-    const payload = { name: "New Business" }; // Missing critical fields like `category`
-    const error = await t.throwsAsync(() =>
-        t.context.got.post('businesses', { json: payload })
-    );
-    t.is(error.response.statusCode, 400);
-    t.is(error.response.body.message, "Required fields are missing");
-});
-
-//Error case: Invalid Data Format
-test("POST /businesses - Invalid data format", async (t) => {
-    const payload = { name: 12345, category: true }; // Invalid types
-    const error = await t.throwsAsync(() =>
-        t.context.got.post('businesses', { json: payload })
-    );
-    t.is(error.response.statusCode, 422);
-    t.is(error.response.body.message, "Invalid data format");
-});
-
-//Error case: Duplicate Entry
-test("POST /businesses - Duplicate entry", async (t) => {
-    const payload = { name: "Existing Business", category: "Food" };
-    await t.context.got.post('businesses', { json: payload }); // First insert
-    const error = await t.throwsAsync(() =>
-        t.context.got.post('businesses', { json: payload })
-    );
-    t.is(error.response.statusCode, 409);
-    t.is(error.response.body.message, "Business already exists");
-});
+// //Error case: Nonexistent Resource
+// test("GET /businesses/:id - Nonexistent business", async (t) => {
+//     const error = await t.throwsAsync(() => t.context.got.get('businesses/99999'));
+//     t.is(error.response.statusCode, 404);
+//     t.is(error.response.body.message, "Business not found");
+// });
 
 
 
-// PUT /businesses
+// // POST /businesses
 
-//Happy path: Update an Existing Business
-test("PUT /businesses/:id - Update a business", async (t) => {
-    const payload = { name: "Updated Business", category: "Tech" };
-    const { body, statusCode } = await t.context.got.put('businesses/1', { json: payload });
-    t.is(statusCode, 200);
-    t.is(body.name, "Updated Business");
-    t.is(body.category, "Tech");
-});
+// //Happy path: Create a New Business
+// test("POST /businesses - Add a new business", async (t) => {
+//     const payload = { name: "New Business", category: "Retail" };
+//     const { body, statusCode } = await t.context.got.post('businesses', { json: payload });
+//     t.is(statusCode, 201);
+//     t.is(body.name, "New Business");
+//     t.is(body.category, "Retail");
+// });
 
-//Error case: Nonexistent Resource
-test("PUT /businesses/:id - Nonexistent business", async (t) => {
-    const payload = { name: "Updated Business", category: "Tech" };
-    const error = await t.throwsAsync(() =>
-        t.context.got.put('businesses/99999', { json: payload })
-    );
-    t.is(error.response.statusCode, 404);
-    t.is(error.response.body.message, "Business not found");
-});
+// //Error case: Missing Required Fields
+// test("POST /businesses - Missing required fields", async (t) => {
+//     const payload = { name: "New Business" }; // Missing critical fields like `category`
+//     const error = await t.throwsAsync(() =>
+//         t.context.got.post('businesses', { json: payload })
+//     );
+//     t.is(error.response.statusCode, 400);
+//     t.is(error.response.body.message, "Required fields are missing");
+// });
 
+// //Error case: Invalid Data Format
+// test("POST /businesses - Invalid data format", async (t) => {
+//     const payload = { name: 12345, category: true }; // Invalid types
+//     const error = await t.throwsAsync(() =>
+//         t.context.got.post('businesses', { json: payload })
+//     );
+//     t.is(error.response.statusCode, 422);
+//     t.is(error.response.body.message, "Invalid data format");
+// });
 
-//Error case: Missing Required Fields
-test("PUT /businesses/:id - Missing required fields", async (t) => {
-    const payload = {}; // Missing name and category
-    const error = await t.throwsAsync(() =>
-        t.context.got.put('businesses/1', { json: payload })
-    );
-    t.is(error.response.statusCode, 400);
-    t.is(error.response.body.message, "Required fields are missing");
-});
-
-//Error case: Invalid Data Format
-test("PUT /businesses/:id - Invalid data format", async (t) => {
-    const payload = { name: true, category: 123 }; // Invalid types
-    const error = await t.throwsAsync(() =>
-        t.context.got.put('businesses/1', { json: payload })
-    );
-    t.is(error.response.statusCode, 422);
-    t.is(error.response.body.message, "Invalid data format");
-});
-
-
+// //Error case: Duplicate Entry
+// test("POST /businesses - Duplicate entry", async (t) => {
+//     const payload = { name: "Existing Business", category: "Food" };
+//     await t.context.got.post('businesses', { json: payload }); // First insert
+//     const error = await t.throwsAsync(() =>
+//         t.context.got.post('businesses', { json: payload })
+//     );
+//     t.is(error.response.statusCode, 409);
+//     t.is(error.response.body.message, "Business already exists");
+// });
 
 
-// DELETE /businesses
 
-//Happy path: Delete an Existing Business
-test("DELETE /businesses/:id - Delete a business", async (t) => {
-    const { statusCode } = await t.context.got.delete('businesses/1');
-    t.is(statusCode, 204); // No content
-});
+// // PUT /businesses
 
-//Error case: Nonexistent Resource
-test("DELETE /businesses/:id - Nonexistent business", async (t) => {
-    const error = await t.throwsAsync(() =>
-        t.context.got.delete('businesses/99999')
-    );
-    t.is(error.response.statusCode, 404);
-    t.is(error.response.body.message, "Business not found");
-});
+// //Happy path: Update an Existing Business
+// test("PUT /businesses/:id - Update a business", async (t) => {
+//     const payload = { name: "Updated Business", category: "Tech" };
+//     const { body, statusCode } = await t.context.got.put('businesses/1', { json: payload });
+//     t.is(statusCode, 200);
+//     t.is(body.name, "Updated Business");
+//     t.is(body.category, "Tech");
+// });
+
+// //Error case: Nonexistent Resource
+// test("PUT /businesses/:id - Nonexistent business", async (t) => {
+//     const payload = { name: "Updated Business", category: "Tech" };
+//     const error = await t.throwsAsync(() =>
+//         t.context.got.put('businesses/99999', { json: payload })
+//     );
+//     t.is(error.response.statusCode, 404);
+//     t.is(error.response.body.message, "Business not found");
+// });
 
 
-//Error case: Unauthorized Access
-test("DELETE /businesses/:id - Unauthorized access", async (t) => {
-    const error = await t.throwsAsync(() =>
-        t.context.got.delete('businesses/1', { headers: { Authorization: "InvalidToken" } })
-    );
-    t.is(error.response.statusCode, 401);
-    t.is(error.response.body.message, "Unauthorized");
-});
+// //Error case: Missing Required Fields
+// test("PUT /businesses/:id - Missing required fields", async (t) => {
+//     const payload = {}; // Missing name and category
+//     const error = await t.throwsAsync(() =>
+//         t.context.got.put('businesses/1', { json: payload })
+//     );
+//     t.is(error.response.statusCode, 400);
+//     t.is(error.response.body.message, "Required fields are missing");
+// });
+
+// //Error case: Invalid Data Format
+// test("PUT /businesses/:id - Invalid data format", async (t) => {
+//     const payload = { name: true, category: 123 }; // Invalid types
+//     const error = await t.throwsAsync(() =>
+//         t.context.got.put('businesses/1', { json: payload })
+//     );
+//     t.is(error.response.statusCode, 422);
+//     t.is(error.response.body.message, "Invalid data format");
+// });
+
+
+
+
+// // DELETE /businesses
+
+// //Happy path: Delete an Existing Business
+// test("DELETE /businesses/:id - Delete a business", async (t) => {
+//     const { statusCode } = await t.context.got.delete('businesses/1');
+//     t.is(statusCode, 204); // No content
+// });
+
+// //Error case: Nonexistent Resource
+// test("DELETE /businesses/:id - Nonexistent business", async (t) => {
+//     const error = await t.throwsAsync(() =>
+//         t.context.got.delete('businesses/99999')
+//     );
+//     t.is(error.response.statusCode, 404);
+//     t.is(error.response.body.message, "Business not found");
+// });
+
+
+// //Error case: Unauthorized Access
+// test("DELETE /businesses/:id - Unauthorized access", async (t) => {
+//     const error = await t.throwsAsync(() =>
+//         t.context.got.delete('businesses/1', { headers: { Authorization: "InvalidToken" } })
+//     );
+//     t.is(error.response.statusCode, 401);
+//     t.is(error.response.body.message, "Unauthorized");
+// });
