@@ -18,7 +18,7 @@ test.after.always(t => {
 // Happy Scenario
 test('POST /reservations - successful case', async t => {
     try {
-        const response = await t.context.got.post('reservations', {
+        const response = await t.context.got.post('reservations?user-id=0&business-id=2', {
             searchParams: {
                 'user-id': 0,
                 'business-id': 2, // Use valid business ID
@@ -59,14 +59,14 @@ test('POST /reservations - successful case', async t => {
 //Unhappy Scenario: User ID is not provided
 test('POST /reservations - missing user-id', async t => {
     try {
-        await t.context.got.post('reservations', {
+        await t.context.got.post('reservations?business-id=101', {
             searchParams: {
                 'business-id': 101 // Missing 'user-id'
             },
             json: {
                 'reservation-id': 0,
                 'user-id': 1,
-                'business-id': 1,
+                'business-id': 101,
                 'reservationTime': "12:00",
                 'reservationDay': 5,
                 'reservationMonth': 11,
@@ -86,7 +86,7 @@ test('POST /reservations - missing user-id', async t => {
 //Unhappy Scenario: Business ID is not provided
 test('POST /reservations - missing business-id', async t => {
     try {
-        await t.context.got.post('reservations', {
+        await t.context.got.post('reservations?user-id=1', {
             searchParams: {
                 'user-id': 1 // Missing 'business-id'
             },
@@ -114,7 +114,7 @@ test('POST /reservations - missing business-id', async t => {
 //ReservationTime
 test('POST /reservations - missing reservationTime', async t => {
     try {
-        await t.context.got.post('reservations', {
+        await t.context.got.post('reservations?user-id=1&business-id=101', {
             searchParams: {
                 'user-id': 1,
                 'business-id': 101
@@ -143,7 +143,7 @@ test('POST /reservations - missing reservationTime', async t => {
 //Invalid Time Format
 test('POST /reservations - invalid reservationTime format', async t => {
     try {
-        await t.context.got.post('reservations', {
+        await t.context.got.post('reservations?user-id=1&business-id=101', {
             searchParams: {
                 'user-id': 1,
                 'business-id': 101
@@ -171,7 +171,7 @@ test('POST /reservations - invalid reservationTime format', async t => {
 //Invalid Reservation Day Format
 test('POST /reservations - invalid reservationDay', async t => {
     try {
-        await t.context.got.post('reservations', {
+        await t.context.got.post('reservations?user-id=1&business-id=101', {
             searchParams: {
                 'user-id': 1,
                 'business-id': 101
@@ -199,7 +199,7 @@ test('POST /reservations - invalid reservationDay', async t => {
 //Invalid Reservation Month Format
 test('POST /reservations - invalid reservationMonth', async t => {
     try {
-        await t.context.got.post('reservations', {
+        await t.context.got.post('reservations?user-id=1&business-id=101', {
             searchParams: {
                 'user-id': 1,
                 'business-id': 101
@@ -227,7 +227,7 @@ test('POST /reservations - invalid reservationMonth', async t => {
 //Invalid Reservation Year Format
 test('POST /reservations - invalid reservationYear', async t => {
     try {
-        await t.context.got.post('reservations', {
+        await t.context.got.post('reservations?user-id=1&business-id=101', {
             searchParams: {
                 'user-id': 1,
                 'business-id': 101
@@ -258,7 +258,7 @@ test('POST /reservations - invalid reservationYear', async t => {
 //Unhappy Scenario: Invalid Data Type of numberOfPeople
 test('POST /reservations - invalid numberOfPeople type', async t => {
     try {
-        await t.context.got.post('reservations', {
+        await t.context.got.post('reservations?user-id=1&business-id=101', {
             searchParams: {
                 'user-id': 1,
                 'business-id': 101
@@ -287,7 +287,7 @@ test('POST /reservations - invalid numberOfPeople type', async t => {
 //manually added in openapi.yaml minimum year is 2024
 test('POST /reservations - reservation date in the past', async t => {
     try {
-        await t.context.got.post('reservations', {
+        await t.context.got.post('reservations?user-id=1&business-id=101', {
             searchParams: {
                 'user-id': 1,
                 'business-id': 101
@@ -316,7 +316,7 @@ test('POST /reservations - reservation date in the past', async t => {
 //Unhappy Scenario: Negative Or Zero Number of People
 test('POST /reservations - numberOfPeople is zero or negative', async t => {
     try {
-        await t.context.got.post('reservations', {
+        await t.context.got.post('reservations?user-id=1&business-id=101', {
             searchParams: {
                 'user-id': 1,
                 'business-id': 101
@@ -344,13 +344,13 @@ test('POST /reservations - numberOfPeople is zero or negative', async t => {
 // Invalid Day for February (non-leap year)
 test('POST /reservations - invalid day for February (non-leap year)', async t => {
     try {
-        await t.context.got.post('reservations', {
+        await t.context.got.post('reservations?user-id=0&business-id=2', {
             searchParams: {
                 'user-id': 0,
                 'business-id': 2,
             },
             json: {
-                'reservation-id': 0,
+                'reservation-id': 16,
                 'user-id': 0,
                 'business-id': 2,
                 'reservationTime': "12:00",
@@ -362,6 +362,11 @@ test('POST /reservations - invalid day for February (non-leap year)', async t =>
                 'businessName': "Cafe Central",
             },
         });
+        console.log('here');
+        const daysInMonth = new Date(reservationYear, reservationMonth, 0).getDate();
+        console.log('here');
+        console.log(daysInMonth);
+
         t.fail('Request should have failed');
     } catch (error) {
         t.is(error.response.statusCode, 400); // Ensure it fails with 400

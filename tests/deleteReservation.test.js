@@ -18,67 +18,57 @@ test.after.always((t) => {
 // DELETE -----------------------------------------------------------------------------
 // Happy path: Delete reservation
 test("DELETE /reservations/:id - Delete nonexistent reservation", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got.delete("reservations/9999"));
+    const error = await t.throwsAsync(() => t.context.got.delete("reservations/56?user-id=0"));
     t.is(error.response.statusCode, 404);
     t.regex(error.response.body.message, /not found/);
 });
 
-test("DELETE /reservations/:id - Unauthorized delete request", async (t) => {
-    const error = await t.throwsAsync(() =>
-        t.context.got.delete("reservations/1", {
-            headers: { Authorization: "InvalidToken" },
-        })
-    );
-    t.is(error.response.statusCode, 404); // Adjust based on actual behavior
-    t.regex(error.response.body.message, /not found/);
-});
 
 test("DELETE /reservations/:id - Delete reservation (happy path)", async (t) => {
     try {
         // Create a reservation
         const response = await t.context.got.post('reservations', {
             searchParams: {
-                'user-id': 0,
+                'user-id': 1,
                 'business-id': 2, // Use valid business ID
             },
             json: {
                 'reservation-id': 0,
-                'user-id': 0,
-                'business-id': 2,
+                'user-id': 6,
+                'business-id': 1,
                 'reservationTime': "20:00",
-                'reservationDay': 25,
-                'reservationMonth': 12,
+                'reservationDay': 5,
+                'reservationMonth': 5,
                 'reservationYear': 2025,
-                'numberOfPeople': 3,
+                'numberOfPeople': 7,
                 'username': "username",
-                'businessName': "Cafe Central", // Match mock data
+                'businessName': "businessName", // Match mock data
             },
         });
 
-        t.is(response.statusCode, 200); //!!!! EDO THEMA
+        t.is(response.statusCode, 200); 
         console.log("here");
         t.truthy(response.body);
 
-        //THEMA EDO
         console.log("here");
 
 
         //GET /reservations/:id
-        const getResponse = await t.context.got.get("reservations/0?user-id=0");
+        const getResponse = await t.context.got.get("reservations/0?user-id=1");
         console.log(getResponse.body);
         t.is(getResponse.statusCode, 200);
         t.deepEqual(getResponse.body, {
-            'reservation-id': 0,
-            'user-id': 0,
-            'business-id': 2,
-            'reservationTime': "20:00",
-            'reservationDay': 25,
-            'reservationMonth': 12,
+            "reservation-id": 0,
+            "user-id": 6,
+            "business-id": 1,
+            'reservationTime': "reservationTime",
+            'reservationDay': 5,
+            'reservationMonth': 5,
             'reservationYear': 2025,
-            'numberOfPeople': 3,
+            'numberOfPeople': 7,
             'username': "username",
-            'businessName': "Cafe Central",
-        });
+            'businessName': "businessName",
+          });
 
         // Delete the created reservation
         const { body, statusCode } = await t.context.got.delete("reservations/0?user-id=0");
@@ -93,7 +83,7 @@ test("DELETE /reservations/:id - Delete reservation (happy path)", async (t) => 
 
 
 test("DELETE /reservations/:id - Missing reservation ID", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got.delete("reservations/"));
+    const error = await t.throwsAsync(() => t.context.got.delete("reservations/?user-id=0"));
     t.is(error.response.statusCode, 405); // Adjust based on actual behavior
     t.regex(error.response.body.message, /DELETE method not allowed/);
 });

@@ -620,7 +620,7 @@ components:
       example:
         reservation-id: 0
         user-id: 6
-        reservationTime: reservationTime
+        reservationTime: '12:00'
         businessName: businessName
         reservationYear: 2025
         reservationDay: 5

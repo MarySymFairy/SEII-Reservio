@@ -1,6 +1,5 @@
 'use strict';
 
-
 const { use } = require('..');
 const userID = [105, 106, 107, 108, 109, 110, 111, 112, 113, 114];
 const businessID = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -74,6 +73,36 @@ const Availability = {
   default: [],
 };
 
+// Function to reset mock data to its initial state
+exports.resetMockData = () => {
+    Object.assign(Reservations, {
+        1: { user: 105, business: 1, date: "2024-12-05", time: "18:00", people: 7 },
+        2: { user: 106, business: 2, date: "2024-12-05", time: "19:00", people: 7 },
+    });
+
+    Object.assign(Users, {
+        105: { userID: 105, username: "user1", password: "password1", role: "user" },
+        106: { userID: 106, username: "user2", password: "password2", role: "user" },
+    });
+};
+
+// Function to dynamically add a reservation
+exports.addMockReservation = (reservationId, reservationData) => {
+    if (Reservations[reservationId]) {
+        throw new Error(`Reservation with ID ${reservationId} already exists.`);
+    }
+    Reservations[reservationId] = reservationData;
+};
+
+// Function to dynamically add a user
+exports.addMockUser = (userId, userData) => {
+    if (Users[userId]) {
+        throw new Error(`User with ID ${userId} already exists.`);
+    }
+    Users[userId] = userData;
+};
+
+
 /**
  * FR4: The logged in user must be able to set his reservation details in the selected business. FR6: The logged in user must be able to submit his reservation in the system. FR5: The logged in user must be able to select an available hour for his reservation. 
  *
@@ -135,18 +164,19 @@ exports.addReservation = function (body, userId, businessId) {
       const daysInMonth = new Date(reservationYear, reservationMonth, 0).getDate();
 
       // Validate February days
-      const isLeapYear = (year) => (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+      const isLeapYear = (year) => {
+        (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0)
+      };
 
       if (reservationMonth === 2) {
-          const maxDays = isLeapYear(reservationYear) ? 29 : 28;
-          if (reservationDay < 1 || reservationDay > maxDays) {
-              console.error(`Invalid reservation day for February: ${reservationDay}. Max allowed: ${maxDays}`);
-              return reject({
-                  message: `Invalid reservation day. Expected a number between 1 and ${maxDays} for February.`,
-                  errorCode: 'validation.error',
-              });
-          }
-        } else if (reservationDay < 1 || reservationDay > daysInMonth) {
+        const maxDays = isLeapYear(reservationYear) ? 29 : 28;
+        if (reservationDay < 1 || reservationDay > maxDays) {
+          return reject({
+            statusCode: 400,
+            error: `Invalid reservation day for February: ${reservationDay}. Max allowed: ${maxDays}.`,
+          });
+        }
+      } else if (reservationDay < 1 || reservationDay > daysInMonth) {
         return reject({
           message: `Invalid reservation day. Expected a number between 1 and ${daysInMonth}.`,
           errorCode: 'validation.error',
@@ -207,12 +237,20 @@ exports.addReservation = function (body, userId, businessId) {
  * reservationId Integer ID of reservation to delete
  * returns Reservation deleted.
  **/
-exports.deleteReservation = function(userId,reservationId) {
-  return new Promise(function(resolve, reject) {
+exports.deleteReservation = function (userId, reservationId) {
+  return new Promise((resolve, reject) => {
+    // Validate input types
+    if (typeof userId !== "number" || typeof reservationId !== "number") {
+      return reject({
+        code: 400,
+        message: "Invalid data types. userId and reservationId must be numbers.",
+      });
+    }
     var examples = {};
-    examples['application/json'] = {
-  "message" : "message"
-};
+    examples['application/json'] = { 
+      "message" : 'Reservation deleted.'
+    };
+
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
@@ -220,6 +258,12 @@ exports.deleteReservation = function(userId,reservationId) {
     }
   });
 }
+
+
+
+
+
+
 
 
 /**
