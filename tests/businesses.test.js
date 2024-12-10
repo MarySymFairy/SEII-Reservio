@@ -28,6 +28,13 @@ test("GET /businesses - Retrieve all businesses", async t => {
     t.true(body.length > 0);
 });
 
+// Unhappy path: Missing category-name Parameter
+test("GET /businesses - Missing category-name parameter", async t => {
+  const { body, statusCode } = await t.context.got.get('businesses');
+  t.is(statusCode, 400);
+  t.is(body.code, 400);
+  t.is(body.message, 'Missing required query parameter: category-name');
+});
 
 // Happy path: Get business by category
 // test("GET /businesses/search - Get businesses by category", async t => {
