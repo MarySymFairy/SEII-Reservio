@@ -30,11 +30,16 @@ test("GET /businesses - Retrieve all businesses", async t => {
 
 // Unhappy path: Missing category-name Parameter
 test("GET /businesses - Missing category-name parameter", async t => {
-  const { body, statusCode } = await t.context.got.get('businesses');
-  t.is(statusCode, 400);
-  t.is(body.code, 400);
-  t.is(body.message, 'Missing required query parameter: category-name');
+  try {
+    const { body, statusCode } = await t.context.got.get('businesses');
+    t.is(statusCode, 400);  // Ελέγχει αν επιστρέφεται ο κωδικός κατάστασης 400
+    t.is(body.code, 400);    // Ελέγχει αν ο κωδικός σφάλματος είναι 400
+    t.is(body.message, 'Missing required query parameter: category-name'); // Ελέγχει το μήνυμα σφάλματος
+  } catch (error) {
+    t.fail(`Test failed with error: ${error.message}`); // Αν αποτύχει, καταγράφει το μήνυμα σφάλματος
+  }
 });
+
 
 // Happy path: Get business by category
 // test("GET /businesses/search - Get businesses by category", async t => {
