@@ -11,7 +11,7 @@ test.before(async t => {
         http2: true,
         throwHttpErrors: false,
         responseType: "json",
-        prefixUrl: t.context.prefixUrl,
+        prefixUrl: `http://localhost:${port}` //t.context.prefixUrl,
     });
 });
 
