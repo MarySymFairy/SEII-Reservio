@@ -35,3 +35,11 @@ test("GET /businessesReservations - Invalid query parameters", async (t) => {
     t.is(error.response.statusCode, 400);
     t.is(error.response.body.message, "Invalid query parameter");
 });
+
+//Unhappy paths: Search business by invalid keyword
+test("GET /businesses/search - Search business by invalid keyword", async t => {
+    const error = await t.throwsAsync(() => t.context.got("businesses/search?keyword=InvalidKeyword"));
+    t.is(error.response.statusCode, 404);
+    t.is(error.response.body.message, "No businesses found.");
+  });
+  
