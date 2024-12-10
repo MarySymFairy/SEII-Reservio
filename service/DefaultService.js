@@ -5,7 +5,7 @@ const userID = [105, 106, 107, 108, 109, 110, 111, 112, 113, 114];
 const businessID = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const reservationID = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const ownerID = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const CategoryName = ["Breakfast", "Lunch", "Dinner"];
+const CategoryName = ["breakfast", "lunch", "dinner"];
 
 const Users = {
   1: {userID:105 ,username: "user1", password: "password1", role: "user"},
@@ -17,11 +17,18 @@ const Owners = {
   2: {ownerID: 2, username: "owner2", password: "password2", role: "owner"},
 };  
 
-const Businesses = {
-  1: {owner: 1, name: "Business 1", category: "Breakfast", keyword: "keyword"},
-  2: {owner: 2, name: "Business 2", category: "Lunch", keyword: "keyword"},
-  3: {owner: 3, name: "Business 3", category: "Dinner", keyword: "keyword"},
-};
+// const Businesses = {
+//   1: {owner: 1, name: "Business 1", category: "Breakfast", keyword: "keyword"},
+//   2: {owner: 2, name: "Business 2", category: "Lunch", keyword: "keyword"},
+//   3: {owner: 3, name: "Business 3", category: "Dinner", keyword: "keyword"},
+// };
+
+const Businesses = [
+  { id: 1, owner: 1, name: "Business 1", category: "breakfast", keyword: "cozy" },
+  { id: 2, owner: 2, name: "Business 2", category: "lunch", keyword: "vegan" },
+  { id: 3, owner: 3, name: "Business 3", category: "dinner", keyword: "family" },
+];
+
 
 const UserReservations = {
   105: [
@@ -322,27 +329,33 @@ exports.getAvailability = function(businessId,reservationDay,reservationMonth,re
   "business-id" : 0
 } ];
  **/
-exports.getBusinessesByCategory = function(categoryName) {
-  return new Promise(function(resolve, reject) {
-    
-    //Validate data types
-    if (typeof categoryName !== "string" || typeof categoryName === "undefined") {
+exports.getBusinessesByCategory = function (categoryName) {
+  return new Promise(function (resolve, reject) {
+    // Validate data types
+    if (typeof categoryName !== "string" || categoryName.trim() === "") {
       return reject({
         message: "Invalid data types.",
-        code: 400
+        code: 400,
       });
     }
-    //Check if the category exists
-    if (!CategoryName[categoryName]) {
-      return reject({status: 404, message: "Category not found."});
+    // Check if the category exists
+    if (!CategoryName.includes(categoryName)) {
+      return reject({
+        status: 404,
+        message: "Category not found.",
+      });
     }
-    //Return the businesses
+    // Find businesses by category
+    const results = Object.values(Businesses).filter(
+    (business) => business.category.toLowerCase() === categoryName.toLowerCase()
+    );
     resolve({
-      businesses: Businesses[categoryName],
-      code: 200
+      businesses: results,
+      code: 200,
     });
   });
-}  
+};
+
 
 
 /**
@@ -521,26 +534,31 @@ exports.notifyUser = function(userId,reservationId) {
   "business-id" : 0
 } ];
  **/
-exports.searchBusinessByKeyword = function(keyword) {
-  return new Promise(function(resolve, reject) { 
-    //Validate data types
+exports.searchBusinessByKeyword = function (keyword) {
+  return new Promise(function (resolve, reject) {
+    // Validate data types
     if (typeof keyword !== "string" || typeof keyword === "undefined") {
       return reject({
         message: "Invalid data types.",
-        code: 400
+        code: 400,
       });
     }
-    //Check if the keyword exists
-    if (!Businesses[keyword]) {
-      return reject({status: 404, message: "No businesses found."});
+
+    // Filter businesses by keyword
+    const filteredBusinesses = Businesses.filter(
+      (business) => business.keyword.toLowerCase() === keyword.toLowerCase()
+    );
+
+    if (filteredBusinesses.length === 0) {
+      return reject({ status: 404, message: "No businesses found." });
     }
-    //Return the businesses
+
     resolve({
-      businesses: Businesses[keyword],
-      code: 200
+      businesses: filteredBusinesses,
+      code: 200,
     });
   });
-}
+};
 
 
 /**
