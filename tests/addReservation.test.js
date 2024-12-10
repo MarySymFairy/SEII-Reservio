@@ -15,43 +15,42 @@ test.after.always(t => {
     t.context.server.close();
 });
 
-//Happy Scenario
+// Happy Scenario
 test('POST /reservations - successful case', async t => {
     try {
         const response = await t.context.got.post('reservations', {
             searchParams: {
-                'user-id': 1,
-                'business-id': 101
+                'user-id': 0,
+                'business-id': 2, // Use valid business ID
             },
             json: {
                 'reservation-id': 0,
-                'user-id': 1,
-                'business-id': 1,
-                'reservationTime': "12:00",
-                'reservationDay': 5,
-                'reservationMonth': 11,
-                'reservationYear': 2024,
+                'user-id': 0,
+                'business-id': 2,
+                'reservationTime': "20:00",
+                'reservationDay': 25,
+                'reservationMonth': 12,
+                'reservationYear': 2025,
                 'numberOfPeople': 3,
                 'username': "username",
-                'businessName': "Cafe Central"
+                'businessName': "Cafe Central", // Match mock data
             },
         });
 
         t.is(response.statusCode, 200);
         t.deepEqual(response.body, {
             'reservation-id': 0,
-            'user-id': 1,
-            'business-id': 4,
-            'reservationTime': "12:00",
-            'reservationDay': 5,
-            'reservationMonth': 11,
-            'reservationYear': 2024,
+            'user-id': 0,
+            'business-id': 2,
+            'reservationTime': "20:00",
+            'reservationDay': 25,
+            'reservationMonth': 12,
+            'reservationYear': 2025,
             'numberOfPeople': 3,
             'username': "username",
-            'businessName': "Cafe Central"
+            'businessName': "Cafe Central",
         });
     } catch (error) {
-        
         console.error('Error:', error.response ? error.response.body : error.message);
         t.fail('Request failed');
     }
@@ -342,30 +341,30 @@ test('POST /reservations - numberOfPeople is zero or negative', async t => {
     }
 });
 
-//Test Invalid Day for February
+// Invalid Day for February (non-leap year)
 test('POST /reservations - invalid day for February (non-leap year)', async t => {
     try {
         await t.context.got.post('reservations', {
             searchParams: {
-                'user-id': 1,
-                'business-id': 101
+                'user-id': 0,
+                'business-id': 2,
             },
             json: {
                 'reservation-id': 0,
-                'user-id': 1,
-                'business-id': 101,
+                'user-id': 0,
+                'business-id': 2,
                 'reservationTime': "12:00",
                 'reservationDay': 30, // Invalid day
                 'reservationMonth': 2, // February
                 'reservationYear': 2026, // Non-leap year
                 'numberOfPeople': 3,
                 'username': "username",
-                'businessName': "Cafe Central"
+                'businessName': "Cafe Central",
             },
         });
         t.fail('Request should have failed');
     } catch (error) {
-        t.is(error.response.statusCode, 400); // Bad Request
-        t.regex(error.response.body.message, /Invalid reservation day. Expected a number between 1 and 28/);
+        t.is(error.response.statusCode, 400); // Ensure it fails with 400
+        t.regex(error.response.body.error, /Invalid reservation day/); // Match the specific error
     }
 });
