@@ -132,7 +132,7 @@ paths:
         schema:
           type: integer
           format: int32
-          minimum: 0
+          minimum: 2024
       - name: numberOfPeople
         in: query
         description: The arranged number of people that will be in the reservation
@@ -454,7 +454,7 @@ paths:
         schema:
           type: integer
           format: int32
-          minimum: 0
+          minimum: 2024
       responses:
         "200":
           description: An array with the reservations made in the business of the
@@ -583,8 +583,9 @@ components:
           minimum: 0
         reservationTime:
           type: string
-          description: The arranged time of the reservation
-          format: time
+          description: >
+              Time of the reservation in 24-hour format.
+              Accepted format: HH:mm (e.g., "14:30")
           pattern: '^([0-1][0-9]|2[0-3]):[0-5][0-9]$'
         reservationDay:
           type: integer
@@ -602,7 +603,7 @@ components:
           type: integer
           description: The arranged reservation year
           format: int32
-          minimum: 0
+          minimum: 2024
         numberOfPeople:
           type: integer
           description: The arranged number of people that will be in the reservation
@@ -621,7 +622,7 @@ components:
         user-id: 6
         reservationTime: reservationTime
         businessName: businessName
-        reservationYear: 2
+        reservationYear: 2025
         reservationDay: 5
         business-id: 1
         reservationMonth: 5
@@ -653,8 +654,9 @@ components:
           minimum: 0
         reservationTime:
           type: string
-          description: The arranged time of the reservation
-          format: time
+          description: >
+              Time of the reservation in 24-hour format.
+              Accepted format: HH:mm (e.g., "14:30")
           pattern: '^([0-1][0-9]|2[0-3]):[0-5][0-9]$'
         reservationDay:
           type: integer
@@ -672,7 +674,7 @@ components:
           type: integer
           description: The arranged reservation year
           format: int32
-          minimum: 0
+          minimum: 2024
         people:
           type: integer
           description: The arranged number of people that will be in the reservation
@@ -691,7 +693,7 @@ components:
         user-id: 6
         reservationTime: reservationTime
         businessName: businessName
-        reservationYear: 5
+        reservationYear: 2026
         reservationDay: 1
         people: 2
         reservationMonth: 5
@@ -736,7 +738,7 @@ components:
           type: array
           items:
             type: string
-            format: time
+            pattern: "^([0-1][0-9]|2[0-3]):[0-5][0-9]$"
             example: 18:00
       example:
         availableHours:
