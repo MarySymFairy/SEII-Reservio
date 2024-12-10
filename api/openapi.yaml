@@ -294,7 +294,7 @@ paths:
           type: integer
           format: int32
           minimum: 0
-      - name: reservation-id
+      - name: reservationId
         in: path
         description: ID of the reservation to modify
         required: true
@@ -343,7 +343,7 @@ paths:
           type: integer
           format: int32
           minimum: 0
-      - name: reservation-id
+      - name: reservationId
         in: path
         description: ID of reservation to delete
         required: true
@@ -383,7 +383,7 @@ paths:
           type: integer
           format: int32
           minimum: 0
-      - name: reservation-id
+      - name: reservationId
         in: path
         description: Retrieve the ID of the reservation
         required: true
