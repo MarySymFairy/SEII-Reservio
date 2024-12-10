@@ -55,11 +55,33 @@ test("DELETE /reservations/:id - Delete reservation (happy path)", async (t) => 
             },
         });
 
-        t.is(createResponse.statusCode, 200);
-        t.truthy(createResponse.body);
+        t.is(response.statusCode, 200); //!!!! EDO THEMA
+        console.log("here");
+        t.truthy(response.body);
+
+        //THEMA EDO
+        console.log("here");
+
+
+        //GET /reservations/:id
+        const getResponse = await t.context.got.get("reservations/0?user-id=0");
+        console.log(getResponse.body);
+        t.is(getResponse.statusCode, 200);
+        t.deepEqual(getResponse.body, {
+            'reservation-id': 0,
+            'user-id': 0,
+            'business-id': 2,
+            'reservationTime': "20:00",
+            'reservationDay': 25,
+            'reservationMonth': 12,
+            'reservationYear': 2025,
+            'numberOfPeople': 3,
+            'username': "username",
+            'businessName': "Cafe Central",
+        });
 
         // Delete the created reservation
-        const { body, statusCode } = await t.context.got.delete("reservations/0");
+        const { body, statusCode } = await t.context.got.delete("reservations/0?user-id=0");
         t.is(statusCode, 200);
         t.deepEqual(body, { message: "Reservation deleted." });
 
