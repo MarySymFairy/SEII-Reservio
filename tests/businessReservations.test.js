@@ -11,7 +11,7 @@ test.before(async t => {
         http2: true,
         throwHttpErrors: false,
         responseType: "json",
-        prefixUrl: `http://localhost:${port}` //t.context.prefixUrl,
+        prefixUrl: t.context.prefixUrl,
     });
 });
 
@@ -52,8 +52,9 @@ test("GET /businessReservations/:id - Nonexistent businessReservations", async (
 });
 
 // Unhappy path: Invalid ID format when fetching a business reservation
-test("GET /businessReservations/:id - Invalid ID format", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got.get("businessReservations/invalid-id"));
+test("GET /businessReservations/:id - invalidID format", async (t) => {
+    const invalidId = 'abc123';
+    const error = await t.throwsAsync(() => t.context.got.get(`businessReservations/${invalidId}`));
     t.is(error.response.statusCode, 400);
     t.is(error.response.body.message, "Invalid reservation ID format");
 });
