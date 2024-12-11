@@ -41,7 +41,7 @@
 // // Error case: Modify reservation with invalid ID format
 // test("PUT /reservations/:id - Modify reservation with invalid ID format", async (t) => {
 //         const body = { numberOfPeople: 3 };
-//         const error = await t.throwsAsync(() => t.context.got.put("reservations/invalid-id", { json: body }));
+//         const error = await t.throwsAsync(() => t.context.got.put("reservations/invalidId", { json: body }));
 //         t.is(error.response.statusCode, 400);
 //         t.is(error.response.body.message, "Invalid reservation ID format.");
 //     });

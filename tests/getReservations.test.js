@@ -20,16 +20,16 @@ test.after.always((t) => {
 //GET--------------------------------------------------------------------------------
 // Happy path: Get reservation
 test("GET /reservations/:id - Get reservation (happy path)", async (t) => {
-    const { body, statusCode } = await t.context.got.get("reservations/0?user-id=6");
+    const { body, statusCode } = await t.context.got.get("reservations/0?userId=6");
     t.is(statusCode, 200);
-    t.is(body.user-id, 6);
-    t.is(body.business-id, 1);
+    t.is(body.userId, 6);
+    t.is(body.businessId, 1);
     t.is(body.reservationTime, "12:00");
 });
 
 // Error case: Get nonexistent reservation
 test("GET /reservations/:id - Get nonexistent reservation", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got.get("reservations/34?user-id=6"));
+    const error = await t.throwsAsync(() => t.context.got.get("reservations/34?userId=6"));
     t.is(error.response.statusCode, 404);
     t.is(error.response.body.message, "Reservation not found.");
 });
@@ -37,7 +37,7 @@ test("GET /reservations/:id - Get nonexistent reservation", async (t) => {
 // GET /reservations/:id - Get reservation with invalid ID format
 test("GET /reservations/:id - Get reservation with invalid ID format", async (t) => {
     const invalidId = 'abc123';
-    const error = await t.throwsAsync(() => t.context.got.get(`reservations/${invalidId}?user-id=6`));
+    const error = await t.throwsAsync(() => t.context.got.get(`reservations/${invalidId}?userId=6`));
     t.is(error.response.statusCode, 400);
     t.is(error.response.body.message, "Invalid reservation ID format.");
 });
@@ -46,7 +46,7 @@ test("GET /reservations/:id - Get reservation with invalid ID format", async (t)
 //GET ALL-----------------------------------------------------------------------------
 // Happy path: Get all reservations
 test("GET /reservations - Retrieve all reservations (happy path)", async (t) => {
-const { body, statusCode } = await t.context.got.get("reservations?user-id=6");
+const { body, statusCode } = await t.context.got.get("reservations?userId=6");
 t.is(statusCode, 200);
 t.true(Array.isArray(body));
 t.true(body.length > 0);
@@ -54,7 +54,7 @@ t.true(body.length > 0);
 
 // Error case: Get reservations with invalid query parameters
 test("GET /reservations - Retrieve reservations with invalid query parameters (error case)", async (t) => {
-const response = await t.context.got.get("reservations?user-id=aba", { searchParams: { invalidParam: "test" }});
+const response = await t.context.got.get("reservations?userId=aba", { searchParams: { invalidParam: "test" }});
 t.is(response.statusCode, 400);
 t.is(response.body.message, "Invalid query parameter");
 });
@@ -62,7 +62,7 @@ t.is(response.body.message, "Invalid query parameter");
 // GET /reservations - Retrieve all reservations (no reservations found)
 test("GET /reservations - Retrieve all reservations (no reservations found)", async (t) => {
     // Assuming the database is empty for this test
-    const { body, statusCode } = await t.context.got.get("reservations?user-id=6");
+    const { body, statusCode } = await t.context.got.get("reservations?userId=6");
     t.is(statusCode, 200);
     t.true(Array.isArray(body));
     t.is(body.length, 0);

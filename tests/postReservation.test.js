@@ -34,20 +34,20 @@
 // // Success case
 // test('POST /reservations - Success case', async (t) => {
 //   const response = await t.context.got.post('reservations', {
-//     searchParams: { 'user-id': userId, 'business-id': businessId },
+//     searchParams: { 'userId': userId, 'businessId': businessId },
 //     json: validReservation
 //   });
 
 //   t.is(response.statusCode, 200);
 //   t.truthy(response.body);
-//   t.is(response.body["user-id"], userId);
-//   t.is(response.body["business-id"], businessId);
+//   t.is(response.body["userId"], userId);
+//   t.is(response.body["businessId"], businessId);
 //   t.is(response.body.reservationTime, validReservation.reservationTime);
 //   t.is(response.body.reservationYear, validReservation.reservationYear);
 //   t.is(response.body.reservationMonth, validReservation.reservationMonth);
 //   t.is(response.body.reservationDay, validReservation.reservationDay);
 //   t.is(response.body.numberOfPeople, validReservation.numberOfPeople);
-//   t.truthy(response.body["reservation-id"]);
+//   t.truthy(response.body["reservationId"]);
 // });
 
 // // Validation tests
@@ -55,7 +55,7 @@
 //   const invalidReservation = { ...validReservation, reservationMonth: 13 };
 
 //   const error = await t.throwsAsync(() => t.context.got.post('reservations', {
-//     searchParams: { 'user-id': userId, 'business-id': businessId },
+//     searchParams: { 'userId': userId, 'businessId': businessId },
 //     json: invalidReservation
 //   }));
 
@@ -67,7 +67,7 @@
 //   const invalidReservation = { ...validReservation, reservationMonth: 1, reservationDay: 32 };
 
 //   const error = await t.throwsAsync(() => t.context.got.post('reservations', {
-//     searchParams: { 'user-id': userId, 'business-id': businessId },
+//     searchParams: { 'userId': userId, 'businessId': businessId },
 //     json: invalidReservation
 //   }));
 
@@ -79,7 +79,7 @@
 //   const invalidReservation = { ...validReservation, reservationMonth: 4, reservationDay: 31 };
 
 //   const error = await t.throwsAsync(() => t.context.got.post('reservations', {
-//     searchParams: { 'user-id': userId, 'business-id': businessId },
+//     searchParams: { 'userId': userId, 'businessId': businessId },
 //     json: invalidReservation
 //   }));
 
@@ -91,7 +91,7 @@
 //   const invalidReservation = { ...validReservation, reservationMonth: 2, reservationDay: 30 };
 
 //   const error = await t.throwsAsync(() => t.context.got.post('reservations', {
-//     searchParams: { 'user-id': userId, 'business-id': businessId },
+//     searchParams: { 'userId': userId, 'businessId': businessId },
 //     json: invalidReservation
 //   }));
 
@@ -103,7 +103,7 @@
 //   const invalidReservation = { ...validReservation, reservationYear: currentYear - 1 };
 
 //   const error = await t.throwsAsync(() => t.context.got.post('reservations', {
-//     searchParams: { 'user-id': userId, 'business-id': businessId },
+//     searchParams: { 'userId': userId, 'businessId': businessId },
 //     json: invalidReservation
 //   }));
 
@@ -111,38 +111,38 @@
 //   t.regex(error.response.body.error, /year must not be in the past/i);
 // });
 
-// test('POST /reservations - Non-unique reservation-id', async (t) => {
-//   const duplicateReservation = { ...validReservation, "reservation-id": 1 };
+// test('POST /reservations - Non-unique reservationId', async (t) => {
+//   const duplicateReservation = { ...validReservation, "reservationId": 1 };
 
 //   const error = await t.throwsAsync(() => t.context.got.post('reservations', {
-//     searchParams: { 'user-id': userId, 'business-id': businessId },
+//     searchParams: { 'userId': userId, 'businessId': businessId },
 //     json: duplicateReservation
 //   }));
 
 //   t.is(error.response.statusCode, 400);
-//   t.regex(error.response.body.error, /reservation-id must be unique/i);
+//   t.regex(error.response.body.error, /reservationId must be unique/i);
 // });
 
-// test('POST /reservations - Nonexistent user-id', async (t) => {
+// test('POST /reservations - Nonexistent userId', async (t) => {
 //   const invalidUserId = 9999; // Assuming this user does not exist
 
 //   const error = await t.throwsAsync(() => t.context.got.post('reservations', {
-//     searchParams: { 'user-id': invalidUserId, 'business-id': businessId },
+//     searchParams: { 'userId': invalidUserId, 'businessId': businessId },
 //     json: validReservation
 //   }));
 
 //   t.is(error.response.statusCode, 404);
-//   t.regex(error.response.body.error, /user-id does not exist/i);
+//   t.regex(error.response.body.error, /userId does not exist/i);
 // });
 
-// test('POST /reservations - Nonexistent business-id', async (t) => {
+// test('POST /reservations - Nonexistent businessId', async (t) => {
 //   const invalidBusinessId = 9999; // Assuming this business does not exist
 
 //   const error = await t.throwsAsync(() => t.context.got.post('reservations', {
-//     searchParams: { 'user-id': userId, 'business-id': invalidBusinessId },
+//     searchParams: { 'userId': userId, 'businessId': invalidBusinessId },
 //     json: validReservation
 //   }));
 
 //   t.is(error.response.statusCode, 404);
-//   t.regex(error.response.body.error, /business-id does not exist/i);
+//   t.regex(error.response.body.error, /businessId does not exist/i);
 // });
