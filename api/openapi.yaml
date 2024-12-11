@@ -423,6 +423,16 @@ paths:
           type: integer
           format: int32
           minimum: 0
+      - name: business-id
+        in: query
+        description: Business-id of the business that the reservations were made in
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
       - name: day
         in: query
         description: Reservation day
@@ -479,6 +489,16 @@ paths:
         FR12: The business owner must be able to view the statistics of his business reservations.
       operationId: viewBusinessStatistics
       parameters:
+      - name: business-id
+        in: query
+        description: Business-id of the business that the reservations were made in
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
       - name: owner-id
         in: query
         description: Owner-id of the business owner of the business that the reservations
@@ -640,8 +660,20 @@ components:
       - reservationYear
       - user-id
       - username
+      - owner-id
+      - business-id
       type: object
       properties:
+        owner-id:
+          type: integer
+          description: The unique id of the business owner
+          format: int32
+          minimum: 0
+        business-id:
+          type: integer
+          description: The unique id of the business
+          format: int32
+          minimum: 0
         reservation-id:
           type: integer
           description: The unique id of the reservation
@@ -691,7 +723,8 @@ components:
       example:
         reservation-id: 0
         user-id: 6
-        reservationTime: reservationTime
+        owner-id: 7
+        reservationTime: '20:00'
         businessName: businessName
         reservationYear: 2026
         reservationDay: 1
@@ -701,10 +734,22 @@ components:
     BusinessStatistics:
       title: BusinessStatistics
       required:
+      - owner-id
+      - business-id
       - month
       - numberOfReservations
       type: object
       properties:
+        owner-id:
+          type: integer
+          description: The unique id of the business owner
+          format: int32
+          minimum: 0
+        business-id:
+          type: integer
+          description: The unique id of the business
+          format: int32
+          minimum: 0
         month:
           type: integer
           description: The arranged reservation month
@@ -719,6 +764,7 @@ components:
       example:
         month: 0
         numberOfReservations: 6
+        owner-id: 7
     Error:
       required:
       - code
@@ -743,7 +789,7 @@ components:
       example:
         availableHours:
         - 18:00
-        - 18:00
+        - 20:00
     Reservation deleted.:
       title: Reservation deleted.
       required:

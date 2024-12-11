@@ -1,108 +1,5 @@
 'use strict';
 
-const { use } = require('..');
-const userID = [105, 106, 107, 108, 109, 110, 111, 112, 113, 114];
-const businessID = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const reservationID = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const ownerID = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const CategoryName = ["Breakfast", "Lunch", "Dinner"];
-
-const Users = {
-  0: {userID: 0, username: "username", password: "admin", role: "user"},
-  1: {userID:105 ,username: "user1", password: "password1", role: "user"},
-  2: {userID:106 ,username: "user2", password: "password2", role: "user"},
-};
-
-const Owners = {
-  1: {ownerID: 1, username: "owner1", password: "password1", role: "owner"},
-  2: {ownerID: 2, username: "owner2", password: "password2", role: "owner"},
-};  
-
-const Businesses = {
-  1: {owner: 1, name: "Business 1", category: "Breakfast", keyword: "keyword"},
-  2: { owner: 2, name: "Cafe Central", category: "Lunch", keyword: "keyword" }, // Updated name
-  3: {owner: 3, name: "Business 3", category: "Dinner", keyword: "keyword"},
-};
-
-const UserReservations = {
-  105: [
-    {date: "2024-12-05", time: "18:00", business: "Business 1", people: 7},
-    {date: "2024-12-05", time: "19:00", business: "Business 2", people: 7},
-  ],
-  106: [
-    {date: "2024-12-05", time: "20:00", business: "Business 3", people: 7},
-    {date: "2024-12-05", time: "21:00", business: "Business 4", people: 7},
-  ],
-};
-
-const BusinessReservations = {
-  1: [
-    {date: "2024-12-05", time: "18:00", user: 105, people: 7, username: "user1"},
-
-    {date: "2024-12-05", time: "19:00", user: 106, people: 7, username: "user2"},
-  ],
-  2: [
-    {date: "2024-12-05", time: "20:00", user: 107, people: 7, username: "user3"},
-    {date: "2024-12-05", time: "21:00", user: 108, people: 7, username: "user4"},
-  ],
-};
-
-const BusinessStatistics = {
-  1: [
-    {month: 1, reservations: 10},
-    {month: 2, reservations: 20},
-  ],
-  2: [
-    {month: 1, reservations: 10},
-    {month: 2, reservations: 20},
-  ],
-};
-
-const Notifications = {
-  1: "Notification sent successfully.",
-};
-
-const Reservations = {
-  1: {user: 105, business: 1, date: "2024-12-05", time: "18:00", people: 7},
-  2: {user: 106, business: 2, date: "2024-12-05", time: "19:00", people: 7},
-};
-
-const Availability = {
-  1: ["12:00", "18:00", "19:00"],
-  2: ["12:00", "20:00", "21:00"],
-  default: [],
-};
-
-// Function to reset mock data to its initial state
-exports.resetMockData = () => {
-    Object.assign(Reservations, {
-        1: { user: 105, business: 1, date: "2024-12-05", time: "18:00", people: 7 },
-        2: { user: 106, business: 2, date: "2024-12-05", time: "19:00", people: 7 },
-    });
-
-    Object.assign(Users, {
-        105: { userID: 105, username: "user1", password: "password1", role: "user" },
-        106: { userID: 106, username: "user2", password: "password2", role: "user" },
-    });
-};
-
-// Function to dynamically add a reservation
-exports.addMockReservation = (reservationId, reservationData) => {
-    if (Reservations[reservationId]) {
-        throw new Error(`Reservation with ID ${reservationId} already exists.`);
-    }
-    Reservations[reservationId] = reservationData;
-};
-
-// Function to dynamically add a user
-exports.addMockUser = (userId, userData) => {
-    if (Users[userId]) {
-        throw new Error(`User with ID ${userId} already exists.`);
-    }
-    Users[userId] = userData;
-};
-
-
 /**
  * FR4: The logged in user must be able to set his reservation details in the selected business. FR6: The logged in user must be able to submit his reservation in the system. FR5: The logged in user must be able to select an available hour for his reservation. 
  *
@@ -280,8 +177,8 @@ exports.getAvailability = function(businessId,reservationDay,reservationMonth,re
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = {
-  "availableHours" : [ "18:00", "18:00" ]
-};
+      "availableHours" : [ "18:00", "20:00" ]
+    };
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
@@ -301,18 +198,18 @@ exports.getBusinessesByCategory = function(categoryName) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = [ {
-  "owner-id" : 6,
-  "businessName" : "businessName",
-  "businessCategory" : "Breakfast",
-  "keyword" : "keyword",
-  "business-id" : 0
-}, {
-  "owner-id" : 6,
-  "businessName" : "businessName",
-  "businessCategory" : "Breakfast",
-  "keyword" : "keyword",
-  "business-id" : 0
-} ];
+      "owner-id" : 6,
+      "businessName" : "businessName",
+      "businessCategory" : "Breakfast",
+      "keyword" : "keyword",
+      "business-id" : 0
+    }, {
+      "owner-id" : 6,
+      "businessName" : "businessName",
+      "businessCategory" : "Breakfast",
+      "keyword" : "keyword",
+      "business-id" : 0
+    } ];
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
@@ -335,28 +232,28 @@ exports.modifyReservation = function(body,userId,reservationId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = [ {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2025,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
-}, {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2025,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
-} ];
+      "reservation-id" : 0,
+      "user-id" : 6,
+      "reservationTime" : "12:00",
+      "businessName" : "businessName",
+      "reservationYear" : 2025,
+      "reservationDay" : 5,
+      "business-id" : 1,
+      "reservationMonth" : 5,
+      "numberOfPeople" : 7,
+      "username" : "username"
+    }, {
+    "reservation-id" : 1,
+    "user-id" : 6,
+    "reservationTime" : "12:00",
+    "businessName" : "businessName",
+    "reservationYear" : 2025,
+    "reservationDay" : 7,
+    "business-id" : 1,
+    "reservationMonth" : 5,
+    "numberOfPeople" : 7,
+    "username" : "username"
+  } ];
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
@@ -377,8 +274,8 @@ exports.notifyUser = function(userId,reservationId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = {
-  "message" : "message"
-};
+      "message" : "message"
+    };
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
@@ -398,18 +295,18 @@ exports.searchBusinessByKeyword = function(keyword) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = [ {
-  "owner-id" : 6,
-  "businessName" : "businessName",
-  "businessCategory" : "Breakfast",
-  "keyword" : "keyword",
-  "business-id" : 0
-}, {
-  "owner-id" : 6,
-  "businessName" : "businessName",
-  "businessCategory" : "Breakfast",
-  "keyword" : "keyword",
-  "business-id" : 0
-} ];
+      "owner-id" : 6,
+      "businessName" : "businessName",
+      "businessCategory" : "Breakfast",
+      "keyword" : "keyword",
+      "business-id" : 0
+    }, {
+      "owner-id" : 6,
+      "businessName" : "businessName",
+      "businessCategory" : "Breakfast",
+      "keyword" : "keyword",
+      "business-id" : 0
+    } ];
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
@@ -430,17 +327,17 @@ exports.viewAReservation = function(reservationId,userId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2025,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
-};
+      "reservation-id" : 0,
+      "user-id" : 6,
+      "reservationTime" : "12:00",
+      "businessName" : "businessName",
+      "reservationYear" : 2025,
+      "reservationDay" : 5,
+      "business-id" : 1,
+      "reservationMonth" : 5,
+      "numberOfPeople" : 7,
+      "username" : "username"
+    };
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
@@ -463,26 +360,30 @@ exports.viewBusinessReservations = function(ownerId,day,month,year) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = [ {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2025,
-  "reservationDay" : 1,
-  "people" : 2,
-  "reservationMonth" : 5,
-  "username" : "username"
-}, {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2025,
-  "reservationDay" : 1,
-  "people" : 2,
-  "reservationMonth" : 5,
-  "username" : "username"
-} ];
+      "reservation-id" : 0,
+      "user-id" : 6,
+      "owner-id" : 7,
+      "business-id" : 8,
+      "reservationTime" : "20:00",
+      "businessName" : "businessName",
+      "reservationYear" : 2026,
+      "reservationDay" : 1,
+      "people" : 2,
+      "reservationMonth" : 5,
+      "username" : "username"
+    }, {
+      "reservation-id" : 0,
+      "user-id" : 6,
+      "owner-id" : 7,
+      "business-id" : 8,
+      "reservationTime" : "20:00",
+      "businessName" : "businessName",
+      "reservationYear" : 2026,
+      "reservationDay" : 1,
+      "people" : 2,
+      "reservationMonth" : 5,
+      "username" : "username"
+    } ];
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
@@ -502,12 +403,16 @@ exports.viewBusinessStatistics = function(ownerId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = [ {
-  "month" : 0,
-  "numberOfReservations" : 6
-}, {
-  "month" : 0,
-  "numberOfReservations" : 6
-} ];
+      "month" : 0,
+      "numberOfReservations" : 6,
+      "owner-id" : 7,
+      "business-id" : 8
+    }, {
+      "month" : 0,
+      "numberOfReservations" : 6,
+      "owner-id" : 7,
+      "business-id" : 8
+    } ];
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
@@ -527,28 +432,28 @@ exports.viewReservations = function(userId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = [ {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2025,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
-}, {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2025,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
-} ];
+      "reservation-id" : 0,
+      "user-id" : 6,
+      "reservationTime" : "12:00",
+      "businessName" : "businessName",
+      "reservationYear" : 2025,
+      "reservationDay" : 5,
+      "business-id" : 1,
+      "reservationMonth" : 5,
+      "numberOfPeople" : 7,
+      "username" : "username"
+    }, {
+      "reservation-id" : 0,
+      "user-id" : 6,
+      "reservationTime" : "12:00",
+      "businessName" : "businessName",
+      "reservationYear" : 2025,
+      "reservationDay" : 5,
+      "business-id" : 1,
+      "reservationMonth" : 5,
+      "numberOfPeople" : 7,
+      "username" : "username"
+    } ];
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
