@@ -16,12 +16,18 @@ test.after.always((t) => {
 });
 
 // DELETE -----------------------------------------------------------------------------
-// Happy path: Delete reservation
 test("DELETE /reservations/:id - Delete nonexistent reservation", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got.delete("reservations/56?user-id=0"));
+    const reservationId = 56;
+    const error = await t.throwsAsync(() =>
+      t.context.got.delete(`reservations/${reservationId}?user-id=0`, {
+        throwHttpErrors: true, // Ensure errors are thrown for non-2xx status codes
+      })
+    );
+  
+    // Check that the response has the expected status code and error message
     t.is(error.response.statusCode, 404);
-    t.regex(error.response.body.message, /not found/);
-});
+    t.regex(error.response.body.message, /Reservation not found/);
+  });
 
 
 test("DELETE /reservations/:id - Delete reservation (happy path)", async (t) => {
@@ -29,14 +35,14 @@ test("DELETE /reservations/:id - Delete reservation (happy path)", async (t) => 
         // Create a reservation
         const response = await t.context.got.post('reservations', {
             searchParams: {
-                'user-id': 1,
-                'business-id': 2, // Use valid business ID
+                'user-id': 6,
+                'business-id': 1, // Use valid business ID
             },
             json: {
                 'reservation-id': 0,
                 'user-id': 6,
                 'business-id': 1,
-                'reservationTime': "20:00",
+                'reservationTime': "12:00",
                 'reservationDay': 5,
                 'reservationMonth': 5,
                 'reservationYear': 2025,
@@ -47,21 +53,17 @@ test("DELETE /reservations/:id - Delete reservation (happy path)", async (t) => 
         });
 
         t.is(response.statusCode, 200); 
-        console.log("here");
         t.truthy(response.body);
-
-        console.log("here");
-
 
         //GET /reservations/:id
         const getResponse = await t.context.got.get("reservations/0?user-id=1");
-        console.log(getResponse.body);
+        //console.log(getResponse.body);
         t.is(getResponse.statusCode, 200);
         t.deepEqual(getResponse.body, {
             "reservation-id": 0,
             "user-id": 6,
             "business-id": 1,
-            'reservationTime': "reservationTime",
+            'reservationTime': "12:00",
             'reservationDay': 5,
             'reservationMonth': 5,
             'reservationYear': 2025,
@@ -71,7 +73,7 @@ test("DELETE /reservations/:id - Delete reservation (happy path)", async (t) => 
           });
 
         // Delete the created reservation
-        const { body, statusCode } = await t.context.got.delete("reservations/0?user-id=0");
+        const { body, statusCode } = await t.context.got.delete("reservations/0?user-id=6");
         t.is(statusCode, 200);
         t.deepEqual(body, { message: "Reservation deleted." });
 

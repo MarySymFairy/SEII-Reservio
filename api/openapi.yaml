@@ -271,6 +271,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Reservation'
+        "400":
+          description: Bad input parameter
+        "404":
+          description: Reservation not found
         default:
           description: unexpected error
           content:
@@ -320,6 +324,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/Reservation'
                 x-content-type: application/json
+        "400":
+          description: Bad input parameter
+        "404":
+          description: Reservation not found
         default:
           description: Unexpected error
           content:
@@ -360,6 +368,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Reservation deleted.'
+        "400":
+          description: Bad input parameter
+        "404":
+          description: Reservation not found
         default:
           description: Unexpected error
           content:

@@ -1,5 +1,9 @@
 'use strict';
 
+// Mock data
+const Users = {6: {username: 'username'}};
+const Businesses = {1: {name: 'businessName'}};
+const Reservations = { 0: {userId: 6, businessId: 1, reservationTime: "12:00",} }
 /**
  * FR4: The logged in user must be able to set his reservation details in the selected business. FR6: The logged in user must be able to submit his reservation in the system. FR5: The logged in user must be able to select an available hour for his reservation. 
  *
@@ -143,18 +147,33 @@ exports.deleteReservation = function (userId, reservationId) {
         message: "Invalid data types. userId and reservationId must be numbers.",
       });
     }
-    var examples = {};
-    examples['application/json'] = { 
-      "message" : 'Reservation deleted.'
-    };
 
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+    // Simulate database check
+    if (reservationId === 0) {
+      return resolve({
+        message: "Reservation deleted.",
+      });
+    } else{
+      return reject ({
+        code: 404,
+        message: "Reservation not found.",
+      });
     }
   });
-}
+};
+
+
+  // var examples = {};
+  // examples['application/json'] = { 
+  //   "message" : 'Reservation deleted.'
+  // };
+    // if (Object.keys(examples).length > 0) {
+    //   resolve(examples[Object.keys(examples)[0]]);
+    // } else {
+    //   resolve();
+    // }
+  // });
+// }
 
 
 
@@ -325,6 +344,12 @@ exports.searchBusinessByKeyword = function(keyword) {
  **/
 exports.viewAReservation = function(reservationId,userId) {
   return new Promise(function(resolve, reject) {
+    if (!reservationId || !userId || typeof reservationId !== "number" || typeof userId !== "number") {
+      return reject({
+        code: 400,
+        message: "Invalid data types. reservationId and userId must be numbers.",
+      });
+    } 
     var examples = {};
     examples['application/json'] = {
       "reservation-id" : 0,
@@ -430,6 +455,12 @@ exports.viewBusinessStatistics = function(ownerId) {
  **/
 exports.viewReservations = function(userId) {
   return new Promise(function(resolve, reject) {
+    if (!userId || typeof userId !== "number") {
+      return reject({
+        code: 400,
+        message: "Invalid data types. reservationId and userId must be numbers.",
+      });
+    }   
     var examples = {};
     examples['application/json'] = [ {
       "reservation-id" : 0,
