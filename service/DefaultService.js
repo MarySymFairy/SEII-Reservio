@@ -382,8 +382,14 @@ exports.viewAReservation = function(reservationId,userId) {
  * year Integer Reservation year
  * returns List
  **/
-exports.viewBusinessReservations = function(ownerId,day,month,year) {
+exports.viewBusinessReservations = function(ownerId, businessId, day, month, year) {
   return new Promise(function(resolve, reject) {
+    if (typeof ownerId !== "number" || typeof businessId !== "number") {
+      return reject({
+        code: 400,
+        message: "Invalid data types. userId and reservationId must be numbers.",
+      });
+    }
     var examples = {};
     examples['application/json'] = [ {
       "reservation-id" : 0,
@@ -425,8 +431,15 @@ exports.viewBusinessReservations = function(ownerId,day,month,year) {
  * ownerId Integer Owner-id of the business owner of the business that the reservations were made in.
  * returns List
  **/
-exports.viewBusinessStatistics = function(ownerId) {
+exports.viewBusinessStatistics = function(ownerId, businessId) {
   return new Promise(function(resolve, reject) {
+    if (typeof ownerId !== "number" || typeof businessId !== "number") {
+      return reject({
+        code: 400,
+        message: "Invalid data types. userId and reservationId must be numbers.",
+      });
+    }
+
     var examples = {};
     examples['application/json'] = [ {
       "month" : 0,
@@ -486,6 +499,7 @@ exports.viewReservations = function(userId) {
       "numberOfPeople" : 7,
       "username" : "username"
     } ];
+
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
