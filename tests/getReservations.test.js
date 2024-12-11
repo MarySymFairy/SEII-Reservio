@@ -22,8 +22,8 @@ test.after.always((t) => {
 test("GET /reservations/:id - Get reservation (happy path)", async (t) => {
     const { body, statusCode } = await t.context.got.get("reservations/0?user-id=6");
     t.is(statusCode, 200);
-    t.is(body.userId, 6);
-    t.is(body.businessId, 1);
+    t.is(body.user-id, 6);
+    t.is(body.business-id, 1);
     t.is(body.reservationTime, "12:00");
 });
 

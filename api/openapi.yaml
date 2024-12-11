@@ -91,9 +91,9 @@ paths:
          FR5: The logged in user must be able to select an available hour for his reservation.
       operationId: getAvailability
       parameters:
-      - name: business-id
+      - name: businessId
         in: query
-        description: Business-id of the business that the reservation is made for
+        description: BusinessId of the business that the reservation is made for
         required: true
         style: form
         explode: false
@@ -165,9 +165,9 @@ paths:
         FR10: The logged in user must be able to view his reservations.
       operationId: viewReservations
       parameters:
-      - name: user-id
+      - name: userId
         in: query
-        description: User-id of the logged in user that made the reservation
+        description: UserId of the logged in user that made the reservation
         required: true
         style: form
         explode: false
@@ -197,9 +197,9 @@ paths:
         FR4: The logged in user must be able to set his reservation details in the selected business. FR6: The logged in user must be able to submit his reservation in the system. FR5: The logged in user must be able to select an available hour for his reservation.
       operationId: addReservation
       parameters:
-      - name: user-id
+      - name: userId
         in: query
-        description: User-id of the logged in user that made the reservation
+        description: UserId of the logged in user that made the reservation
         required: true
         style: form
         explode: false
@@ -207,9 +207,9 @@ paths:
           type: integer
           format: int32
           minimum: 0
-      - name: business-id
+      - name: businessΙd
         in: query
-        description: Business-id of the business that the reservation is made for
+        description: BusinessΙd of the business that the reservation is made for
         required: true
         style: form
         explode: false
@@ -254,9 +254,9 @@ paths:
           type: integer
           format: int32
           minimum: 0
-      - name: user-id
+      - name: userΙd
         in: query
-        description: User-id of the logged in user that made the reservation
+        description: UserΙd of the logged in user that made the reservation
         required: true
         style: form
         explode: true
@@ -283,12 +283,12 @@ paths:
                 $ref: '#/components/schemas/Error'
       x-swagger-router-controller: Default
     put:
-      summary: Modifies a single reservation based on the reservation-id supplied
+      summary: Modifies a single reservation based on the reservationId supplied
       description: |
         FR7 - The logged-in user must be able to modify his reservation
       operationId: modifyReservation
       parameters:
-      - name: user-id
+      - name: userΙd
         in: query
         description: Retrieve the ID of the user
         required: true
@@ -341,7 +341,7 @@ paths:
         FR8 - The logged in user must be able to cancel his existing reservation
       operationId: deleteReservation
       parameters:
-      - name: user-id
+      - name: userId
         in: query
         description: Retrieve the ID of the user
         required: true
@@ -385,7 +385,7 @@ paths:
         \ his reservation at the reservation date."
       operationId: notifyUser
       parameters:
-      - name: user-id
+      - name: userId
         in: query
         description: Retrieve the ID of the user
         required: true
@@ -425,9 +425,9 @@ paths:
         FR11: The business owner must be able to view the reservations of his business.
       operationId: viewBusinessReservations
       parameters:
-      - name: owner-id
+      - name: ownerId
         in: query
-        description: Owner-id of the business owner
+        description: OwnerId of the business owner
         required: true
         style: form
         explode: false
@@ -435,9 +435,9 @@ paths:
           type: integer
           format: int32
           minimum: 0
-      - name: business-id
+      - name: businessId
         in: query
-        description: Business-id of the business that the reservations were made in
+        description: BusinessId of the business that the reservations were made in
         required: true
         style: form
         explode: false
@@ -501,9 +501,9 @@ paths:
         FR12: The business owner must be able to view the statistics of his business reservations.
       operationId: viewBusinessStatistics
       parameters:
-      - name: business-id
+      - name: businessId
         in: query
-        description: Business-id of the business that the reservations were made in
+        description: BusinessId of the business that the reservations were made in
         required: true
         style: form
         explode: false
@@ -511,9 +511,9 @@ paths:
           type: integer
           format: int32
           minimum: 0
-      - name: owner-id
+      - name: ownerId
         in: query
-        description: Owner-id of the business owner of the business that the reservations
+        description: OwnerId of the business owner of the business that the reservations
           were made in.
         required: true
         style: form
@@ -545,14 +545,14 @@ components:
     Business:
       title: Business
       required:
-      - business-id
+      - businessId
       - businessCategory
       - businessName
       - keyword
-      - owner-id
+      - ownerId
       type: object
       properties:
-        business-id:
+        businessId:
           type: integer
           description: The unique id of the business
           format: int32
@@ -568,7 +568,7 @@ components:
           - Lunch
           - Dinner
           - Drinks
-        owner-id:
+        ownerId:
           type: integer
           description: The unique id of the business owner
           format: int32
@@ -578,37 +578,37 @@ components:
           description: "The keyword that the business can be found with, during the\
             \ search procedure"
       example:
-        owner-id: 6
+        ownerId: 6
         businessName: businessName
         businessCategory: Breakfast
         keyword: keyword
-        business-id: 0
+        businessId: 0
     Reservation:
       title: Reservation
       required:
-      - business-id
+      - businessId
       - businessName
       - numberOfPeople
-      - reservation-id
+      - reservationId
       - reservationDay
       - reservationMonth
       - reservationTime
       - reservationYear
-      - user-id
+      - userId
       - username
       type: object
       properties:
-        reservation-id:
+        reservationId:
           type: integer
           description: The unique id of the reservation
           format: int32
           minimum: 0
-        user-id:
+        userId:
           type: integer
           description: The unique id of the user
           format: int32
           minimum: 0
-        business-id:
+        businessId:
           type: integer
           description: The unique id of the business
           format: int32
@@ -650,13 +650,13 @@ components:
           description: The name of the business for which this specific reservation
             was made
       example:
-        reservation-id: 0
-        user-id: 6
+        reservationId: 0
+        userId: 6
         reservationTime: '12:00'
         businessName: businessName
         reservationYear: 2025
         reservationDay: 5
-        business-id: 1
+        businessId: 1
         reservationMonth: 5
         numberOfPeople: 7
         username: username
@@ -665,33 +665,33 @@ components:
       required:
       - businessName
       - numberOfPeople
-      - reservation-id
+      - reservationId
       - reservationDay
       - reservationMonth
       - reservationTime
       - reservationYear
-      - user-id
+      - userId
       - username
-      - owner-id
-      - business-id
+      - ownerId
+      - businessId
       type: object
       properties:
-        owner-id:
+        ownerId:
           type: integer
           description: The unique id of the business owner
           format: int32
           minimum: 0
-        business-id:
+        businessId:
           type: integer
           description: The unique id of the business
           format: int32
           minimum: 0
-        reservation-id:
+        reservationId:
           type: integer
           description: The unique id of the reservation
           format: int32
           minimum: 0
-        user-id:
+        userId:
           type: integer
           description: The unique id of the user
           format: int32
@@ -733,9 +733,9 @@ components:
           description: The name of the business for which this specific reservation
             was made
       example:
-        reservation-id: 0
-        user-id: 6
-        owner-id: 7
+        reservationId: 0
+        userId: 6
+        ownerId: 7
         reservationTime: '20:00'
         businessName: businessName
         reservationYear: 2026
@@ -746,18 +746,18 @@ components:
     BusinessStatistics:
       title: BusinessStatistics
       required:
-      - owner-id
-      - business-id
+      - ownerId
+      - businessId
       - month
       - numberOfReservations
       type: object
       properties:
-        owner-id:
+        ownerId:
           type: integer
           description: The unique id of the business owner
           format: int32
           minimum: 0
-        business-id:
+        businessId:
           type: integer
           description: The unique id of the business
           format: int32
@@ -776,7 +776,7 @@ components:
       example:
         month: 0
         numberOfReservations: 6
-        owner-id: 7
+        ownerId: 7
     Error:
       required:
       - code
