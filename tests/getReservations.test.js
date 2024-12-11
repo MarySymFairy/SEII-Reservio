@@ -29,7 +29,7 @@ test("GET /reservations/:id - Get reservation (happy path)", async (t) => {
 
 // Error case: Get nonexistent reservation
 test("GET /reservations/:id - Get nonexistent reservation", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got.get("reservations/9999?user-id=6"));
+    const error = await t.throwsAsync(() => t.context.got.get("reservations/34?user-id=6"));
     t.is(error.response.statusCode, 404);
     t.is(error.response.body.message, "Reservation not found.");
 });

@@ -344,12 +344,13 @@ exports.searchBusinessByKeyword = function(keyword) {
  **/
 exports.viewAReservation = function(reservationId,userId) {
   return new Promise(function(resolve, reject) {
-    if (!reservationId || !userId || typeof reservationId !== "number" || typeof userId !== "number") {
+    if (typeof userId !== "number" || typeof reservationId !== "number") {
       return reject({
         code: 400,
-        message: "Invalid data types. reservationId and userId must be numbers.",
+        message: "Invalid data types. userId and reservationId must be numbers.",
       });
-    } 
+    }
+    
     var examples = {};
     examples['application/json'] = {
       "reservation-id" : 0,
@@ -455,7 +456,7 @@ exports.viewBusinessStatistics = function(ownerId) {
  **/
 exports.viewReservations = function(userId) {
   return new Promise(function(resolve, reject) {
-    if (!userId || typeof userId !== "number") {
+    if (typeof userId !== "number") {
       return reject({
         code: 400,
         message: "Invalid data types. reservationId and userId must be numbers.",

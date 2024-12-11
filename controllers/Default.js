@@ -83,8 +83,8 @@ module.exports.viewAReservation = function viewAReservation (req, res, next, res
     });
 };
 
-module.exports.viewBusinessReservations = function viewBusinessReservations (req, res, next, ownerId, day, month, year) {
-  Default.viewBusinessReservations(ownerId, day, month, year)
+module.exports.viewBusinessReservations = function viewBusinessReservations (req, res, next, ownerId, businessId, day, month, year) {
+  Default.viewBusinessReservations(ownerId, businessId, day, month, year)
     .then(function (response) {
       utils.writeJson(res, response, response.code);
     })
@@ -93,8 +93,8 @@ module.exports.viewBusinessReservations = function viewBusinessReservations (req
     });
 };
 
-module.exports.viewBusinessStatistics = function viewBusinessStatistics (req, res, next, ownerId) {
-  Default.viewBusinessStatistics(ownerId)
+module.exports.viewBusinessStatistics = function viewBusinessStatistics (req, res, next, ownerId, businessId) {
+  Default.viewBusinessStatistics(ownerId, businessId)
     .then(function (response) {
       utils.writeJson(res, response, response.code);
     })
