@@ -207,9 +207,9 @@ paths:
           type: integer
           format: int32
           minimum: 0
-      - name: businessΙd
+      - name: businessId
         in: query
-        description: BusinessΙd of the business that the reservation is made for
+        description: BusinessId of the business that the reservation is made for
         required: true
         style: form
         explode: false
@@ -254,9 +254,9 @@ paths:
           type: integer
           format: int32
           minimum: 0
-      - name: userΙd
+      - name: userId
         in: query
-        description: UserΙd of the logged in user that made the reservation
+        description: UserId of the logged in user that made the reservation
         required: true
         style: form
         explode: true
@@ -288,7 +288,7 @@ paths:
         FR7 - The logged-in user must be able to modify his reservation
       operationId: modifyReservation
       parameters:
-      - name: userΙd
+      - name: userId
         in: query
         description: Retrieve the ID of the user
         required: true
