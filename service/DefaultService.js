@@ -148,8 +148,24 @@ exports.deleteReservation = function (userId, reservationId) {
       });
     }
 
+    var examples = {};
+    examples['application/json'] = {
+      "reservationId" : 0,
+      "userId" : 6,
+      "reservationTime" : "12:00",
+      "businessName" : "businessName",
+      "reservationYear" : 2025,
+      "reservationDay" : 5,
+      "businessId" : 1,
+      "reservationMonth" : 5,
+      "numberOfPeople" : 7,
+      "username" : "username"
+    };
+
+    const reservation = Object.values(examples).find(reservation => reservation.reservationId === reservationId);
+
     // Simulate database check
-    if (reservationId === 0) {
+    if (reservation) {
       return resolve({
         message: "Reservation deleted.",
       });
@@ -384,27 +400,28 @@ exports.viewAReservation = function(reservationId,userId) {
       "username" : "username"
     };
 
-    // Find the reservation
-    const reservation = examples.find(
-      (r) => r["reservationId"] === reservationId && r["userId"] === userId
-    );
+    const reservation = Object.values(examples).find(reservation => reservation.reservationId === reservationId && reservation.userId === userId);
 
-    if (!reservation) {
-      return reject({
+    // Simulate database check
+    if (reservation) {
+      return resolve(reservation);
+    } else{
+      return reject ({
         code: 404,
         message: "Reservation not found.",
       });
     }
-   
-    resolve(reservation);   
+  });
+};
+
 
     // if (Object.keys(examples).length > 0) {
     //   resolve(examples[Object.keys(examples)[0]]);
     // } else {
     //   resolve();
     // }
-  });
-}
+//   });
+// }
 
 /**
  * FR10: The logged in user must be able to view his reservations. 
@@ -454,19 +471,34 @@ exports.viewReservations = function(userId) {
       "username" : "username"
     } ];
 
-    // Filter reservations by user ID
-    const reservations = examples.filter((r) => r["userId"] === userId);
+    const userReservations = Object.values(examples).find(user => user.userId === userId);
 
-    resolve(reservations.length ? reservations : []);
+    // Simulate database check
+    if (userReservations) {
+      return resolve(userReservations);
+    } else{
+      return reject ({
+        code: 404,
+        message: "Reservations not found.",
+      });
+    }
+  });
+};
+    // // Filter reservations by user ID
+    // const reservations = examples.filter((r) => r["userId"] === userId);
+
+    // resolve(reservations.length ? reservations : []);
 
     // if (Object.keys(examples).length > 0) {
     //   resolve(examples[Object.keys(examples)[0]]);
     // } else {
     //   resolve();
     // }
-  });
-}
+//   });
+// }
 
+
+//BUSINESS FUNCTIONS
 
 /**
  * FR11: The business owner must be able to view the reservations of his business. 

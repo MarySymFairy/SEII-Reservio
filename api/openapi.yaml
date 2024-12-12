@@ -95,7 +95,7 @@ paths:
         in: query
         description: BusinessId of the business that the reservation is made for
         required: true
-        style: form
+        style: simple
         explode: false
         schema:
           type: integer
@@ -169,7 +169,7 @@ paths:
         in: query
         description: UserId of the logged in user that made the reservation
         required: true
-        style: form
+        style: simple
         explode: false
         schema:
           type: integer
@@ -201,7 +201,7 @@ paths:
         in: query
         description: UserId of the logged in user that made the reservation
         required: true
-        style: form
+        style: simple
         explode: false
         schema:
           type: integer
@@ -211,7 +211,7 @@ paths:
         in: query
         description: BusinessId of the business that the reservation is made for
         required: true
-        style: form
+        style: simple
         explode: false
         schema:
           type: integer
@@ -258,7 +258,7 @@ paths:
         in: query
         description: UserId of the logged in user that made the reservation
         required: true
-        style: form
+        style: simple
         explode: true
         schema:
           type: integer
@@ -292,7 +292,7 @@ paths:
         in: query
         description: Retrieve the ID of the user
         required: true
-        style: form
+        style: simple
         explode: false
         schema:
           type: integer
@@ -345,7 +345,7 @@ paths:
         in: query
         description: Retrieve the ID of the user
         required: true
-        style: form
+        style: simple
         explode: false
         schema:
           type: integer
@@ -389,7 +389,7 @@ paths:
         in: query
         description: Retrieve the ID of the user
         required: true
-        style: form
+        style: simple
         explode: false
         schema:
           type: integer
@@ -429,7 +429,7 @@ paths:
         in: query
         description: OwnerId of the business owner
         required: true
-        style: form
+        style: simple
         explode: false
         schema:
           type: integer
@@ -439,7 +439,7 @@ paths:
         in: query
         description: BusinessId of the business that the reservations were made in
         required: true
-        style: form
+        style: simple
         explode: false
         schema:
           type: integer
@@ -505,7 +505,7 @@ paths:
         in: query
         description: BusinessId of the business that the reservations were made in
         required: true
-        style: form
+        style: simple
         explode: false
         schema:
           type: integer
@@ -516,7 +516,7 @@ paths:
         description: OwnerId of the business owner of the business that the reservations
           were made in.
         required: true
-        style: form
+        style: simple
         explode: false
         schema:
           type: integer
