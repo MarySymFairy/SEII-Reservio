@@ -45,6 +45,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/Business'
                 x-content-type: application/json
+        "400":
+          description: Bad input parameter
+        "404":
+          description: Business not found        
         default:
           description: unexpected error
           content:
@@ -76,6 +80,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/Business'
                 x-content-type: application/json
+        "400":
+          description: Bad input parameter     
         default:
           description: Unexpected error
           content:
@@ -95,7 +101,7 @@ paths:
         in: query
         description: BusinessId of the business that the reservation is made for
         required: true
-        style: simple
+        style: form
         explode: false
         schema:
           type: integer
@@ -152,6 +158,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/inline_response_200'
+        "400":
+          description: Bad input parameter     
         default:
           description: Unexpected error
           content:
@@ -169,7 +177,7 @@ paths:
         in: query
         description: UserId of the logged in user that made the reservation
         required: true
-        style: simple
+        style: form
         explode: false
         schema:
           type: integer
@@ -185,6 +193,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/Reservation'
                 x-content-type: application/json
+        "400":
+          description: Bad input parameter
+        "404":
+          description: No reservations found        
         default:
           description: unexpected error
           content:
@@ -201,7 +213,7 @@ paths:
         in: query
         description: UserId of the logged in user that made the reservation
         required: true
-        style: simple
+        style: form
         explode: false
         schema:
           type: integer
@@ -211,7 +223,7 @@ paths:
         in: query
         description: BusinessId of the business that the reservation is made for
         required: true
-        style: simple
+        style: form
         explode: false
         schema:
           type: integer
@@ -231,6 +243,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Reservation'
+        "400":
+          description: Bad input parameter      
         default:
           description: unexpected error
           content:
@@ -258,7 +272,7 @@ paths:
         in: query
         description: UserId of the logged in user that made the reservation
         required: true
-        style: simple
+        style: form
         explode: true
         schema:
           type: integer
@@ -292,7 +306,7 @@ paths:
         in: query
         description: Retrieve the ID of the user
         required: true
-        style: simple
+        style: form
         explode: false
         schema:
           type: integer
@@ -306,7 +320,7 @@ paths:
         explode: false
         schema:
           type: integer
-          format: int64
+          format: int32
       requestBody:
         description: "Reservation to be modified (numberOfPeople, date, time)"
         content:
@@ -345,7 +359,7 @@ paths:
         in: query
         description: Retrieve the ID of the user
         required: true
-        style: simple
+        style: form
         explode: false
         schema:
           type: integer
@@ -389,7 +403,7 @@ paths:
         in: query
         description: Retrieve the ID of the user
         required: true
-        style: simple
+        style: form
         explode: false
         schema:
           type: integer
@@ -412,6 +426,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/You have a reservation in 2 hours'
+        "400":
+          description: Bad input parameter
+        "404":
+          description: Reservation not found
         default:
           description: Unexpected error
           content:
@@ -429,7 +447,7 @@ paths:
         in: query
         description: OwnerId of the business owner
         required: true
-        style: simple
+        style: form
         explode: false
         schema:
           type: integer
@@ -439,7 +457,7 @@ paths:
         in: query
         description: BusinessId of the business that the reservations were made in
         required: true
-        style: simple
+        style: form
         explode: false
         schema:
           type: integer
@@ -488,6 +506,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/BusinessReservation'
                 x-content-type: application/json
+        "400":
+          description: Bad input parameter
+        "404":
+          description: Business Reservations not found        
         default:
           description: unexpected error
           content:
@@ -505,7 +527,7 @@ paths:
         in: query
         description: BusinessId of the business that the reservations were made in
         required: true
-        style: simple
+        style: form
         explode: false
         schema:
           type: integer
@@ -516,7 +538,7 @@ paths:
         description: OwnerId of the business owner of the business that the reservations
           were made in.
         required: true
-        style: simple
+        style: form
         explode: false
         schema:
           type: integer
@@ -533,6 +555,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/BusinessStatistics'
                 x-content-type: application/json
+        "400":
+          description: Bad input parameter
+        "404":
+          description: Business Statistics not found        
         default:
           description: unexpected error
           content:
