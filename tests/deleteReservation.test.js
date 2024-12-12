@@ -57,7 +57,7 @@ test("DELETE /reservations/:id - Delete reservation (happy path)", async (t) => 
         t.truthy(response.body);
 
         //GET /reservations/:id
-        const getResponse = await t.context.got.get("reservations/0?userId=1");
+        const getResponse = await t.context.got.get("reservations/0?userId=6");
         //console.log(getResponse.body);
         t.is(getResponse.statusCode, 200);
         t.deepEqual(getResponse.body, {

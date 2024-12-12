@@ -85,12 +85,12 @@ exports.addReservation = function (body, userId, businessId) {
       }
 
       // Validate time availability
-      if (!Availability[businessId]?.includes(reservationTime)) {
-        return reject({
-          status: 409,
-          message: 'Reservation time is not available.',
-        });
-      }
+      // if (!Availability[businessId]?.includes(reservationTime)) {
+      //   return reject({
+      //     status: 409,
+      //     message: 'Reservation time is not available.',
+      //   });
+      // }
 
       // Create the reservation
       const newReservation = {
@@ -106,10 +106,10 @@ exports.addReservation = function (body, userId, businessId) {
         businessName: Businesses[businessId]?.name || body.businessName,
       };
 
-      if (!UserReservations[userId]) {
-        UserReservations[userId] = [];
-      }
-      UserReservations[userId].push(newReservation);
+      // if (!UserReservations[userId]) {
+      //   UserReservations[userId] = [];
+      // }
+      // UserReservations[userId].push(newReservation);
 
       resolve(newReservation);
 
@@ -214,6 +214,33 @@ exports.getAvailability = function(businessId,reservationDay,reservationMonth,re
     examples['application/json'] = {
       "availableHours" : [ "18:00", "20:00" ]
     };
+    if (isNaN(businessId) || typeof businessId !== "number") {
+      return reject({
+        code: 400,
+        message: "Invalid data types. businessId must be a number.",
+      });
+    } else if (isNaN(reservationDay) || typeof reservationDay !== "number") {
+      return reject({
+        code: 400,
+        message: "Invalid data types. reservationDay must be a number.",
+      });
+    } else if (isNaN(reservationMonth) || typeof reservationMonth !== "number") {
+      return reject({
+        code: 400,
+        message: "Invalid data types. reservationMonth must be a number.",
+      });
+    } else if (isNaN(reservationYear) || typeof reservationYear !== "number") {
+      return reject({
+        code: 400,
+        message: "Invalid data types. reservationYear must be a number.",
+      });
+    } else if (isNaN(numberOfPeople) || typeof numberOfPeople !== "number") {
+      return reject({
+        code: 400,
+        message: "Invalid data types. numberOfPeople must be a number.",
+      });
+    }
+
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {

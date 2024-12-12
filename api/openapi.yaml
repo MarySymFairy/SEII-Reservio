@@ -4,19 +4,11 @@ info:
   description: Software Engineering II Course Reservio API
   contact: {}
   version: 1.0.0
-tags:
-- name: business
-  description: Operations about Businesses
-- name: reservation
-  description: Operations about Reservations
-- name: business-reservation
-  description: Operations about Business Reservations (from the aspect of the business
-    owner)
-- name: business-statistics
-  description: Operations about Business Statistics
 paths:
   /businesses:
     get:
+      tags:
+      - business
       description: |
         FR1: The logged in user must be able to view the businesses that are included in the system divided by categories.
       operationId: getBusinessesByCategory
@@ -58,6 +50,8 @@ paths:
       x-swagger-router-controller: Default
   /businesses/search:
     get:
+      tags:
+      - business
       description: "FR2: The logged in user must be able to search for a business\
         \ with a keyword. \n"
       operationId: searchBusinessByKeyword
@@ -169,6 +163,8 @@ paths:
       x-swagger-router-controller: Default
   /reservations:
     get:
+      tags:
+      - reservation
       description: |
         FR10: The logged in user must be able to view his reservations.
       operationId: viewReservations
@@ -205,6 +201,8 @@ paths:
                 $ref: '#/components/schemas/Error'
       x-swagger-router-controller: Default
     post:
+      tags:
+      - reservation
       description: |
         FR4: The logged in user must be able to set his reservation details in the selected business. FR6: The logged in user must be able to submit his reservation in the system. FR5: The logged in user must be able to select an available hour for his reservation.
       operationId: addReservation
@@ -254,6 +252,8 @@ paths:
       x-swagger-router-controller: Default
   /reservations/{reservationId}:
     get:
+      tags:
+      - reservation
       description: |
         FR10: The logged in user must be able to view his reservations.
       operationId: viewAReservation
@@ -297,6 +297,8 @@ paths:
                 $ref: '#/components/schemas/Error'
       x-swagger-router-controller: Default
     put:
+      tags:
+      - reservation
       summary: Modifies a single reservation based on the reservationId supplied
       description: |
         FR7 - The logged-in user must be able to modify his reservation
@@ -350,6 +352,8 @@ paths:
                 $ref: '#/components/schemas/Error'
       x-swagger-router-controller: Default
     delete:
+      tags:
+      - reservation
       summary: Deletes a single reservation based on the reservationID supplied
       description: |
         FR8 - The logged in user must be able to cancel his existing reservation
@@ -439,6 +443,8 @@ paths:
       x-swagger-router-controller: Default
   /business-reservations:
     get:
+      tags:
+      - business-reservation
       description: |
         FR11: The business owner must be able to view the reservations of his business.
       operationId: viewBusinessReservations
@@ -519,6 +525,8 @@ paths:
       x-swagger-router-controller: Default
   /business-statistics:
     get:
+      tags:
+      - business-statistics
       description: |
         FR12: The business owner must be able to view the statistics of his business reservations.
       operationId: viewBusinessStatistics
