@@ -1,23 +1,23 @@
-// const http = require('http');
-// const test = require('ava');
-// const got = require('got');
-// const listen = require('test-listen');
-// const app = require('../index.js');
+const http = require('http');
+const test = require('ava');
+const got = require('got');
+const listen = require('test-listen');
+const app = require('../index.js');
 
-// test.before(async t => {
-//     t.context.server = http.createServer(app);
-//     t.context.prefixUrl = await listen(t.context.server);
-//     t.context.got = got.extend({
-//         http2: true,
-//         throwHttpErrors: false,
-//         responseType: "json",
-//         prefixUrl: t.context.prefixUrl,
-//     });
-// });
+test.before(async t => {
+    t.context.server = http.createServer(app);
+    t.context.prefixUrl = await listen(t.context.server);
+    t.context.got = got.extend({
+        http2: true,
+        throwHttpErrors: false,
+        responseType: "json",
+        prefixUrl: `http://localhost:${port}` //t.context.prefixUrl,
+    });
+});
 
-// test.after.always((t) => {
-//     t.context.server.close();
-// });
+test.after.always((t) => {
+    t.context.server.close();
+});
 
 // GET /businessReservations
 
