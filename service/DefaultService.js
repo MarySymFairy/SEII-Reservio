@@ -1,5 +1,7 @@
 'use strict';
 
+const { type } = require("ramda");
+
 
 
 
@@ -183,17 +185,41 @@ exports.modifyReservation = function(body,userId,reservationId) {
  **/
 exports.notifyUser = function(userId,reservationId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "message" : "message"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+    const notification = {
+      message: "You have a reservation in 2 hours"
+    };
+    const userReservations = [
+      {
+        userId: 6,
+        reservationId: 1,
+        reservationTime: "20:00",
+        reservationDay: 25,
+        reservationMonth: 12,
+        reservationYear: 2025,
+        numberOfPeople: 3,
+        username: "username",
+        businessName: "businessName"
+      }
+    ];
+    if (typeof userId !== 'number' || typeof reservationId !== 'number'){
+      return reject({
+        code: 400,
+        message: "Invalid userId or reservationId."
+      });
+    } else { 
+      const filteredUserReservations = userReservations.filter(reservation => reservation.userId === userId && reservation.reservationId === reservationId);
+      if (filteredUserReservations.length > 0) {
+        resolve([notification]);
+      } else {
+        return reject({
+          code: 404,
+          message: "Reservation not found."
+        });
+      }
     }
   });
 }
+  
 
 
 /**
@@ -247,19 +273,33 @@ if (typeof keyword !== 'string') {
  **/
 exports.viewAReservation = function(reservationId,userId) {
   return new Promise(function(resolve, reject) {
+    if (isNaN(userId) || typeof userId !== "number" || !Number.isInteger(userId)) {
+      return reject({
+        code: 400,
+        message: "Invalid user ID format.",
+      });
+    } else if ( isNaN(reservationId) || typeof reservationId !== "number" || !Number.isInteger(reservationId)) {
+      return reject({
+        code: 400,
+        message: "Invalid reservation ID format.",
+      });
+    }
+  
+    
     var examples = {};
     examples['application/json'] = {
-    'reservationId': 1,
-    'userId': 6,
-    'businessId': 2,
-    'reservationTime': '20:00',
-    'reservationDay': 25,
-    'reservationMonth': 12,
-    'reservationYear': 2025,
-    'numberOfPeople': 3,
-    'username': "username",
-    'businessName': "businessName"
-};
+      "reservationId" : 0,
+      "userId" : 6,
+      "reservationTime" : "12:00",
+      "businessName" : "businessName",
+      "reservationYear" : 2025,
+      "reservationDay" : 5,
+      "businessId" : 1,
+      "reservationMonth" : 5,
+      "numberOfPeople" : 7,
+      "username" : "username"
+    };
+
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
@@ -365,34 +405,45 @@ exports.viewBusinessStatistics = function(businessId,ownerId) {
  **/
 exports.viewReservations = function(userId) {
   return new Promise(function(resolve, reject) {
+    if (typeof userId !== "number" || !Number.isInteger(userId)) {
+      return reject({
+          code: 400,
+          message: "Invalid user ID format.", // Match expected output
+      });
+    } 
+  
+
     var examples = {};
     examples['application/json'] = [ {
-    'reservationId': 1,
-    'userId': 6,
-    'businessId': 2,
-    'reservationTime': '20:00',
-    'reservationDay': 25,
-    'reservationMonth': 12,
-    'reservationYear': 2025,
-    'numberOfPeople': 3,
-    'username': "username",
-    'businessName': "businessName"
-}, {
-    'reservationId': 1,
-    'userId': 6,
-    'businessId': 2,
-    'reservationTime': '20:00',
-    'reservationDay': 25,
-    'reservationMonth': 12,
-    'reservationYear': 2025,
-    'numberOfPeople': 3,
-    'username': "username",
-    'businessName': "businessName"
-} ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+      "reservationId" : 0,
+      "userId" : 6,
+      "reservationTime" : "12:00",
+      "businessName" : "businessName",
+      "reservationYear" : 2025,
+      "reservationDay" : 5,
+      "businessId" : 1,
+      "reservationMonth" : 5,
+      "numberOfPeople" : 7,
+      "username" : "username"
+    }, {
+      "reservationId" : 0,
+      "userId" : 6,
+      "reservationTime" : "12:00",
+      "businessName" : "businessName",
+      "reservationYear" : 2025,
+      "reservationDay" : 5,
+      "businessId" : 1,
+      "reservationMonth" : 5,
+      "numberOfPeople" : 7,
+      "username" : "username"
+    } ];
+
+    const userReservations = examples['application/json'].filter(reservation => reservation.userId === userId);
+
+    if (userReservations.length > 0) {
+        return resolve(userReservations);
     } else {
-      resolve();
+        return resolve([]); // Return empty array if no reservations are found
     }
   });
-}
+};
