@@ -552,11 +552,19 @@ exports.viewBusinessReservations = function(ownerId, businessId, day, month, yea
       "reservationMonth" : 5,
       "username" : "username"
     } ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+
+    const filteredBusinessReservations = examples['application/json'].filter(r => r.ownerId === ownerId && r.businessId === businessId && r.reservationDay === day && r.reservationMonth === month && r.reservationYear === year);
+    if (filteredBusinessReservations.length > 0) {
+      resolve(filteredBusinessReservations);
+    } else{
+      reject({code: 404, message: "No business reservations found."});
     }
+    
+    // if (Object.keys(examples).length > 0) {
+    //   resolve(examples[Object.keys(examples)[0]]);
+    // } else {
+    //   reject({code: 404, message: "No business reservations found."});
+    // }
   });
 }
 
