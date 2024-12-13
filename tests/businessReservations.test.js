@@ -17,43 +17,62 @@ test.after.always(t => {
     t.context.server.close();
 });
 
-
+const day = 1;
+const month = 5;
+const year = 2025;
+const owner_id = 7;
+const business_id = 8;
 // GET /businessReservations
 
 //Happy path: Retrieve all reservations 
 test("GET /businessReservations - Retrieve all reservations", async (t) => {
-    const { body, statusCode } = await t.context.got.get("business-reservations"); //or business - reservations
+    const { body, statusCode } = await t.context.got.get(`business-reservations?ownerId=${owner_id}&businessId=${business_id}&day=${day}&month=${month}&year=${year}`); //or business - reservations
     t.is(statusCode, 200);
     t.true(Array.isArray(body));
 });
 
-
-//Unhappy path: Get businesses reservations with invalid query parameter
-test("GET /businessReservations - Invalid query parameters", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got.get("business-reservations?invalidParam=value"));
-    t.is(error.response.statusCode, 400);
-    t.is(error.response.body.message, "Invalid query parameter");
-});
-
 //Unhappy path: No existing reservations
  test("GET /businessReservations - No existing reservations/", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got.get("business-reservations"));
+    const noReservationsBusinessId = 99999;
+    const error = await t.throwsAsync(() => t.context.got.get(`business-reservations?ownerId=${owner_id}&businessId=${noReservationsBusinessId}&day=${day}&month=${month}&year=${year}`));
     t.is(error.response.statusCode, 404);
     t.is(error.response.body.message, "No business reservations found.");
   }); 
   
 
-//Unhappy path: Nonexistent Resource
-test("GET /businessReservations/:id - Nonexistent businessReservations", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got.get("business-reservations/99999"));
-    t.is(error.response.statusCode, 404);
-    t.is(error.response.body.message, "Business reservations not found");
-});
+const invalid = "invalid";
 
-// Unhappy path: Invalid ID format when fetching a business reservation
-test("GET /businessReservations/:id - Invalid ID format", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got.get("business-reservations/invalid-id"));
+//Unhappy path: Invalid owner id
+test("GET /businessReservations - Invalid owner id", async (t) => {
+    const error = await t.throwsAsync(() => t.context.got.get(`business-reservations?ownerId=${invalid}&businessId=${business_id}&day=${day}&month=${month}&year=${year}`));
     t.is(error.response.statusCode, 400);
-    t.is(error.response.body.message, "Invalid reservation ID format");
+    t.is(error.response.body.message, "request.query.ownerId should be integer");
 });
 
+//Unhappy path: Invalid business id
+test("GET /businessReservations - Invalid business id", async (t) => {
+    const error = await t.throwsAsync(() => t.context.got.get(`business-reservations?ownerId=${owner_id}&businessId=${invalid}&day=${day}&month=${month}&year=${year}`));
+    t.is(error.response.statusCode, 400);
+    t.is(error.response.body.message, "request.query.businessId should be integer");
+});
+
+//Unhappy path: Invalid day
+test("GET /businessReservations - Invalid day", async (t) => {
+    const error = await t.throwsAsync(() => t.context.got.get(`business-reservations?ownerId=${owner_id}&businessId=${business_id}&day=${invalid}&month=${month}&year=${year}`));
+    t.is(error.response.statusCode, 400);
+    t.is(error.response.body.message, "request.query.day should be integer");
+});
+
+//Unhappy path: Invalid month
+test("GET /businessReservations - Invalid month", async (t) => {
+    const error = await t.throwsAsync(() => t.context.got.get(`business-reservations?ownerId=${owner_id}&businessId=${business_id}&day=${day}&month=${invalid}&year=${year}`));
+    t.is(error.response.statusCode, 400);
+    t.is(error.response.body.message, "request.query.month should be integer");
+});
+
+//Unhappy path: Invalid year
+test("GET /businessReservations - Invalid year", async (t) => {
+    const error = await t.throwsAsync(() => t.context.got.get(`business-reservations?ownerId=${owner_id}&businessId=${business_id}&day=${day}&month=${month}&year=${invalid}`));
+    t.is(error.response.statusCode, 400);
+    t.is(error.response.body.message, "request.query.year should be integer");
+});

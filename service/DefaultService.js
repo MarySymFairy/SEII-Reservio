@@ -519,6 +519,13 @@ exports.viewBusinessReservations = function(ownerId, businessId, day, month, yea
         message: "Invalid data types. userId and reservationId must be numbers.",
       });
     }
+    if (typeof day !== "number" || typeof month !== "number" || typeof year !== "number") {
+      return reject({
+        code: 400,
+        message: "Invalid data types. day, month, and year must be numbers.",
+      });
+    }
+    
     var examples = {};
     examples['application/json'] = [ {
       "reservationId" : 0,
