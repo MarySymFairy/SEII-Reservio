@@ -82,20 +82,9 @@ test("GET /reservations/:id - Get reservation (WITH POST INCLUDED)", async (t) =
 
 // Error case: Get nonexistent reservation
 test("GET /reservations/:id - Get nonexistent reservation", async (t) => {
-    const { statusCode, body } = await t.context.got.get("reservations/34?userId=6");
-    t.is(statusCode, 200);
-    t.deepEqual(body, {
-        'businessId': 1,
-        'businessName': 'businessName',
-        'numberOfPeople': 7,
-        'reservationDay': 5,
-        'reservationId': 0,
-        'reservationMonth': 5,
-        'reservationTime': '12:00',
-        'reservationYear': 2025,
-        'userId': 6,
-        'username': 'username',
-      });
+    const error = await t.throwsAsync(() => t.context.got.get("reservations/34?userId=6"));
+    t.is(error.response.statusCode, 404);
+    t.is(error.response.body.message, "Reservation not found.");
 });
 
 // GET /reservations/:id - Get reservation with invalid ID format

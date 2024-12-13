@@ -31,6 +31,7 @@ test("GET /businessReservations - Retrieve all reservations", async (t) => {
     t.true(Array.isArray(body));
 });
 
+
 //Unhappy path: No existing reservations
  test("GET /businessReservations - No existing reservations/", async (t) => {
     const noReservationsBusinessId = 99999;
@@ -38,8 +39,8 @@ test("GET /businessReservations - Retrieve all reservations", async (t) => {
     t.is(error.response.statusCode, 404);
     t.is(error.response.body.message, "No business reservations found.");
   }); 
-  
 
+  
 const invalid = "invalid";
 
 //Unhappy path: Invalid owner id
