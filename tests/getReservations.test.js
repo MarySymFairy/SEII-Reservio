@@ -55,10 +55,11 @@ test("GET /reservations/:id - Get reservation (WITH POST INCLUDED)", async (t) =
 
         t.is(response.statusCode, 200); 
         t.truthy(response.body);
+        console.log("here");
 
         //GET /reservations/:id
         const getResponse = await t.context.got.get("reservations/0?userId=6");
-        //console.log(getResponse.body);
+        console.log("here", getResponse.body);
         t.is(getResponse.statusCode, 200);
         t.deepEqual(getResponse.body, {
             'businessId': 1,

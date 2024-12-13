@@ -396,7 +396,7 @@ exports.viewAReservation = function(reservationId,userId) {
   
     
     var examples = {};
-    examples['application/json'] = [{
+    examples['application/json'] = {
       "reservationId" : 0,
       "userId" : 6,
       "reservationTime" : "12:00",
@@ -407,32 +407,37 @@ exports.viewAReservation = function(reservationId,userId) {
       "reservationMonth" : 5,
       "numberOfPeople" : 7,
       "username" : "username"
-    },];
+    };
 
-    // Find reservation based on reservationId and userId
-    const reservation = examples['application/json'].find(
-      (res) => res.reservationId === reservationId && res.userId === userId
-    );
-
-    if (!reservation) {
-      return reject({
-        code: 404,
-        message: "Reservation not found.",
-      });
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
+    } else {
+      resolve();
     }
-
-    resolve(reservation);
   });
-};
+}
 
+//     // Find reservation based on reservationId and userId
+//     const reservation = examples.find(
+//       (res) => res.reservationId === reservationId && res.userId === userId
+//     );
 
-//     if (Object.keys(examples).length > 0) {
-//       resolve(examples[Object.keys(examples)[0]]);
-//     } else {
-//       resolve();
+//     if (reservation) {
+//       return resolve({
+//         code: 200,
+//         body: reservation,
+//       });
+//     }else if (!reservation){
+//       return reject({
+//         code: 404,
+//         message: "Reservation not found.",
+//       })    
+//     } else{
+//       return console.log("WHAT?")
 //     }
 //   });
-// }
+// };
+
 
 
 /**
