@@ -1,9 +1,6 @@
 'use strict';
 
-// Mock data
-const Users = {6: {username: 'username'}};
-const Businesses = {1: {name: 'businessName'}};
-const Reservations = { 0: {userId: 6, businessId: 1, reservationTime: "12:00",} }
+
 /**
  * FR4: The logged in user must be able to set his reservation details in the selected business. FR6: The logged in user must be able to submit his reservation in the system. FR5: The logged in user must be able to select an available hour for his reservation. 
  *
@@ -30,9 +27,7 @@ exports.addReservation = function (body, userId, businessId) {
         typeof body.numberOfPeople !== 'number' ||
         body.numberOfPeople <= 0 ||
         typeof userId !== 'number' ||
-        typeof businessId !== 'number' ||
-        !Users[userId] ||
-        !Businesses[businessId]
+        typeof businessId !== 'number'
       ) {
         return reject({
           message: 'Invalid data types or values.',
@@ -56,7 +51,7 @@ exports.addReservation = function (body, userId, businessId) {
 
       if (reservationDateUTC < todayUTC) {
         return reject({
-          status: 409,
+          code: 409,
           message: 'Cannot reserve a date in the past.',
         });
       }
@@ -73,7 +68,7 @@ exports.addReservation = function (body, userId, businessId) {
         const maxDays = isLeapYear(reservationYear) ? 29 : 28;
         if (reservationDay < 1 || reservationDay > maxDays) {
           return reject({
-            statusCode: 400,
+            code: 400,
             error: `Invalid reservation day for February: ${reservationDay}. Max allowed: ${maxDays}.`,
           });
         }
@@ -102,8 +97,8 @@ exports.addReservation = function (body, userId, businessId) {
         reservationMonth,
         reservationYear,
         numberOfPeople: body.numberOfPeople,
-        username: Users[userId]?.username || body.username,
-        businessName: Businesses[businessId]?.name || body.businessName,
+        username: body.username,
+        businessName: body.businessName,
       };
 
       // if (!UserReservations[userId]) {
@@ -387,34 +382,21 @@ exports.searchBusinessByKeyword = function(keyword) {
  **/
 exports.viewAReservation = function(reservationId,userId) {
   return new Promise(function(resolve, reject) {
-    if (isNaN(userId) || typeof userId !== "number") {
+    if (isNaN(userId) || typeof userId !== "number" || !Number.isInteger(userId)) {
       return reject({
         code: 400,
-        message: "Invalid data types. userId be a number.",
+        message: "Invalid user ID format.",
       });
-    } else if ( isNaN(reservationId) || typeof reservationId !== "number") {
+    } else if ( isNaN(reservationId) || typeof reservationId !== "number" || !Number.isInteger(reservationId)) {
       return reject({
         code: 400,
-        message: "Invalid data types. reservationId must be a number.",
-      });
-    }
-
-    if (!Number.isInteger(reservationId)) {
-      return reject({
-          code: 400,
-          message: "Invalid reservation ID format.", // Match the expected test output
-      });
-    }
-    if (!Number.isInteger(userId)) {
-      return reject({
-          code: 400,
-          message: "Invalid reservation ID format.", // Match the expected test output
+        message: "Invalid reservation ID format.",
       });
     }
   
     
     var examples = {};
-    examples['application/json'] = {
+    examples['application/json'] = [{
       "reservationId" : 0,
       "userId" : 6,
       "reservationTime" : "12:00",
@@ -425,30 +407,33 @@ exports.viewAReservation = function(reservationId,userId) {
       "reservationMonth" : 5,
       "numberOfPeople" : 7,
       "username" : "username"
-    };
+    },];
 
-    const reservation = Object.values(examples).find(reservation => reservation.reservationId === reservationId && reservation.userId === userId);
+    // Find reservation based on reservationId and userId
+    const reservation = examples['application/json'].find(
+      (res) => res.reservationId === reservationId && res.userId === userId
+    );
 
-    // Simulate database check
-    if (reservation) {
-      return resolve(reservation);
-    } else{
-      return reject ({
+    if (!reservation) {
+      return reject({
         code: 404,
         message: "Reservation not found.",
       });
     }
+
+    resolve(reservation);
   });
 };
 
 
-    // if (Object.keys(examples).length > 0) {
-    //   resolve(examples[Object.keys(examples)[0]]);
-    // } else {
-    //   resolve();
-    // }
+//     if (Object.keys(examples).length > 0) {
+//       resolve(examples[Object.keys(examples)[0]]);
+//     } else {
+//       resolve();
+//     }
 //   });
 // }
+
 
 /**
  * FR10: The logged in user must be able to view his reservations. 
@@ -458,19 +443,12 @@ exports.viewAReservation = function(reservationId,userId) {
  **/
 exports.viewReservations = function(userId) {
   return new Promise(function(resolve, reject) {
-    if (typeof userId !== "number") {
+    if (typeof userId !== "number" || !Number.isInteger(userId)) {
       return reject({
           code: 400,
-          message: "Invalid query parameter: userId must be a number.", // Match expected output
+          message: "Invalid user ID format.", // Match expected output
       });
-  }
-    
-    if (!Number.isInteger(userId)) {
-      return reject({
-          code: 400,
-          message: "Invalid user ID format.", // Match the expected test output
-      });
-  }
+    } 
   
 
     var examples = {};
@@ -498,23 +476,15 @@ exports.viewReservations = function(userId) {
       "username" : "username"
     } ];
 
-    const userReservations = Object.values(examples).find(user => user.userId === userId);
+    const userReservations = examples['application/json'].filter(reservation => reservation.userId === userId);
 
-    // Simulate database check
-    if (userReservations) {
-      return resolve(userReservations);
-    } else{
-      return reject ({
-        code: 404,
-        message: "Reservations not found.",
-      });
+    if (userReservations.length > 0) {
+        return resolve(userReservations);
+    } else {
+        return resolve([]); // Return empty array if no reservations are found
     }
   });
 };
-    // // Filter reservations by user ID
-    // const reservations = examples.filter((r) => r["userId"] === userId);
-
-    // resolve(reservations.length ? reservations : []);
 
     // if (Object.keys(examples).length > 0) {
     //   resolve(examples[Object.keys(examples)[0]]);

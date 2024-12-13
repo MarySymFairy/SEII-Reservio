@@ -34,7 +34,7 @@ test("DELETE /reservations/:id - Delete nonexistent reservation", async (t) => {
 test("DELETE /reservations/:id - Delete reservation (happy path)", async (t) => {
     try {
         // Create a reservation
-        const response = await t.context.got.post('reservations', {
+        const response = await t.context.got.post('reservations?userId=6&businessId=1', {
             searchParams: {
                 'userId': 6,
                 'businessId': 1, // Use valid business ID
