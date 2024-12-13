@@ -410,18 +410,20 @@ exports.viewAReservation = function(reservationId,userId) {
     },];
 
     // Find reservation based on reservationId and userId
-    const reservation = examples['application/json'].find(
+    const reservation = examples.find(
       (res) => res.reservationId === reservationId && res.userId === userId
     );
 
-    if (!reservation) {
+    if (reservation) {
+      resolve(reservation)
+    }else if (!reservation){
       return reject({
         code: 404,
         message: "Reservation not found.",
-      });
+      })    
+    } else{
+      return console.log("WHAT?")
     }
-
-    resolve(reservation);
   });
 };
 
@@ -441,18 +443,23 @@ exports.viewAReservation = function(reservationId,userId) {
  * userId Integer UserId of the logged in user that made the reservation
  * returns List
  **/
-exports.viewReservations = function(userId) {
+exports.viewAReservation = function(reservationId,userId) {
   return new Promise(function(resolve, reject) {
-    if (typeof userId !== "number" || !Number.isInteger(userId)) {
+    if (isNaN(userId) || typeof userId !== "number" || !Number.isInteger(userId)) {
       return reject({
-          code: 400,
-          message: "Invalid user ID format.", // Match expected output
+        code: 400,
+        message: "Invalid user ID format.",
       });
-    } 
+    } else if ( isNaN(reservationId) || typeof reservationId !== "number" || !Number.isInteger(reservationId)) {
+      return reject({
+        code: 400,
+        message: "Invalid reservation ID format.",
+      });
+    }
   
-
+    
     var examples = {};
-    examples['application/json'] = [ {
+    examples['application/json'] = [{
       "reservationId" : 0,
       "userId" : 6,
       "reservationTime" : "12:00",
@@ -463,36 +470,37 @@ exports.viewReservations = function(userId) {
       "reservationMonth" : 5,
       "numberOfPeople" : 7,
       "username" : "username"
-    }, {
-      "reservationId" : 0,
-      "userId" : 6,
-      "reservationTime" : "12:00",
-      "businessName" : "businessName",
-      "reservationYear" : 2025,
-      "reservationDay" : 5,
-      "businessId" : 1,
-      "reservationMonth" : 5,
-      "numberOfPeople" : 7,
-      "username" : "username"
-    } ];
+    },];
 
-    const userReservations = examples['application/json'].filter(reservation => reservation.userId === userId);
-
-    if (userReservations.length > 0) {
-        return resolve(userReservations);
+    if (Object.keys(examples).length > 0) {
+      resolve(examples[Object.keys(examples)[0]]);
     } else {
-        return resolve([]); // Return empty array if no reservations are found
+      resolve();
     }
   });
-};
+}
 
-    // if (Object.keys(examples).length > 0) {
-    //   resolve(examples[Object.keys(examples)[0]]);
-    // } else {
-    //   resolve();
-    // }
+//     // Find reservation based on reservationId and userId
+//     const reservation = examples.find(
+//       (res) => res.reservationId === reservationId && res.userId === userId
+//     );
+
+//     if (reservation) {
+//       return resolve({
+//         code: 200,
+//         body: reservation,
+//       });
+//     }else if (!reservation){
+//       return reject({
+//         code: 404,
+//         message: "Reservation not found.",
+//       })    
+//     } else{
+//       return console.log("WHAT?")
+//     }
 //   });
-// }
+// };
+
 
 
 //BUSINESS FUNCTIONS
