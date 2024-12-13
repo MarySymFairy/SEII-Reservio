@@ -396,7 +396,7 @@ exports.viewAReservation = function(reservationId,userId) {
   
     
     var examples = {};
-    examples['application/json'] = [{
+    examples['application/json'] = {
       "reservationId" : 0,
       "userId" : 6,
       "reservationTime" : "12:00",
@@ -407,7 +407,7 @@ exports.viewAReservation = function(reservationId,userId) {
       "reservationMonth" : 5,
       "numberOfPeople" : 7,
       "username" : "username"
-    },];
+    };
 
     // Find reservation based on reservationId and userId
     const reservation = examples.find(
