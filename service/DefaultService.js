@@ -553,7 +553,9 @@ exports.viewBusinessReservations = function(ownerId, businessId, day, month, yea
       "username" : "username"
     } ];
 
+    //Filter if business reservations exist (in mock data)
     const filteredBusinessReservations = examples['application/json'].filter(r => r.ownerId === ownerId && r.businessId === businessId && r.reservationDay === day && r.reservationMonth === month && r.reservationYear === year);
+    
     if (filteredBusinessReservations.length > 0) {
       resolve(filteredBusinessReservations);
     } else{
@@ -596,11 +598,26 @@ exports.viewBusinessStatistics = function(ownerId, businessId) {
       "ownerId" : 7,
       "businessId" : 8
     } ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+
+    // filter if ownerId and businessId exist (in mock data)
+    const filteredBusinessStatistics = examples['application/json'].filter(b => b.ownerId === ownerId && b.businessId === businessId);
+    
+    if (filteredBusinessStatistics.length > 0) {
+      resolve(filteredBusinessStatistics);
     }
+    else {
+      return reject({
+        code: 404,
+        message: "Business statistics not found."
+      });
+    }
+
+
+    // if (Object.keys(examples).length > 0) {
+    //   resolve(examples[Object.keys(examples)[0]]);
+    // } else {
+    //   resolve();
+    // }
   });
 }
 
