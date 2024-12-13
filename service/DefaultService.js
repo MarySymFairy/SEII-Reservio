@@ -1,28 +1,30 @@
 'use strict';
 
+const { type } = require("ramda");
+
 
 /**
  * FR4: The logged in user must be able to set his reservation details in the selected business. FR6: The logged in user must be able to submit his reservation in the system. FR5: The logged in user must be able to select an available hour for his reservation. 
  *
  * body Reservation Submit reservation to the system
- * userId Integer User-id of the logged in user that made the reservation
- * businessId Integer Business-id of the business that the reservation is made for
+ * userId Integer UserId of the logged in user that made the reservation
+ * businessId Integer BusinessId of the business that the reservation is made for
  * returns Reservation
  **/
 exports.addReservation = function(body,userId,businessId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
+    'reservationId': 1,
+    'userId': 6,
+    'businessId': 2,
+    'reservationTime': '20:00',
+    'reservationDay': 25,
+    'reservationMonth': 12,
+    'reservationYear': 2025,
+    'numberOfPeople': 3,
+    'username': "username",
+    'businessName': "businessName"
 };
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
@@ -45,8 +47,9 @@ exports.deleteReservation = function(userId,reservationId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = {
-  "message" : "message"
+  "message" : "Reservation deleted."
 };
+console.log(`Attempting to delete reservationId: ${reservationId} for userId: ${userId}`);
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
     } else {
@@ -59,7 +62,7 @@ exports.deleteReservation = function(userId,reservationId) {
 /**
  * In order to have the available hours for the specific reservation you want to create.  FR3: The logged in user must be able to start a reservation process by selecting a business  FR5: The logged in user must be able to select an available hour for his reservation. 
  *
- * businessId Integer Business-id of the business that the reservation is made for
+ * businessId Integer BusinessId of the business that the reservation is made for
  * reservationDay Integer The arranged reservation day
  * reservationMonth Integer The arranged reservation month
  * reservationYear Integer The arranged reservation year
@@ -87,33 +90,48 @@ exports.getAvailability = function(businessId,reservationDay,reservationMonth,re
  * categoryName String The name of the category that the business belongs to.
  * returns List
  **/
+// service/DefaultService.js
+
 exports.getBusinessesByCategory = function(categoryName) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = [ {
-  "owner-id" : 6,
-  "businessName" : "businessName",
-  "businessCategory" : "Breakfast",
-  "keyword" : "keyword",
-  "business-id" : 0
-}, {
-  "owner-id" : 6,
-  "businessName" : "businessName",
-  "businessCategory" : "Breakfast",
-  "keyword" : "keyword",
-  "business-id" : 0
-} ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    const businesses = [ 
+      { 
+        "ownerId": 6, 
+        "businessName": "businessName", 
+        "categoryName": "breakfast", 
+        "keyword": "keyword", 
+        "businessId": 1 
+      },
+      { 
+        "ownerId": 6, 
+        "businessName": "businessName", 
+        "categoryName": "breakfast", 
+        "keyword": "keyword", 
+        "businessId": 1 
+      }
+    ];
+
+    const filteredBusinesses = businesses.filter(b => 
+      b.categoryName.toLowerCase() === categoryName.toLowerCase()
+    );
+
+    if (filteredBusinesses.length > 0) {
+      resolve(filteredBusinesses);
     } else {
-      resolve();
+      reject({ 
+        statusCode: 400, 
+        message: "categoryName should be equal to one of the allowed values: breakfast, brunch, lunch, dinner, drinks"
+      });
     }
   });
-}
+};
+
+
+
 
 
 /**
- * Modifies a single reservation based on the reservation-id supplied
+ * Modifies a single reservation based on the reservationId supplied
  * FR7 - The logged-in user must be able to modify his reservation 
  *
  * body Reservation Reservation to be modified (numberOfPeople, date, time)
@@ -125,27 +143,27 @@ exports.modifyReservation = function(body,userId,reservationId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = [ {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
+    'reservationId': 1,
+    'userId': 6,
+    'businessId': 2,
+    'reservationTime': '20:00',
+    'reservationDay': 25,
+    'reservationMonth': 12,
+    'reservationYear': 2025,
+    'numberOfPeople': 3,
+    'username': "username",
+    'businessName': "businessName"
 }, {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
+  'reservationId': 1,
+  'userId': 6,
+  'businessId': 2,
+  'reservationTime': '20:00',
+  'reservationDay': 25,
+  'reservationMonth': 12,
+  'reservationYear': 2025,
+  'numberOfPeople': 3,
+  'username': "username",
+  'businessName': "businessName"
 } ];
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
@@ -186,50 +204,61 @@ exports.notifyUser = function(userId,reservationId) {
  **/
 exports.searchBusinessByKeyword = function(keyword) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = [ {
-  "owner-id" : 6,
+  const businesses = [{
+  "ownerId" : 6,
   "businessName" : "businessName",
-  "businessCategory" : "Breakfast",
+  "categoryName" : "breakfast",
   "keyword" : "keyword",
-  "business-id" : 0
+  "businessId" : 1
 }, {
-  "owner-id" : 6,
+  "ownerId" : 6,
   "businessName" : "businessName",
-  "businessCategory" : "Breakfast",
+  "categoryName" : "breakfast",
   "keyword" : "keyword",
-  "business-id" : 0
+  "businessId" : 1
 } ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
+console.log(typeof keyword);
+if (typeof keyword !== 'string') {
+  return reject({
+    code: 400,
+    message: "Invalid keyword."
   });
+} else {
+  const filteredBusinesses = businesses.filter(b => b.keyword === keyword);
+  if (filteredBusinesses.length > 0) {
+    resolve(filteredBusinesses);
+  } else {
+    return reject({
+      code: 404,
+      message: "Businesses not found with that keyword."
+    });
+  }
+}
+});
 }
 
 
 /**
  * FR10: The logged in user must be able to view his reservations. 
  *
- * reservationId Integer Reservation-id of the reservation submitted to the system
- * userId Integer User-id of the logged in user that made the reservation
+ * reservationId Integer ReservationId of the reservation submitted to the system
+ * userId Integer UserId of the logged in user that made the reservation
  * returns Reservation
  **/
 exports.viewAReservation = function(reservationId,userId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
+    'reservationId': 1,
+    'userId': 6,
+    'businessId': 2,
+    'reservationTime': '20:00',
+    'reservationDay': 25,
+    'reservationMonth': 12,
+    'reservationYear': 2025,
+    'numberOfPeople': 3,
+    'username': "username",
+    'businessName': "businessName"
 };
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
@@ -243,7 +272,7 @@ exports.viewAReservation = function(reservationId,userId) {
 /**
  * FR11: The business owner must be able to view the reservations of his business. 
  *
- * ownerId Integer Owner-id of the business owner
+ * ownerId Integer OwnerId of the business owner
  * day Integer Reservation day
  * month Integer Reservation month
  * year Integer Reservation year
@@ -253,25 +282,27 @@ exports.viewBusinessReservations = function(ownerId,day,month,year) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = [ {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 5,
-  "reservationDay" : 1,
-  "people" : 2,
-  "reservationMonth" : 5,
-  "username" : "username"
+    'reservationId': 1,
+    'userId': 6,
+    'businessId': 2,
+    'reservationTime': '20:00',
+    'reservationDay': 25,
+    'reservationMonth': 12,
+    'reservationYear': 2025,
+    'numberOfPeople': 3,
+    'username': "username",
+    'businessName': "businessName"
 }, {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 5,
-  "reservationDay" : 1,
-  "people" : 2,
-  "reservationMonth" : 5,
-  "username" : "username"
+  'reservationId': 1,
+  'userId': 6,
+  'businessId': 2,
+  'reservationTime': '20:00',
+  'reservationDay': 25,
+  'reservationMonth': 12,
+  'reservationYear': 2025,
+  'numberOfPeople': 3,
+  'username': "username",
+  'businessName': "businessName"
 } ];
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);
@@ -285,23 +316,42 @@ exports.viewBusinessReservations = function(ownerId,day,month,year) {
 /**
  * FR12: The business owner must be able to view the statistics of his business reservations. 
  *
- * ownerId Integer Owner-id of the business owner of the business that the reservations were made in.
+ * ownerId Integer OwnerId of the business owner of the business that the reservations were made in.
  * returns List
  **/
-exports.viewBusinessStatistics = function(ownerId) {
+exports.viewBusinessStatistics = function(businessId,ownerId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = [ {
-  "month" : 0,
-  "numberOfReservations" : 6
-}, {
-  "month" : 0,
-  "numberOfReservations" : 6
-} ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    const businessStatistics = [
+      {
+        'ownerId': 1,
+        'businessId': 1,
+        'month': 1,
+        'numberOfReservations': 6
+
+      },
+      {
+        'ownerId': 1,
+        'businessId': 1,
+        'month': 1,
+        'numberOfReservations': 6
+      }
+    ];
+    if (typeof ownerId !== 'number' || typeof businessId !== 'number') {
+      return reject({
+        code: 400,
+        message: "Invalid ownerId or businessId."
+      });
     } else {
-      resolve();
+      const filteredBusinessStatistics = businessStatistics.filter(b => b.ownerId === ownerId && b.businessId === businessId);
+      if (filteredBusinessStatistics.length > 0) {
+        resolve(filteredBusinessStatistics);
+      }
+      else {
+        return reject({
+          code: 404,
+          message: "Business statistics not found."
+        });
+      }
     }
   });
 }
@@ -310,34 +360,34 @@ exports.viewBusinessStatistics = function(ownerId) {
 /**
  * FR10: The logged in user must be able to view his reservations. 
  *
- * userId Integer User-id of the logged in user that made the reservation
+ * userId Integer UserId of the logged in user that made the reservation
  * returns List
  **/
 exports.viewReservations = function(userId) {
   return new Promise(function(resolve, reject) {
     var examples = {};
     examples['application/json'] = [ {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
+    'reservationId': 1,
+    'userId': 6,
+    'businessId': 2,
+    'reservationTime': '20:00',
+    'reservationDay': 25,
+    'reservationMonth': 12,
+    'reservationYear': 2025,
+    'numberOfPeople': 3,
+    'username': "username",
+    'businessName': "businessName"
 }, {
-  "reservation-id" : 0,
-  "user-id" : 6,
-  "reservationTime" : "reservationTime",
-  "businessName" : "businessName",
-  "reservationYear" : 2,
-  "reservationDay" : 5,
-  "business-id" : 1,
-  "reservationMonth" : 5,
-  "numberOfPeople" : 7,
-  "username" : "username"
+    'reservationId': 1,
+    'userId': 6,
+    'businessId': 2,
+    'reservationTime': '20:00',
+    'reservationDay': 25,
+    'reservationMonth': 12,
+    'reservationYear': 2025,
+    'numberOfPeople': 3,
+    'username': "username",
+    'businessName': "businessName"
 } ];
     if (Object.keys(examples).length > 0) {
       resolve(examples[Object.keys(examples)[0]]);

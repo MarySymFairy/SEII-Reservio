@@ -16,12 +16,20 @@ module.exports.addReservation = function addReservation (req, res, next, body, u
 module.exports.deleteReservation = function deleteReservation (req, res, next, userId, reservationId) {
   Default.deleteReservation(userId, reservationId)
     .then(function (response) {
-      utils.writeJson(res, response, response.code);
+      if (response.code === 200) {
+        utils.writeJson(res, {message: "Reservation deleted successfully.",reservationId}, 200);
+      } else {
+        utils.writeJson(res, {message: "Reservation not found."}, 404);
+      }
+      //utils.writeJson(res, response, response.code);
     })
     .catch(function (response) {
-      utils.writeJson(res, response, response.code);
+      console.log('Error deleting reservation: ', response);
+      utils.writeJson(res, {message: "Internal server error."}, 500);
+      //utils.writeJson(res, response, response.code);
     });
 };
+
 
 module.exports.getAvailability = function getAvailability (req, res, next, businessId, reservationDay, reservationMonth, reservationYear, numberOfPeople) {
   Default.getAvailability(businessId, reservationDay, reservationMonth, reservationYear, numberOfPeople)
@@ -93,7 +101,7 @@ module.exports.viewBusinessReservations = function viewBusinessReservations (req
     });
 };
 
-module.exports.viewBusinessStatistics = function viewBusinessStatistics (req, res, next, ownerId, businessId) {
+module.exports.viewBusinessStatistics = function viewBusinessStatistics(req, res, next, ownerId, businessId) {
   Default.viewBusinessStatistics(ownerId, businessId)
     .then(function (response) {
       utils.writeJson(res, response, response.code);

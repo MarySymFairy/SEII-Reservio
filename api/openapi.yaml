@@ -21,7 +21,7 @@ paths:
         FR1: The logged in user must be able to view the businesses that are included in the system divided by categories.
       operationId: getBusinessesByCategory
       parameters:
-      - name: category-name
+      - name: categoryName
         in: query
         description: The name of the category that the business belongs to.
         required: true
@@ -76,6 +76,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/Business'
                 x-content-type: application/json
+        "400":
+          description: Bad input parameter
+        "404":
+          description: Business not found for the given keyword
         default:
           description: Unexpected error
           content:
@@ -207,9 +211,9 @@ paths:
           type: integer
           format: int32
           minimum: 0
-      - name: businessΙd
+      - name: businessId
         in: query
-        description: BusinessΙd of the business that the reservation is made for
+        description: BusinessId of the business that the reservation is made for
         required: true
         style: form
         explode: false
@@ -254,9 +258,9 @@ paths:
           type: integer
           format: int32
           minimum: 0
-      - name: userΙd
+      - name: userId
         in: query
-        description: UserΙd of the logged in user that made the reservation
+        description: UserId of the logged in user that made the reservation
         required: true
         style: form
         explode: true
@@ -288,7 +292,7 @@ paths:
         FR7 - The logged-in user must be able to modify his reservation
       operationId: modifyReservation
       parameters:
-      - name: userΙd
+      - name: userId
         in: query
         description: Retrieve the ID of the user
         required: true
@@ -652,7 +656,7 @@ components:
       example:
         reservationId: 0
         userId: 6
-        reservationTime: '12:00'
+        reservationTime: '20:00'
         businessName: businessName
         reservationYear: 2025
         reservationDay: 5
