@@ -744,7 +744,7 @@ components:
         businessName: businessName
         reservationYear: 2026
         reservationDay: 1
-        people: 2
+        numberOfpeople: 2
         reservationMonth: 5
         username: username
     BusinessStatistics:

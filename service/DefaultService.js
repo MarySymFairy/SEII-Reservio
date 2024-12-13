@@ -71,20 +71,119 @@ console.log(`Attempting to delete reservationId: ${reservationId} for userId: ${
  * numberOfPeople Integer The arranged number of people that will be in the reservation
  * returns inline_response_200
  **/
-exports.getAvailability = function(businessId,reservationDay,reservationMonth,reservationYear,numberOfPeople) {
+// exports.getAvailability = function(businessId,reservationDay,reservationMonth,reservationYear,numberOfPeople) {
+//   return new Promise(function(resolve, reject) {
+//     const availableHours = [ "18:00", "20:00" ];
+//      const availableReservations = availableHours.map(hour => {
+//        return {
+//         reservationTime: hour
+//       };
+//     });
+//     if (typeof businessId !== 'number' || typeof reservationDay !== 'number' || typeof reservationMonth !== 'number' || typeof reservationYear !== 'number' || typeof numberOfPeople !== 'number') {
+//       return reject({
+//         code: 400,
+//         message: "Invalid businessId, reservationDay, reservationMonth, reservationYear, or numberOfPeople."
+//       });
+//     } else {
+//       resolve(availableReservations);
+//     }
+//   });
+// }
+
+
+exports.getAvailability = function(businessId, reservationDay, reservationMonth, reservationYear, numberOfPeople) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "availableHours" : [ "18:00", "18:00" ]
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+    const availableHours = [ "18:00", "20:00" ]; // Define all possible reservation times
+
+    // Mock existing reservations data
+    const businessReservations = [
+      {
+        reservationId: 1,
+        userId: 6,
+        ownerId: 7,
+        reservationTime: '20:00',
+        businessName: "businessName",
+        reservationYear: 2026,
+        reservationDay: 1,
+        numberOfPeople: 2,
+        reservationMonth: 5,
+        username: "username",
+      },
+      {
+        reservationId: 2,
+        userId: 6,
+        ownerId: 7,
+        reservationTime: '18:00',
+        businessName: "businessName",
+        reservationYear: 2026,
+        reservationDay: 2,
+        numberOfPeople: 10,
+        reservationMonth: 5,
+        username: "username2"
+      },
+      {
+        reservationId: 3,
+        userId: 7,
+        ownerId: 7,
+        reservationTime: '20:00',
+        businessName: "businessName",
+        reservationYear: 2026,
+        reservationDay: 2,
+        numberOfPeople: 10,
+        reservationMonth: 5,
+        username: "username3"
+      }
+    ];
+
+    // Input Validation
+    if (
+      typeof businessId !== 'number' ||
+      typeof reservationDay !== 'number' ||
+      typeof reservationMonth !== 'number' ||
+      typeof reservationYear !== 'number' ||
+      typeof numberOfPeople !== 'number' ||
+      businessId <= 0 ||
+      reservationDay <= 0 ||
+      reservationMonth <= 0 ||
+      reservationYear <= 0 ||
+      numberOfPeople <= 0
+    ) {
+      return reject({
+        code: 400,
+        message: "Invalid businessId, reservationDay, reservationMonth, reservationYear, or numberOfPeople."
+      });
     }
+
+    // Fetch reservations for the specified business and date
+    const existingReservations = businessReservations.filter(reservation => 
+      reservation.reservationDay === reservationDay &&
+      reservation.reservationMonth === reservationMonth &&
+      reservation.reservationYear === reservationYear
+    );
+
+    // Extract reserved times
+    const reservedTimes = existingReservations.map(reservation => reservation.reservationTime);
+
+    // Determine available times by excluding reserved times
+    const freeHours = availableHours.filter(hour => !reservedTimes.includes(hour));
+    const freeHoursWithTime = freeHours.map(hour => { return { reservationTime: hour }; });
+
+    // (Optional) If there's a capacity limit per time slot, you can add additional checks here
+    // For example, assuming a maximum of 10 people per time slot
+    const MAX_CAPACITY_PER_SLOT = 10;
+    const capacityCheck = existingReservations.reduce((total, reservation) => total + reservation.numberOfPeople, 0);
+
+    if (capacityCheck + numberOfPeople > MAX_CAPACITY_PER_SLOT) {
+      return reject({
+        code: 404,
+        message: "No available hour found."
+      });
+    }
+
+    // Resolve with available reservation times
+    resolve(freeHoursWithTime);
   });
 }
-
 
 /**
  * FR1: The logged in user must be able to view the businesses that are included in the system divided by categories. 
