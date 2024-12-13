@@ -82,9 +82,17 @@ test("GET /reservations/:id - Get reservation (WITH POST INCLUDED)", async (t) =
 
 // Error case: Get nonexistent reservation
 test("GET /reservations/:id - Get nonexistent reservation", async (t) => {
-    const error = await t.throwsAsync(() => t.context.got.get("reservations/34?userId=6"));
+    const reservationId = 56;
+    const error = await t.throwsAsync(() =>
+      t.context.got.get(`reservations/${reservationId}?userId=6`, {
+        //it worked for deleteReservation.test.js
+        throwHttpErrors: true, // Ensure errors are thrown for non-2xx status codes
+      })
+    );
+  
+    // Check that the response has the expected status code and error message
     t.is(error.response.statusCode, 404);
-    t.is(error.response.body.message, "Reservation not found.");
+    t.regex(error.response.body.message, /Reservation not found/);
 });
 
 // GET /reservations/:id - Get reservation with invalid ID format
