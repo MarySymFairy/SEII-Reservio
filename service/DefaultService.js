@@ -257,21 +257,31 @@ exports.getBusinessesByCategory = function(categoryName) {
     examples['application/json'] = [ {
       "ownerId" : 6,
       "businessName" : "businessName",
-      "businessCategory" : "Breakfast",
+      "categoryName" : "breakfast",
       "keyword" : "keyword",
       "businessId" : 0
     }, {
       "ownerId" : 6,
       "businessName" : "businessName",
-      "businessCategory" : "Breakfast",
+      "categoryName" : "breakfast",
       "keyword" : "keyword",
       "businessId" : 0
     } ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+
+    console.log("CHECKME", categoryName);
+    const filteredBusinesses = examples['application/json'].filter(
+      b => b.categoryName.toLowerCase() === categoryName.toLowerCase()
+    );
+
+    if (filteredBusinesses.length > 0) {
+      resolve(filteredBusinesses);
     } else {
-      resolve();
-    }
+      reject({ 
+        statusCode: 400, 
+        message: "categoryName should be equal to one of the allowed values: breakfast, brunch, lunch, dinner, drinks"
+      })
+    };
+
   });
 }
 
@@ -364,11 +374,27 @@ exports.searchBusinessByKeyword = function(keyword) {
       "keyword" : "keyword",
       "businessId" : 0
     } ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+
+    if (typeof keyword !== 'string') {
+      return reject({
+        code: 400,
+        message: "Invalid keyword."
+      });
     }
+    
+    const filteredBusinesses = examples['application/json'].filter(
+      b => b.keyword === keyword
+    );
+
+    if (filteredBusinesses.length > 0) {
+      resolve(filteredBusinesses);
+    } else {
+      return reject({
+        code: 404,
+        message: "Businesses not found with that keyword."
+      });
+    }
+    
   });
 }
 

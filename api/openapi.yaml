@@ -13,7 +13,7 @@ paths:
         FR1: The logged in user must be able to view the businesses that are included in the system divided by categories.
       operationId: getBusinessesByCategory
       parameters:
-      - name: category-name
+      - name: categoryName
         in: query
         description: The name of the category that the business belongs to.
         required: true
@@ -576,7 +576,7 @@ components:
       title: Business
       required:
       - businessId
-      - businessCategory
+      - categoryName
       - businessName
       - keyword
       - ownerId
@@ -589,7 +589,7 @@ components:
           minimum: 0
         businessName:
           type: string
-        businessCategory:
+        categoryName:
           type: string
           description: The categories that the businesses are divided into
           enum:
@@ -610,7 +610,7 @@ components:
       example:
         ownerId: 6
         businessName: businessName
-        businessCategory: Breakfast
+        categoryName: breakfast
         keyword: keyword
         businessId: 0
     Reservation:
