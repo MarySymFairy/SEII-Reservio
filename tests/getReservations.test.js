@@ -109,22 +109,22 @@ test("GET /reservations/:id - Get reservation with invalid ID format", async (t)
 //GET ALL-----------------------------------------------------------------------------
 // Happy path: Get all reservations
 test("GET /reservations - Retrieve all reservations (happy path)", async (t) => {
-const { body, statusCode } = await t.context.got.get("reservations?userId=6");
-t.is(statusCode, 200);
-t.true(Array.isArray(body));
-t.true(body.length > 0);
-body.forEach((reservation) => {
-    t.is(reservation.reservationId >= 0, true);
-    t.is(reservation.userId >= 0, true);
-    t.is(reservation.businessId >= 0, true);
-    t.truthy(reservation.reservationTime);
-    t.truthy(reservation.reservationDay);
-    t.truthy(reservation.reservationMonth);
-    t.truthy(reservation.reservationYear);
-    t.truthy(reservation.numberOfPeople);
-    t.truthy(reservation.username);
-    t.truthy(reservation.businessName);
-});
+    const { body, statusCode } = await t.context.got.get("reservations?userId=6");
+    t.is(statusCode, 200);
+    t.true(Array.isArray(body));
+    t.true(body.length > 0);
+    body.forEach((reservation) => {
+        t.is(reservation.reservationId >= 0, true);
+        t.is(reservation.userId >= 0, true);
+        t.is(reservation.businessId >= 0, true);
+        t.truthy(reservation.reservationTime);
+        t.truthy(reservation.reservationDay);
+        t.truthy(reservation.reservationMonth);
+        t.truthy(reservation.reservationYear);
+        t.truthy(reservation.numberOfPeople);
+        t.truthy(reservation.username);
+        t.truthy(reservation.businessName);
+    });
 });
 
 // Error case: Get reservations with invalid query parameters

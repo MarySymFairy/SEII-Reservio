@@ -19,17 +19,34 @@ test.after.always(t => {
 
 const day = 1;
 const month = 5;
-const year = 2025;
+const year = 2026;
 const owner_id = 7;
 const business_id = 8;
 // GET /businessReservations
 
 //Happy path: Retrieve all reservations 
 test("GET /businessReservations - Retrieve all reservations", async (t) => {
-    const { body, statusCode } = await t.context.got.get(`business-reservations?ownerId=${owner_id}&businessId=${business_id}&day=${day}&month=${month}&year=${year}`); //or business - reservations
+    const { body, statusCode } = await t.context.got.get(`business-reservations?ownerId=${owner_id}&businessId=${business_id}&day=${day}&month=${month}&year=${year}`); 
+    console.log("hello", body);
+    
     t.is(statusCode, 200);
     t.true(Array.isArray(body));
+    t.true(body.length > 0);
+    body.forEach((br) => {
+        t.is(br.reservationId >= 0, true);
+        t.is(br.userId >= 0, true);
+        t.is(br.ownerId >= 0, true);
+        t.is(br.businessId >= 0, true);
+        t.truthy(br.reservationTime);
+        t.truthy(br.reservationDay);
+        t.truthy(br.reservationMonth);
+        t.truthy(br.reservationYear);
+        t.truthy(br.people);
+        t.truthy(br.username);
+        t.truthy(br.businessName);
+    });
 });
+
 
 
 //Unhappy path: No existing reservations
