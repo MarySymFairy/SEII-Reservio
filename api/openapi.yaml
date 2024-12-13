@@ -562,11 +562,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/BusinessStatistics'
-                x-content-type: application/json
-        "400":
-          description: Bad input parameter
-        "404":
-          description: Business Statistics not found        
+                x-content-type: application/json    
         default:
           description: unexpected error
           content:
