@@ -409,14 +409,6 @@ exports.viewAReservation = function(userId, reservationId) {
       "username" : "username"
     }];
 
-//     if (Object.keys(examples).length > 0) {
-//       resolve(examples[Object.keys(examples)[0]]);
-//     } else {
-//       resolve();
-//     }
-//   });
-// }
-
     // Find reservation based on reservationId and userId
     const reservation = examples['application/json'].find(
       (res) => res.reservationId === reservationId && res.userId === userId
@@ -486,13 +478,7 @@ exports.viewReservations = function(userId) {
   });
 };
 
-    // if (Object.keys(examples).length > 0) {
-    //   resolve(examples[Object.keys(examples)[0]]);
-    // } else {
-    //   resolve();
-    // }
-//   });
-// }
+
 
 
 //BUSINESS FUNCTIONS
@@ -563,11 +549,6 @@ exports.viewBusinessReservations = function(ownerId, businessId, day, month, yea
     }
   });
 }    
-    // if (Object.keys(examples).length > 0) {
-    //   resolve(examples[Object.keys(examples)[0]]);
-    // } else {
-    //   reject({code: 404, message: "No business reservations found."});
-    // }
 
 
 
@@ -577,7 +558,7 @@ exports.viewBusinessReservations = function(ownerId, businessId, day, month, yea
  * ownerId Integer OwnerId of the business owner of the business that the reservations were made in.
  * returns List
  **/
-exports.viewBusinessStatistics = function(ownerId, businessId) {
+exports.viewBusinessStatistics = function(businessId, ownerId) {
   return new Promise(function(resolve, reject) {
     if (typeof ownerId !== "number" || typeof businessId !== "number") {
       return reject({
@@ -599,11 +580,15 @@ exports.viewBusinessStatistics = function(ownerId, businessId) {
       "businessId" : 8
     } ];
 
+    console.log("CHECKME");
+    console.log("OWNER",ownerId, "BUSINESS",businessId);
     // filter if ownerId and businessId exist (in mock data)
-    const filteredBusinessStatistics = examples['application/json'].filter(b => b.ownerId === ownerId && b.businessId === businessId);
+    const filtStat = examples['application/json'].filter(
+      b => b.ownerId === ownerId && b.businessId === businessId
+    );
     
-    if (filteredBusinessStatistics.length > 0) {
-      resolve(filteredBusinessStatistics);
+    if (filtStat.length > 0) {
+      resolve(filtStat);
     }
     else {
       return reject({
