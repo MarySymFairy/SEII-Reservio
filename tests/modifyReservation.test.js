@@ -30,9 +30,6 @@ test('PUT /reservations/:reservationId - successful case', async t => {
                 reservationMonth: 10,
                 reservationYear: 2025,
                 numberOfPeople: 4,
-                businessId: 0,
-                businessName: "Test Business",
-                username: "Test User",
             },
         });
 
