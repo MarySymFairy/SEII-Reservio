@@ -5,12 +5,10 @@ const got = require("got");
 const app = require('../index.js');
 
 test.before(async (t) => {
-    // t.context.server = http.createServer(app);
-    // const server = t.context.server.listen();
-    // const {port} = server.address();
-    // t.context.got = got.extend({responseType: 'json', prefixUrl: `http://localhost:${port}`});
-    t.context.server = app.listen(8080); // Bind to a fixed port
-    t.context.got = got.extend({ responseType: 'json', prefixUrl: 'http://localhost:8080' });
+    t.context.server = http.createServer(app);
+    const server = t.context.server.listen();
+    const {port} = server.address();
+    t.context.got = got.extend({responseType: 'json', prefixUrl: `http://localhost:${port}`});
 });
 
 test.after.always(t => {

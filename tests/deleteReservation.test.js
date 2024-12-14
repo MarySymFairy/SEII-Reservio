@@ -20,7 +20,7 @@ test.after.always((t) => {
 test("DELETE /reservations/:id - Delete nonexistent reservation", async (t) => {
     const reservationId = 56;
     const error = await t.throwsAsync(() =>
-      t.context.got.delete(`reservations/${reservationId}?userId=0`, {
+      t.context.got.delete(`reservations/${reservationId}?userId=6`, {
         throwHttpErrors: true, // Ensure errors are thrown for non-2xx status codes
       })
     );
