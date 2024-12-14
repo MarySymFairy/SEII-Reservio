@@ -609,7 +609,7 @@ exports.viewAReservation = function(userId, reservationId) {
     }];
 
     // Find reservation based on reservationId and userId
-    const reservation = examples.find(
+    const reservation = examples['application/json'].find(
       (res) => res.reservationId === reservationId && res.userId === userId
     );
 
@@ -632,23 +632,18 @@ exports.viewAReservation = function(userId, reservationId) {
  * userId Integer UserId of the logged in user that made the reservation
  * returns List
  **/
-exports.viewAReservation = function(reservationId,userId) {
+exports.viewReservations = function(userId) {
   return new Promise(function(resolve, reject) {
     if (typeof userId !== "number" || !Number.isInteger(userId) || userId < 0 || isNaN(userId)) {
       return reject({
-        code: 400,
-        message: "Invalid user ID format.",
+          code: 400,
+          message: "Invalid user ID format.", // Match expected output
       });
-    } else if ( isNaN(reservationId) || typeof reservationId !== "number" || !Number.isInteger(reservationId)) {
-      return reject({
-        code: 400,
-        message: "Invalid reservation ID format.",
-      });
-    }
+    } 
   
-    
+
     var examples = {};
-    examples['application/json'] = [{
+    examples['application/json'] = [ {
       "reservationId" : 0,
       "userId" : 6,
       "reservationTime" : "12:00",
@@ -659,15 +654,30 @@ exports.viewAReservation = function(reservationId,userId) {
       "reservationMonth" : 5,
       "numberOfPeople" : 7,
       "username" : "username"
-    },];
+    }, {
+      "reservationId" : 0,
+      "userId" : 6,
+      "reservationTime" : "12:00",
+      "businessName" : "businessName",
+      "reservationYear" : 2025,
+      "reservationDay" : 5,
+      "businessId" : 1,
+      "reservationMonth" : 5,
+      "numberOfPeople" : 7,
+      "username" : "username"
+    } ];
 
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
+    const userReservations = examples['application/json'].filter(reservation => reservation.userId === userId);
+
+    if (userReservations.length > 0) {
+        return resolve(userReservations);
     } else {
-      resolve();
+        return resolve([]); // Return empty array if no reservations are found
     }
   });
-}
+};
+
+
 
 
 //BUSINESS FUNCTIONS
@@ -792,6 +802,3 @@ exports.viewBusinessStatistics = function(businessId, ownerId) {
     }
   });
 }
-
-
-
