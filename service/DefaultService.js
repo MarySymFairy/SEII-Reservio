@@ -325,39 +325,170 @@ exports.getBusinessesByCategory = function(categoryName) {
  * reservationId Long ID of the reservation to modify
  * returns List
  **/
-exports.modifyReservation = function(body,userId,reservationId) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = [ {
-      "reservationId" : 0,
-      "userId" : 6,
-      "reservationTime" : "12:00",
-      "businessName" : "businessName",
-      "reservationYear" : 2025,
-      "reservationDay" : 5,
-      "businessId" : 1,
-      "reservationMonth" : 5,
-      "numberOfPeople" : 7,
-      "username" : "username"
-    }, {
-    "reservationId" : 1,
-    "userId" : 6,
-    "reservationTime" : "12:00",
-    "businessName" : "businessName",
-    "reservationYear" : 2025,
-    "reservationDay" : 7,
-    "businessId" : 1,
-    "reservationMonth" : 5,
-    "numberOfPeople" : 7,
-    "username" : "username"
-  } ];
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+// exports.modifyReservation = function(body, userId, reservationId) {
+//   return new Promise(function(resolve, reject) {
+//     // Validate input types
+//     if (typeof userId !== "number" || typeof reservationId !== "number" ||
+//       !Number.isInteger(userId) || !Number.isInteger(reservationId) ||
+//       userId < 0 || reservationId < 0 || isNaN(userId) || isNaN(reservationId)
+//     ) {
+//       return reject({
+//         code: 400,
+//         message: "Invalid data types. userId and reservationId must be numbers.",
+//       });
+//     }
+//     var examples = {};
+//     examples['application/json'] = [ {
+//       "reservationId" : 0,
+//       "userId" : 6,
+//       "reservationTime" : "12:00",
+//       "businessName" : "businessName",
+//       "reservationYear" : 2025,
+//       "reservationDay" : 5,
+//       "businessId" : 1,
+//       "reservationMonth" : 5,
+//       "numberOfPeople" : 7,
+//       "username" : "username"
+//     }, {
+//       "reservationId" : 1,
+//       "userId" : 6,
+//       "reservationTime" : "12:00",
+//       "businessName" : "businessName",
+//       "reservationYear" : 2025,
+//       "reservationDay" : 7,
+//       "businessId" : 1,
+//       "reservationMonth" : 5,
+//       "numberOfPeople" : 7,
+//       "username" : "username"
+//     } ];
+
+
+//     if (Object.keys(examples).length > 0) {
+//       resolve(examples[Object.keys(examples)[0]]);
+//     } else {
+//       resolve();
+//     }
+//   });
+// }
+
+exports.modifyReservation = function (body, userId, reservationId) {
+  return new Promise(function (resolve, reject) {
+    try {
+      const reservationTime = body.reservationTime ? body.reservationTime.trim() : '';
+      const reservationDay = parseInt(body.reservationDay, 10);
+      const reservationMonth = parseInt(body.reservationMonth, 10);
+      const reservationYear = parseInt(body.reservationYear, 10);
+
+      // Validate inputs
+      if (
+        isNaN(reservationId) || typeof reservationId !== 'number' || typeof userId !== 'number' ||
+        (body.reservationTime && typeof reservationTime !== 'string') || reservationId < 0 || userId < 0 ||
+        (body.reservationDay && isNaN(reservationDay)) ||
+        (body.reservationMonth && isNaN(reservationMonth)) ||
+        (body.reservationYear && isNaN(reservationYear)) ||
+        (body.numberOfPeople && (typeof body.numberOfPeople !== 'number' || body.numberOfPeople <= 0))
+      ) {
+        return reject({
+          message: 'Invalid data types or values.',
+          code: 400,
+        });
+      }
+
+      // Validate time format if provided
+      if (body.reservationTime) {
+        const timeRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
+        if (!timeRegex.test(reservationTime)) {
+          return reject({
+            message: 'Invalid time format. Expected HH:mm.',
+            errorCode: 'validation.error',
+          });
+        }
+      }
+
+      // Validate date fields if provided
+      if (body.reservationDay || body.reservationMonth || body.reservationYear) {
+        const today = new Date();
+        const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+        const reservationDateUTC = Date.UTC(reservationYear, reservationMonth - 1, reservationDay);
+
+        if (reservationDateUTC < todayUTC) {
+          return reject({
+            code: 409,
+            message: 'Cannot modify a reservation to a date in the past.',
+          });
+        }
+
+        // Validate February days
+        const daysInMonth = new Date(reservationYear, reservationMonth, 0).getDate();
+        const isLeapYear = (year) =>
+          (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+
+        if (reservationMonth === 2) {
+          const maxDays = isLeapYear(reservationYear) ? 29 : 28;
+          if (reservationDay < 1 || reservationDay > maxDays) {
+            return reject({
+              code: 400,
+              error: `Invalid reservation day for February: ${reservationDay}. Max allowed: ${maxDays}.`,
+            });
+          }
+        } else if (reservationDay < 1 || reservationDay > daysInMonth) {
+          return reject({
+            message: `Invalid reservation day. Expected a number between 1 and ${daysInMonth}.`,
+            errorCode: 'validation.error',
+          });
+        }
+      }
+
+      // Fetch the existing reservation (mocked here; replace with actual logic to retrieve reservations)
+      // const existingReservation = UserReservations[userId]?.find(r => r.reservationId === reservationId);
+      const existingReservation = {
+        reservationId: 0,
+        userId: 6,
+        reservationTime: '12:00',
+        businessName: 'businessName',
+        reservationYear: 2025,
+        reservationDay: 5,
+        businessId: 1,
+        reservationMonth: 5,
+        numberOfPeople: 7,
+        username: 'username'
+      }; // Mock data
+
+      console.log("CHECKME");
+      console.log("USER=6",userId, "RESERVATION=0", reservationId);
+      if (!existingReservation) {
+        return reject({
+          code: 404,
+          message: 'Reservation not found.',
+        });
+      }
+
+      // Modify the reservation with provided data
+      const updatedReservation = {
+        ...existingReservation,
+        reservationTime: reservationTime || existingReservation.reservationTime,
+        reservationDay: reservationDay || existingReservation.reservationDay,
+        reservationMonth: reservationMonth || existingReservation.reservationMonth,
+        reservationYear: reservationYear || existingReservation.reservationYear,
+        numberOfPeople: body.numberOfPeople || existingReservation.numberOfPeople,
+      };
+
+      // Save the updated reservation (mocked here; replace with actual save logic)
+      // const index = UserReservations[userId].findIndex(r => r.reservationId === reservationId);
+      // UserReservations[userId][index] = updatedReservation;
+
+      resolve(updatedReservation);
+
+    } catch (error) {
+      console.error('Error in modifying reservation:', error);
+      reject({
+        message: 'Internal server error',
+        errorCode: 'server.error',
+      });
     }
   });
-}
+};
+
 
 
 /**
@@ -369,11 +500,13 @@ exports.modifyReservation = function(body,userId,reservationId) {
  **/
 exports.notifyUser = function(userId,reservationId) {
   return new Promise(function(resolve, reject) {
-    if (typeof userId !== "number" || typeof reservationId !== "number") {
-      return reject({
-        code: 400,
-        message: "Invalid data types. userId and reservationId must be numbers.",
-      });
+    if (typeof userId !== "number" || typeof reservationId !== "number" || 
+      userId < 0 || reservationId < 0 || isNaN(userId) || isNaN(reservationId) || 
+      !Number.isInteger(userId) || !Number.isInteger(reservationId)) {
+        return reject({
+          code: 400,
+          message: "Invalid data types. userId and reservationId must be numbers.",
+        });
     }
 
     var examples = {};
@@ -467,12 +600,12 @@ exports.searchBusinessByKeyword = function(keyword) {
  **/
 exports.viewAReservation = function(userId, reservationId) {
   return new Promise(function(resolve, reject) {
-    if (isNaN(userId) || typeof userId !== "number" || !Number.isInteger(userId)) {
+    if (isNaN(userId) || typeof userId !== "number" || !Number.isInteger(userId) || userId < 0) {
       return reject({
         code: 400,
         message: "Invalid user ID format.",
       });
-    } else if ( isNaN(reservationId) || typeof reservationId !== "number" || !Number.isInteger(reservationId)) {
+    } else if (isNaN(reservationId) || typeof reservationId !== "number" || !Number.isInteger(reservationId) || reservationId < 0) {
       return reject({
         code: 400,
         message: "Invalid reservation ID format.",
@@ -520,7 +653,7 @@ exports.viewAReservation = function(userId, reservationId) {
  **/
 exports.viewReservations = function(userId) {
   return new Promise(function(resolve, reject) {
-    if (typeof userId !== "number" || !Number.isInteger(userId)) {
+    if (typeof userId !== "number" || !Number.isInteger(userId) || userId < 0 || isNaN(userId)) {
       return reject({
           code: 400,
           message: "Invalid user ID format.", // Match expected output
@@ -579,17 +712,20 @@ exports.viewReservations = function(userId) {
  **/
 exports.viewBusinessReservations = function(ownerId, businessId, day, month, year) {
   return new Promise(function(resolve, reject) {
-    if (typeof ownerId !== "number" || typeof businessId !== "number") {
-      return reject({
-        code: 400,
-        message: "Invalid data types. userId and reservationId must be numbers.",
-      });
+    if (typeof ownerId !== "number" || typeof businessId !== "number" || 
+      !Number.isInteger(ownerId) || !Number.isInteger(businessId) || 
+      ownerId < 0 || businessId < 0) {
+        return reject({
+          code: 400,
+          message: "Invalid data types. userId and reservationId must be numbers.",
+        });
     }
-    if (typeof day !== "number" || typeof month !== "number" || typeof year !== "number") {
-      return reject({
-        code: 400,
-        message: "Invalid data types. day, month, and year must be numbers.",
-      });
+    if (typeof day !== "number" || typeof month !== "number" || typeof year !== "number" || 
+      day < 0 || month < 0 || year < 0 || day > 31 || month > 12 || year < 2024) {
+        return reject({
+          code: 400,
+          message: "Invalid data types. day, month, and year must be numbers.",
+        });
     }
     
     var examples = {};
@@ -645,11 +781,13 @@ exports.viewBusinessReservations = function(ownerId, businessId, day, month, yea
  **/
 exports.viewBusinessStatistics = function(businessId, ownerId) {
   return new Promise(function(resolve, reject) {
-    if (typeof ownerId !== "number" || typeof businessId !== "number") {
-      return reject({
-        code: 400,
-        message: "Invalid data types. userId and reservationId must be numbers.",
-      });
+    if (!Number.isInteger(ownerId) || typeof ownerId !== "number" || 
+      typeof businessId !== "number" || !Number.isInteger(businessId) || 
+      ownerId < 0 || businessId < 0) {
+        return reject({
+          code: 400,
+          message: "Invalid data types. userId and reservationId must be numbers.",
+        });
     }
 
     var examples = {};
@@ -681,13 +819,6 @@ exports.viewBusinessStatistics = function(businessId, ownerId) {
         message: "Business statistics not found."
       });
     }
-
-
-    // if (Object.keys(examples).length > 0) {
-    //   resolve(examples[Object.keys(examples)[0]]);
-    // } else {
-    //   resolve();
-    // }
   });
 }
 

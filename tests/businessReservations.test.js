@@ -51,7 +51,7 @@ test("GET /businessReservations - Retrieve all reservations", async (t) => {
 
 //Unhappy path: No existing reservations
  test("GET /businessReservations - No existing reservations/", async (t) => {
-    const noReservationsBusinessId = 99999;
+    const noReservationsBusinessId = 12;
     const error = await t.throwsAsync(() => t.context.got.get(`business-reservations?ownerId=${owner_id}&businessId=${noReservationsBusinessId}&day=${day}&month=${month}&year=${year}`));
     t.is(error.response.statusCode, 404);
     t.is(error.response.body.message, "No business reservations found.");
