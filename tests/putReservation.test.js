@@ -1,147 +1,170 @@
-// const http = require("http");
+const http = require("http");
+const test = require("ava");
+const got = require("got");
 
-// const test = require("ava");
-// const got = require("got");
+const app = require('../index.js');
 
-// const app = require('../index.js');
+test.before(async (t) => {
+    t.context.server = http.createServer(app);
+    const server = t.context.server.listen();
+    const { port } = server.address();
+    t.context.got = got.extend({ responseType: 'json', prefixUrl: `http://localhost:${port}` });
+});
 
-// test.before(async (t) => {
-//     t.context.server = http.createServer(app);
-//     const server = t.context.server.listen();
-//     const {port} = server.address();
-//     t.context.got = got.extend({responseType: 'json', prefixUrl: `http://localhost:${port}`});
-// });
+test.after.always(t => {
+    t.context.server.close();
+});
 
-// test.after.always((t) => {
-//     t.context.server.close();
-// });
+// Happy Scenario
 
+test('PUT /reservations/:reservationId - successful case', async t => {
+    try {
+        const response = await t.context.got.put('reservations/0?userId=6', {
+            searchParams: {
+                userId: 6,
+            },
+            json: {
+                reservationId: 0,
+                userId: 6,
+                businessId: 1,
+                reservationTime: "18:00",
+                reservationDay: 15,
+                reservationMonth: 10,
+                reservationYear: 2025,
+                numberOfPeople: 4,
+                username: "username",
+                businessName: "businessName",
+            },
+        });
 
-// //PUT--------------------------------------------------------------------------------
-// // Happy path: Modify reservation
-// test("PUT /reservations/:id - Modify reservation (happy path)", async (t) => {
-//         const body = {
-//                 reservationTime: "19:00",
-//                 numberOfPeople: 5,
-//         };
+        t.is(response.statusCode, 200);
+        t.deepEqual(response.body, {
+            reservationId: 0,
+            userId: 6,
+            businessId: 1,
+            reservationTime: "18:00",
+            reservationDay: 15,
+            reservationMonth: 10,
+            reservationYear: 2025,
+            numberOfPeople: 4,
+            username: "username",
+            businessName: "businessName",
+        });
+    } catch (error) {
+        console.error('Error:', error.response ? error.response.body : error.message);
+        t.fail('Request failed');
+    }
+});
 
-//         const { body: response, statusCode } = await t.context.got.put("reservations/1", { json: body });
-//         t.is(statusCode, 200);
-//         t.is(response.numberOfPeople, 5);
-// });
+// Unhappy Scenario: Missing userId in query parameters
 
-// // Error case: Modify nonexistent reservation
-// test("PUT /reservations/:id - Modify nonexistent reservation", async (t) => {
-//         const body = { numberOfPeople: 3 };
-//         const error = await t.throwsAsync(() => t.context.got.put("reservations/9999", { json: body }));
-//         t.is(error.response.statusCode, 404);
-//         t.is(error.response.body.message, "Reservation not found.");
-// });
+test('PUT /reservations/:reservationId - missing userId', async t => {
+    try {
+        await t.context.got.put('reservations/{reservationId}=0?userId=', {
+            json: {
+                reservationTime: "18:00",
+                reservationDay: 15,
+                reservationMonth: 10,
+                reservationYear: 2025,
+                numberOfPeople: 4,
+            },
+        });
+        t.fail('Request should have failed');
+    } catch (error) {
+        t.is(error.response.statusCode, 400);
+        t.regex(error.response.body.message, /userId/);
+    }
+});
 
-// // Error case: Modify reservation with invalid ID format
-// test("PUT /reservations/:id - Modify reservation with invalid ID format", async (t) => {
-//         const body = { numberOfPeople: 3 };
-//         const error = await t.throwsAsync(() => t.context.got.put("reservations/invalid-id", { json: body }));
-//         t.is(error.response.statusCode, 400);
-//         t.is(error.response.body.message, "Invalid reservation ID format.");
-//     });
-    
-//     // Error case: Modify reservation without body
-//     test("PUT /reservations/:id - Modify reservation with empty body", async (t) => {
-//         const error = await t.throwsAsync(() => t.context.got.put("reservations/1", { json: {} }));
-//         t.is(error.response.statusCode, 400);
-//         t.is(error.response.body.message, "Request body cannot be empty.");
-//     });
-    
-//     // Error case: Modify reservation with invalid body structure
-//     test("PUT /reservations/:id - Modify reservation with invalid body structure", async (t) => {
-//         const body = { unknownField: "value" }; // Invalid field
-//         const error = await t.throwsAsync(() => t.context.got.put("reservations/1", { json: body }));
-//         t.is(error.response.statusCode, 400);
-//         t.is(error.response.body.message, "Invalid request body.");
-//     });
-    
-//     // Error case: Modify reservation with unauthorized user
-//     test("PUT /reservations/:id - Unauthorized modify request", async (t) => {
-//         const body = { numberOfPeople: 4 };
-//         const error = await t.throwsAsync(() => 
-//             t.context.got.put("reservations/1", {
-//                 json: body,
-//                 headers: { Authorization: "InvalidToken" },
-//             })
-//         );
-//         t.is(error.response.statusCode, 401);
-//         t.is(error.response.body.message, "Unauthorized access.");
-//     });
-    
-//     // Error case: Modify reservation with missing required fields
-//     test("PUT /reservations/:id - Missing required fields in body", async (t) => {
-//         const body = { numberOfPeople: null }; // Missing a valid value
-//         const error = await t.throwsAsync(() => t.context.got.put("reservations/1", { json: body }));
-//         t.is(error.response.statusCode, 422);
-//         t.is(error.response.body.message, "Missing or invalid required fields.");
-//     });
-    
-//     // Error case: Modify reservation causing constraint violations
-//     test("PUT /reservations/:id - Modify reservation with constraint violation", async (t) => {
-//         const body = { reservationTime: "25:00" }; // Invalid time format
-//         const error = await t.throwsAsync(() => t.context.got.put("reservations/1", { json: body }));
-//         t.is(error.response.statusCode, 422);
-//         t.is(error.response.body.message, "Invalid reservation time format.");
-//     });
-    
-//     // Error case: Modify reservation that belongs to another user
-//     test("PUT /reservations/:id - Modify reservation belonging to another user", async (t) => {
-//         const body = { numberOfPeople: 3 };
-//         const error = await t.throwsAsync(() => t.context.got.put("reservations/2", { json: body }));
-//         t.is(error.response.statusCode, 403);
-//         t.is(error.response.body.message, "You are not authorized to modify this reservation.");
-//     });   
+// Unhappy Scenario: Missing reservationId in the URL path
 
-// // Error case: Modify reservation with invalid data types
-// test("PUT /reservations/:id - Modify reservation with invalid data types", async (t) => {
-//     const body = { numberOfPeople: "four" }; // Should be a number
-//     const error = await t.throwsAsync(() => 
-//         t.context.got.put("reservations/1", { json: body })
-//     );
-//     t.is(error.response.statusCode, 400);
-//     t.is(error.response.body.message, "Invalid data types for fields.");
-// });
+test('PUT /reservations/:reservationId - missing reservationId', async t => {
+    try {
+        await t.context.got.put('reservations/{reservationId}=?userId=6', {
+            searchParams: {
+                userId: 6,
+                // Missing reservationId
+            },
+            json: {
+                reservationTime: "18:00",
+                reservationDay: 15,
+                reservationMonth: 10,
+                reservationYear: 2025,
+                numberOfPeople: 4,
+            },
+        });
+        t.fail('Request should have failed');
+    } catch (error) {
+        t.is(error.response.statusCode, 400); // Adjusted to match the expected status code
+        t.regex(error.response.body.message, /reservationId/);
+    }
+});
 
-// // Error case: Modify reservation with expired reservation date
-// test("PUT /reservations/:id - Modify reservation with expired date", async (t) => {
-//     const body = { reservationYear: 2020, reservationMonth: 1, reservationDay: 1 };
-//     const error = await t.throwsAsync(() => 
-//         t.context.got.put("reservations/1", { json: body })
-//     );
-//     t.is(error.response.statusCode, 409);
-//     t.is(error.response.body.message, "Cannot modify reservation to an expired date.");
-// });
+// Unhappy Scenario: Invalid reservationTime format
 
-// // Error case: Modify reservation without authentication
-// test("PUT /reservations/:id - Modify reservation without authentication", async (t) => {
-//     const body = { numberOfPeople: 5 };
-//     const error = await t.throwsAsync(() => 
-//         t.context.got.put("reservations/1", { json: body, headers: { Authorization: "" } })
-//     );
-//     t.is(error.response.statusCode, 401);
-//     t.is(error.response.body.message, "Authentication required.");
-// });
+test('PUT /reservations/:reservationId - invalid reservationTime format', async t => {
+    try {
+        await t.context.got.put('reservations/0?userId=6', {
+            searchParams: {
+                userId: 6,
+            },
+            json: {
+                reservationTime: "25:00", // Invalid time
+                reservationDay: 15,
+                reservationMonth: 10,
+                reservationYear: 2025,
+                numberOfPeople: 4,
+            },
+        });
+        t.fail('Request should have failed');
+    } catch (error) {
+        t.is(error.response.statusCode, 400);
+        t.regex(error.response.body.message, /reservationTime/);
+    }
+});
 
-// // Error case: Modify reservation without userId
-// test("PUT /reservations/:id - Modify reservation without userId", async (t) => {
-//     const body = { numberOfPeople: 5 };
-//     const reservationId = 1;
-//     const { body: response, statusCode } = await t.context.got.put(`reservations/${reservationId}`, { json: body, throwHttpErrors: false });
-//     t.is(statusCode, 400);
-//     t.is(response.message, "userId is required.");
-// });
+// Unhappy Scenario: Reservation date in the past
 
-// // Error case: Modify reservation without reservationId
-// test("PUT /reservations/:id - Modify reservation without reservationId", async (t) => {
-//     const body = { userId: 1, numberOfPeople: 5 };
-//     const reservationId = ''; // Missing reservationId in path
-//     const { body: response, statusCode } = await t.context.got.put(`reservations/${reservationId}`, { json: body, throwHttpErrors: false });
-//     t.is(statusCode, 400);
-//     t.is(response.message, "reservationId is required.");
-// });
+test('PUT /reservations/:reservationId - reservation date in the past', async t => {
+    try {
+        await t.context.got.put('reservations/0?userId=6', {
+            searchParams: {
+                userId: 6,
+            },
+            json: {
+                reservationTime: "18:00",
+                reservationDay: 1,
+                reservationMonth: 1,
+                reservationYear: 2020, // Past date
+                numberOfPeople: 4,
+            },
+        });
+        t.fail('Request should have failed');
+    } catch (error) {
+        t.is(error.response.statusCode, 400);
+        t.regex(error.response.body.message, /request.body.reservationYear should be >= 2024/);
+    }
+});
+
+// Unhappy Scenario: Invalid numberOfPeople
+
+test('PUT /reservations/:reservationId - invalid numberOfPeople', async t => {
+    try {
+        await t.context.got.put('reservations/0?userId=6', {
+            searchParams: {
+                userId: 6,
+            },
+            json: {
+                reservationTime: "18:00",
+                reservationDay: 15,
+                reservationMonth: 10,
+                reservationYear: 2025,
+                numberOfPeople: 0, // Invalid value
+            },
+        });
+        t.fail('Request should have failed');
+    } catch (error) {
+        t.is(error.response.statusCode, 400);
+        t.regex(error.response.body.message, /numberOfPeople/);
+    }
+});
