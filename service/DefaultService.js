@@ -802,6 +802,3 @@ exports.viewBusinessStatistics = function(businessId, ownerId) {
     }
   });
 }
-
-
-
