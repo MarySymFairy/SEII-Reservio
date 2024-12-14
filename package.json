@@ -8,7 +8,9 @@
     "prestart": "npm install",
     "start": "node index.js",
     "dev": "nodemon index.js --watch .",
-    "test": "c8 ava"
+    "test": "c8 ava",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "keywords": [
     "swagger"
@@ -31,7 +33,7 @@
     "eslint-config-iamnapo": "^28.2.0",
     "nodemon": "^2.0.20",
     "test-listen": "^1.1.0",
-    "cypress": "^12.0.0"
+    "cypress": "^12.17.4"
   },
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
