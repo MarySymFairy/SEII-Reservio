@@ -1,68 +1,49 @@
-// const http = require("http");
+const http = require("http");
 
-// const test = require("ava");
-// const got = require("got");
+const test = require("ava");
+const got = require("got");
 
-// const app = require('../index.js');
+const app = require('../index.js');
 
-// test.before(async (t) => {
-//     t.context.server = http.createServer(app);
-//     const server = t.context.server.listen();
-//     const {port} = server.address();
-//     t.context.got = got.extend({responseType: 'json', prefixUrl: `http://localhost:${port}`});
-// });
+test.before(async (t) => {
+    t.context.server = http.createServer(app);
+    const server = t.context.server.listen();
+    const {port} = server.address();
+    t.context.got = got.extend({responseType: 'json', prefixUrl: `http://localhost:${port}`});
+});
 
-// test.after.always((t) => {
-//     t.context.server.close();
-// });
+test.after.always((t) => {
+    t.context.server.close();
+});
 
-// //GET NOTIFICATION---------------------------------------------------------------------
-// // GET /reservations/{reservation-id}/notification - Notify user about reservation (happy path)
-// test("GET /reservations/{reservation-id}/notification - Notify user (happy path)", async (t) => {
-//     const reservationId = 1;
-//     const { body, statusCode } = await t.context.got.get(`reservations/${reservationId}/notification`);
-//     t.is(statusCode, 200);
-//     t.is(body.message, "Notification sent successfully.");
-// });
+test("GET /reservations/reservationId/notification?userId - Should return a notifications for the reservation ", async (t) => {
+    const { body, statusCode } = await t.context.got.get("reservations/0/notification?userId=6");
+    t.is(statusCode, 200, "Response status should be 200");
+    t.true(Array.isArray(body), "Response body should be an array");
+    t.true(body.length > 0, "Response body should not be empty");
 
-// // GET /reservations/{reservation-id}/notification - Notify user about non-existent reservation (error case)
-// test("GET /reservations/{reservation-id}/notification - Notify user about non-existent reservation (error case)", async (t) => {
-//     const reservationId = 9999; // non-existent reservationId
-//     const { body, statusCode } = await t.context.got.get(`reservations/${reservationId}/notification`);
-//     t.is(statusCode, 404);
-//     t.is(body.message, "Reservation not found.");
-// });
+    const notification = body[0];
+    t.not(notification.message, undefined, "Notification should have a message");
+});
 
-// // GET /reservations/{reservation-id}/notification - Notify user about invalid reservation ID (unhappy path)
-// test("GET /reservations/{reservation-id}/notification - Notify user with invalid reservation ID", async (t) => {
-//     const invalidReservationId = "invalid-id"; // Invalid ID format
-//     const { body, statusCode } = await t.context.got.get(`reservations/${invalidReservationId}/notification`, { throwHttpErrors: false });
-//     t.is(statusCode, 400); // Assuming 400 Bad Request for invalid input
-//     t.is(body.message, "Invalid reservation ID.");
-// });
+test("GET /reservations/reservationId/notification?userId - Should return an error message for an invalid userId", async (t) => {
+    const invalid_userId = "invalidUserId";
+    const error = await t.throwsAsync(() => t.context.got.get(`reservations/0/notification?userId=${invalid_userId}`));
+    t.is(error.response.statusCode, 400, "Response status should be 400");
+});
 
-// // GET /reservations/{reservation-id}/notification - Unauthorized access (unhappy path)
-// test("GET /reservations/{reservation-id}/notification - Unauthorized access", async (t) => {
-//     const reservationId = 1;
-//     const { body, statusCode } = await t.context.got.get(`reservations/${reservationId}/notification`, {
-//         throwHttpErrors: false,
-//         headers: { Authorization: "InvalidToken" }, // Simulating unauthorized access
-//     });
-//     t.is(statusCode, 401); // Assuming 401 Unauthorized
-//     t.is(body.message, "Unauthorized access.");
-// });
+test("GET /reservations/reservationId/notification?userId - Should return an error message for an invalid reservationId", async (t) => {
+    const invalid_reservationId = "invalidReservationId";
+    const error = await t.throwsAsync(() => t.context.got.get(`reservations/${invalid_reservationId}/notification?userId=6`));
+    t.is(error.response.statusCode, 400, "Response status should be 400");
+});
 
-// // GET /reservations/{reservation-id}/notification - Missing reservation ID in the URL (unhappy path)
-// test("GET /reservations/{reservation-id}/notification - Missing reservation ID", async (t) => {
-//     const { body, statusCode } = await t.context.got.get(`reservations//notification`, { throwHttpErrors: false });
-//     t.is(statusCode, 400); // Assuming 400 Bad Request for malformed request
-//     t.is(body.message, "Missing reservation ID.");
-// });
+test("GET /reservations/reservationId/notification?userId - Should return an error message for an empty userId", async (t) => {
+   const error = await t.throwsAsync(() => t.context.got.get(`reservations/0/notification?userId=`));
+    t.is(error.response.statusCode, 400, "Response status should be 400");
+});
 
-// // GET /reservations/{reservation-id}/notification - Notify user for a deleted reservation (unhappy path)
-// test("GET /reservations/{reservation-id}/notification - Deleted reservation", async (t) => {
-//     const deletedReservationId = 2; // Simulating a reservation that has been deleted
-//     const { body, statusCode } = await t.context.got.get(`reservations/${deletedReservationId}/notification`, { throwHttpErrors: false });
-//     t.is(statusCode, 410); // Assuming 410 Gone for deleted resources
-//     t.is(body.message, "Reservation has been deleted.");
-// });
+test("GET /reservations/reservationId/notification?userId - Should return an error message for a not found reservation with this userId and reservationId", async (t) => {
+    const error = await t.throwsAsync(() => t.context.got.get(`reservations/4/notification?userId=0`));
+    t.is(error.response.statusCode, 404, "Response status should be 404");
+});
