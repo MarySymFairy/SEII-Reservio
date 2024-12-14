@@ -203,52 +203,61 @@ exports.deleteReservation = function (userId, reservationId) {
  * numberOfPeople Integer The arranged number of people that will be in the reservation
  * returns inline_response_200
  **/
-exports.getAvailability = function(businessId,reservationDay,reservationMonth,reservationYear,numberOfPeople) {
+exports.getAvailability = function(businessId, reservationDay, reservationMonth, reservationYear, numberOfPeople) {
   return new Promise(function(resolve, reject) {
     const availableHours = [ "18:00", "20:00" ]; // Define all possible reservation times
 
     // Mock existing reservations data
     const businessReservations = [
       {
-        'reservationId': 0,
-        'userId': 6,
-        'ownerId': 7,
-	      'businessId': 8,
-        'reservationTime': '20:00',
-        'businessName': 'businessName',
-        'reservationYear': 2025,
-        'reservationDay': 1,
-        'people': 7,
-        'reservationMonth': 5,
-        'username': 'username'
+        reservationId: 1,
+        userId: 6,
+        ownerId: 7,
+        businessId: 1,
+        reservationTime: '20:00',
+        businessName: "businessName",
+        reservationYear: 2026,
+        reservationDay: 1,
+        numberOfPeople: 2,
+        reservationMonth: 5,
+        username: "username",
       },
       {
-        'reservationId': 2,
-        'userId': 7,
-        'ownerId': 7,
-	      'businessId': 8,
-        'reservationTime': '18:00',
-        'businessName': 'businessName',
-        'reservationYear': 2026,
-        'reservationDay': 1,
-        'people': 2,
-        'reservationMonth': 5,
-        'username': 'username2'
+        reservationId: 2,
+        userId: 6,
+        ownerId: 7,
+        businessId: 1,
+        reservationTime: '18:00',
+        businessName: "businessName",
+        reservationYear: 2026,
+        reservationDay: 2,
+        numberOfPeople: 99,
+        reservationMonth: 5,
+        username: "username2"
+      },
+      {
+        reservationId: 3,
+        userId: 7,
+        ownerId: 7,
+        businessId: 1,
+        reservationTime: '20:00',
+        businessName: "businessName",
+        reservationYear: 2026,
+        reservationDay: 2,
+        numberOfPeople: 10,
+        reservationMonth: 5,
+        username: "username3"
       }
     ];
 
-    console.log("CHECKME");
-    console.log("BUSINESSID=8",businessId,"DAY=5", reservationDay,"MONTH=5", reservationMonth, "YEAR=2025",reservationYear, "PEOPLE=7",numberOfPeople);
     // Input Validation
     if (
       typeof businessId !== 'number' || typeof reservationDay !== 'number' ||
       typeof reservationMonth !== 'number' || typeof reservationYear !== 'number' ||
-      typeof numberOfPeople !== 'number' || businessId < 0 || 
-      reservationDay <= 0 || reservationMonth <= 0 ||
-      reservationYear <= 0 || numberOfPeople <= 0 || 
-      numberOfPeople > 100 || !Number.isInteger(numberOfPeople) ||
-      !Number.isInteger(businessId) || !Number.isInteger(reservationDay) ||
-      !Number.isInteger(reservationMonth) || !Number.isInteger(reservationYear)
+      typeof numberOfPeople !== 'number' || businessId < 0 || reservationDay <= 0 ||
+      reservationMonth <= 0 || reservationYear < 2024 || numberOfPeople <= 0 || 
+      numberOfPeople > 100 || !Number.isInteger(numberOfPeople) || !Number.isInteger(businessId) ||
+      !Number.isInteger(reservationDay) || !Number.isInteger(reservationMonth) || !Number.isInteger(reservationYear)
     ) {
       return reject({
         code: 400,
@@ -256,10 +265,15 @@ exports.getAvailability = function(businessId,reservationDay,reservationMonth,re
       });
     }
 
+    //     console.log("CHECKME");
+//     console.log("BUSINESSID",businessId,"DAY", reservationDay,"MONTH", reservationMonth, "YEAR",reservationYear, "PEOPLE",numberOfPeople);
+
     // Fetch reservations for the specified business and date
-    const existingReservations = businessReservations.filter(r => 
-      r.businessId === businessId && r.reservationDay === reservationDay &&
-      r.reservationMonth === reservationMonth && r.reservationYear === reservationYear
+    const existingReservations = businessReservations.filter(reservation => 
+      reservation.reservationDay === reservationDay &&
+      reservation.reservationMonth === reservationMonth &&
+      reservation.reservationYear === reservationYear &&
+      reservation.businessId === businessId
     );
 
     // Extract reserved times
@@ -269,10 +283,23 @@ exports.getAvailability = function(businessId,reservationDay,reservationMonth,re
     const freeHours = availableHours.filter(hour => !reservedTimes.includes(hour));
     const freeHoursWithTime = freeHours.map(hour => { return { reservationTime: hour }; });
 
+    // (Optional) If there's a capacity limit per time slot, you can add additional checks here
+    // For example, assuming a maximum of 10 people per time slot
+    const MAX_CAPACITY_PER_SLOT = 100;
+    const capacityCheck = existingReservations.reduce((total, reservation) => total + reservation.numberOfPeople, 0);
+
+    if (capacityCheck + numberOfPeople > MAX_CAPACITY_PER_SLOT) {
+      return reject({
+        code: 404,
+        message: "No available hour found."
+      });
+    }
+
     // Resolve with available reservation times
     resolve(freeHoursWithTime);
   });
 }
+
 
 
 /**
@@ -325,52 +352,6 @@ exports.getBusinessesByCategory = function(categoryName) {
  * reservationId Long ID of the reservation to modify
  * returns List
  **/
-// exports.modifyReservation = function(body, userId, reservationId) {
-//   return new Promise(function(resolve, reject) {
-//     // Validate input types
-//     if (typeof userId !== "number" || typeof reservationId !== "number" ||
-//       !Number.isInteger(userId) || !Number.isInteger(reservationId) ||
-//       userId < 0 || reservationId < 0 || isNaN(userId) || isNaN(reservationId)
-//     ) {
-//       return reject({
-//         code: 400,
-//         message: "Invalid data types. userId and reservationId must be numbers.",
-//       });
-//     }
-//     var examples = {};
-//     examples['application/json'] = [ {
-//       "reservationId" : 0,
-//       "userId" : 6,
-//       "reservationTime" : "12:00",
-//       "businessName" : "businessName",
-//       "reservationYear" : 2025,
-//       "reservationDay" : 5,
-//       "businessId" : 1,
-//       "reservationMonth" : 5,
-//       "numberOfPeople" : 7,
-//       "username" : "username"
-//     }, {
-//       "reservationId" : 1,
-//       "userId" : 6,
-//       "reservationTime" : "12:00",
-//       "businessName" : "businessName",
-//       "reservationYear" : 2025,
-//       "reservationDay" : 7,
-//       "businessId" : 1,
-//       "reservationMonth" : 5,
-//       "numberOfPeople" : 7,
-//       "username" : "username"
-//     } ];
-
-
-//     if (Object.keys(examples).length > 0) {
-//       resolve(examples[Object.keys(examples)[0]]);
-//     } else {
-//       resolve();
-//     }
-//   });
-// }
-
 exports.modifyReservation = function (body, userId, reservationId) {
   return new Promise(function (resolve, reject) {
     try {
