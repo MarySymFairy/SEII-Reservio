@@ -205,10 +205,8 @@ exports.deleteReservation = function (userId, reservationId) {
  **/
 exports.getAvailability = function(businessId,reservationDay,reservationMonth,reservationYear,numberOfPeople) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-      "availableHours" : [ "18:00", "20:00" ]
-    };
+    const availableHours = [ "18:00", "20:00" ]; // Define all possible reservation times
+
     // Mock existing reservations data
     const businessReservations = [
       {
@@ -268,7 +266,7 @@ exports.getAvailability = function(businessId,reservationDay,reservationMonth,re
     const reservedTimes = existingReservations.map(reservation => reservation.reservationTime);
 
     // Determine available times by excluding reserved times
-    const freeHours = examples['application/json'].filter(hour => !reservedTimes.includes(hour));
+    const freeHours = availableHours.filter(hour => !reservedTimes.includes(hour));
     const freeHoursWithTime = freeHours.map(hour => { return { reservationTime: hour }; });
 
     // Resolve with available reservation times
