@@ -4,19 +4,11 @@ info:
   description: Software Engineering II Course Reservio API
   contact: {}
   version: 1.0.0
-tags:
-- name: business
-  description: Operations about Businesses
-- name: reservation
-  description: Operations about Reservations
-- name: business-reservation
-  description: Operations about Business Reservations (from the aspect of the business
-    owner)
-- name: business-statistics
-  description: Operations about Business Statistics
 paths:
   /businesses:
     get:
+      tags:
+      - business
       description: |
         FR1: The logged in user must be able to view the businesses that are included in the system divided by categories.
       operationId: getBusinessesByCategory
@@ -45,6 +37,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/Business'
                 x-content-type: application/json
+        "400":
+          description: Bad input parameter
+        "404":
+          description: Business not found        
         default:
           description: unexpected error
           content:
@@ -54,6 +50,8 @@ paths:
       x-swagger-router-controller: Default
   /businesses/search:
     get:
+      tags:
+      - business
       description: "FR2: The logged in user must be able to search for a business\
         \ with a keyword. \n"
       operationId: searchBusinessByKeyword
@@ -77,9 +75,7 @@ paths:
                   $ref: '#/components/schemas/Business'
                 x-content-type: application/json
         "400":
-          description: Bad input parameter
-        "404":
-          description: Business not found for the given keyword
+          description: Bad input parameter     
         default:
           description: Unexpected error
           content:
@@ -156,6 +152,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/inline_response_200'
+        "400":
+          description: Bad input parameter     
         default:
           description: Unexpected error
           content:
@@ -165,6 +163,8 @@ paths:
       x-swagger-router-controller: Default
   /reservations:
     get:
+      tags:
+      - reservation
       description: |
         FR10: The logged in user must be able to view his reservations.
       operationId: viewReservations
@@ -189,6 +189,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/Reservation'
                 x-content-type: application/json
+        "400":
+          description: Bad input parameter
+        "404":
+          description: No reservations found        
         default:
           description: unexpected error
           content:
@@ -197,6 +201,8 @@ paths:
                 $ref: '#/components/schemas/Error'
       x-swagger-router-controller: Default
     post:
+      tags:
+      - reservation
       description: |
         FR4: The logged in user must be able to set his reservation details in the selected business. FR6: The logged in user must be able to submit his reservation in the system. FR5: The logged in user must be able to select an available hour for his reservation.
       operationId: addReservation
@@ -235,6 +241,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Reservation'
+        "400":
+          description: Bad input parameter      
         default:
           description: unexpected error
           content:
@@ -244,6 +252,8 @@ paths:
       x-swagger-router-controller: Default
   /reservations/{reservationId}:
     get:
+      tags:
+      - reservation
       description: |
         FR10: The logged in user must be able to view his reservations.
       operationId: viewAReservation
@@ -287,6 +297,8 @@ paths:
                 $ref: '#/components/schemas/Error'
       x-swagger-router-controller: Default
     put:
+      tags:
+      - reservation
       summary: Modifies a single reservation based on the reservationId supplied
       description: |
         FR7 - The logged-in user must be able to modify his reservation
@@ -310,7 +322,7 @@ paths:
         explode: false
         schema:
           type: integer
-          format: int64
+          format: int32
       requestBody:
         description: "Reservation to be modified (numberOfPeople, date, time)"
         content:
@@ -340,6 +352,8 @@ paths:
                 $ref: '#/components/schemas/Error'
       x-swagger-router-controller: Default
     delete:
+      tags:
+      - reservation
       summary: Deletes a single reservation based on the reservationID supplied
       description: |
         FR8 - The logged in user must be able to cancel his existing reservation
@@ -416,6 +430,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/You have a reservation in 2 hours'
+        "400":
+          description: Bad input parameter
+        "404":
+          description: Reservation not found
         default:
           description: Unexpected error
           content:
@@ -425,6 +443,8 @@ paths:
       x-swagger-router-controller: Default
   /business-reservations:
     get:
+      tags:
+      - business-reservation
       description: |
         FR11: The business owner must be able to view the reservations of his business.
       operationId: viewBusinessReservations
@@ -492,6 +512,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/BusinessReservation'
                 x-content-type: application/json
+        "400":
+          description: Bad input parameter
+        "404":
+          description: Business Reservations not found        
         default:
           description: unexpected error
           content:
@@ -501,6 +525,8 @@ paths:
       x-swagger-router-controller: Default
   /business-statistics:
     get:
+      tags:
+      - business-statistics
       description: |
         FR12: The business owner must be able to view the statistics of his business reservations.
       operationId: viewBusinessStatistics
@@ -536,7 +562,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/BusinessStatistics'
-                x-content-type: application/json
+                x-content-type: application/json    
         default:
           description: unexpected error
           content:
@@ -550,7 +576,7 @@ components:
       title: Business
       required:
       - businessId
-      - businessCategory
+      - categoryName
       - businessName
       - keyword
       - ownerId
@@ -563,7 +589,7 @@ components:
           minimum: 0
         businessName:
           type: string
-        businessCategory:
+        categoryName:
           type: string
           description: The categories that the businesses are divided into
           enum:
@@ -584,7 +610,7 @@ components:
       example:
         ownerId: 6
         businessName: businessName
-        businessCategory: Breakfast
+        categoryName: breakfast
         keyword: keyword
         businessId: 0
     Reservation:
@@ -656,7 +682,7 @@ components:
       example:
         reservationId: 0
         userId: 6
-        reservationTime: '20:00'
+        reservationTime: '12:00'
         businessName: businessName
         reservationYear: 2025
         reservationDay: 5
@@ -740,11 +766,12 @@ components:
         reservationId: 0
         userId: 6
         ownerId: 7
+        businessId: 8
         reservationTime: '20:00'
         businessName: businessName
         reservationYear: 2026
         reservationDay: 1
-        numberOfpeople: 2
+        people: 2
         reservationMonth: 5
         username: username
     BusinessStatistics:
@@ -779,6 +806,7 @@ components:
           minimum: 0
       example:
         month: 0
+        businessId: 8
         numberOfReservations: 6
         ownerId: 7
     Error:
