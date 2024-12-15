@@ -203,7 +203,7 @@ exports.deleteReservation = function (userId, reservationId) {
  * numberOfPeople Integer The arranged number of people that will be in the reservation
  * returns inline_response_200
  **/
-exports.getAvailability = function(businessId, reservationDay, reservationMonth, reservationYear, numberOfPeople) {
+exports.getAvailability = async function(businessId, reservationDay, reservationMonth, reservationYear, numberOfPeople) {
   return new Promise(function(resolve, reject) {
     const availableHours = [ "18:00", "20:00" ]; // Define all possible reservation times
 
@@ -295,8 +295,10 @@ exports.getAvailability = function(businessId, reservationDay, reservationMonth,
       });
     }
 
+    const freeHoursArray = freeHoursWithTime.map(item => item.reservationTime);
+
     // Resolve with available reservation times
-    resolve(freeHoursWithTime);
+    resolve(freeHoursArray);
   });
 }
 
@@ -435,6 +437,14 @@ exports.modifyReservation = function (body, userId, reservationId) {
         username: 'username'
       }; // Mock data
 
+      // Fetch availability
+      // const availableTimes = await exports.getAvailability(businessId, reservationDay, reservationMonth, reservationYear, numberOfPeople);
+
+      // // Check if the chosen reservationTime is valid
+      // if (!availableTimes.includes(reservationTime)) {
+      //     return res.status(400).json({ message: `Invalid reservationTime. Available times are: ${availableTimes.join(", ")}.` });
+      // }
+      
       console.log("CHECKME");
       console.log("USER=6",userId, "RESERVATION=0", reservationId);
       if (!existingReservation) {

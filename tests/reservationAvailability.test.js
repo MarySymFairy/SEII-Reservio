@@ -22,8 +22,8 @@ test("GET /reservations/availability?businessId&reservationDay&reservationMonth&
     t.true(Array.isArray(body), "Response body should be an array");
     t.true(body.length > 0, "Response body should not be empty");
 
-    const availability = body[0];
-    t.not(availability.reservationTime, undefined, "Availability should have a reservationTime");
+    // Assert the elements in the array are strings
+    t.true(body.every(item => typeof item === "string"), "Each item in the response array should be a string");
 });
 
 test("GET /reservations/availability?businessId&reservationDay&reservationMonth&reservationYear&numberOfPeople - Should return an error message for an invalid businessId", async (t) => {
