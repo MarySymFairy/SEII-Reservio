@@ -101,11 +101,6 @@ exports.addReservation = function (body, userId, businessId) {
         businessName: body.businessName,
       };
 
-      // if (!UserReservations[userId]) {
-      //   UserReservations[userId] = [];
-      // }
-      // UserReservations[userId].push(newReservation);
-
       resolve(newReservation);
 
     } catch (error) {
@@ -117,11 +112,6 @@ exports.addReservation = function (body, userId, businessId) {
     }
   });
 };
-
-
-
-
-
 
 
 
@@ -172,24 +162,6 @@ exports.deleteReservation = function (userId, reservationId) {
     }
   });
 };
-
-
-  // var examples = {};
-  // examples['application/json'] = { 
-  //   "message" : 'Reservation deleted.'
-  // };
-    // if (Object.keys(examples).length > 0) {
-    //   resolve(examples[Object.keys(examples)[0]]);
-    // } else {
-    //   resolve();
-    // }
-  // });
-// }
-
-
-
-
-
 
 
 
@@ -265,9 +237,6 @@ exports.getAvailability = async function(businessId, reservationDay, reservation
       });
     }
 
-    //     console.log("CHECKME");
-//     console.log("BUSINESSID",businessId,"DAY", reservationDay,"MONTH", reservationMonth, "YEAR",reservationYear, "PEOPLE",numberOfPeople);
-
     // Fetch reservations for the specified business and date
     const existingReservations = businessReservations.filter(reservation => 
       reservation.reservationDay === reservationDay &&
@@ -327,7 +296,6 @@ exports.getBusinessesByCategory = function(categoryName) {
       "businessId" : 0
     } ];
 
-    console.log("CHECKME", categoryName);
     const filteredBusinesses = examples['application/json'].filter(
       b => b.categoryName.toLowerCase() === categoryName.toLowerCase()
     );
@@ -437,16 +405,6 @@ exports.modifyReservation = function (body, userId, reservationId) {
         username: 'username'
       }; // Mock data
 
-      // Fetch availability
-      // const availableTimes = await exports.getAvailability(businessId, reservationDay, reservationMonth, reservationYear, numberOfPeople);
-
-      // // Check if the chosen reservationTime is valid
-      // if (!availableTimes.includes(reservationTime)) {
-      //     return res.status(400).json({ message: `Invalid reservationTime. Available times are: ${availableTimes.join(", ")}.` });
-      // }
-      
-      console.log("CHECKME");
-      console.log("USER=6",userId, "RESERVATION=0", reservationId);
       if (!existingReservation) {
         return reject({
           code: 404,
@@ -463,10 +421,6 @@ exports.modifyReservation = function (body, userId, reservationId) {
         reservationYear: reservationYear || existingReservation.reservationYear,
         numberOfPeople: body.numberOfPeople || existingReservation.numberOfPeople,
       };
-
-      // Save the updated reservation (mocked here; replace with actual save logic)
-      // const index = UserReservations[userId].findIndex(r => r.reservationId === reservationId);
-      // UserReservations[userId][index] = updatedReservation;
 
       resolve(updatedReservation);
 
@@ -518,9 +472,6 @@ exports.notifyUser = function(userId,reservationId) {
         businessName: "businessName"
       }
     ];
-
-    console.log("CHECKME");
-    console.log("USER",userId, "RESERVATION", reservationId);
 
     const filteredUserReservations = userReservations.filter(reservation => reservation.userId === userId && reservation.reservationId === reservationId);
     if (filteredUserReservations.length > 0) {
@@ -689,9 +640,6 @@ exports.viewReservations = function(userId) {
 
 
 
-
-//BUSINESS FUNCTIONS
-
 /**
  * FR11: The business owner must be able to view the reservations of his business. 
  *
@@ -746,9 +694,6 @@ exports.viewBusinessReservations = function(ownerId, businessId, day, month, yea
       "username" : "username"
     } ];
 
-    console.log("CHECKME");
-    console.log(ownerId, businessId, day, month, year);
-
     //Filter if business reservations exist (in mock data)
     const filtered = examples['application/json'].filter(
       (r) => r.ownerId === ownerId && r.businessId === businessId && r.reservationDay === day && r.reservationMonth === month && r.reservationYear === year
@@ -794,8 +739,6 @@ exports.viewBusinessStatistics = function(businessId, ownerId) {
       "businessId" : 8
     } ];
 
-    console.log("CHECKME");
-    console.log("OWNER",ownerId, "BUSINESS",businessId);
     // filter if ownerId and businessId exist (in mock data)
     const filtStat = examples['application/json'].filter(
       b => b.ownerId === ownerId && b.businessId === businessId
