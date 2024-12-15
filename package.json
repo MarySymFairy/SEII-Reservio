@@ -31,10 +31,10 @@
     "c8": "^8.0.1",
     "eslint": "^8.34.0",
     "eslint-config-iamnapo": "^28.2.0",
-    "nodemon": "^4.3.2",
+    "nodemon": "^2.0.20",
     "test-listen": "^1.1.0",
     "cypress": "^12.17.4",
-    "@cypress/request": "^3.0.0"
+    "@cypress/request":"3.0.0"
   },
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
@@ -56,13 +56,6 @@
     "yup": "^1.0.0",
     "connect": "^3.2.0",
     "js-yaml": "^3.3.0",
-    "oas3-tools": "^2.2.3",
-    "body-parser": "^1.20.3",
-    "busboy": "^1.6.0",
-    "dicer": "^0.3.2",
-    "multer": "^2.0.0",
-    "qs": "^1.0.0",
-    "semver": "^4.3.2",
-    "simple-update-notifier": "^1.0.0"
+    "oas3-tools": "^2.2.3"
   }
 }
