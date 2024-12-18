@@ -31,7 +31,7 @@
     "c8": "^8.0.1",
     "eslint": "^8.34.0",
     "eslint-config-iamnapo": "^28.2.0",
-    "nodemon": "^2.0.20",
+    "nodemon": "^4.3.2",
     "test-listen": "^1.1.0",
     "cypress": "^12.17.4"
   },
