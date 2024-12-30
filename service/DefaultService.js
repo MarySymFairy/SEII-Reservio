@@ -339,7 +339,7 @@ exports.getBusinessesByCategory = function(categoryName) {
         statusCode: 400, 
         message: "categoryName should be equal to one of the allowed values: breakfast, brunch, lunch, dinner, drinks"
       })
-    };
+    }
 
   });
 }
