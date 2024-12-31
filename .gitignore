@@ -70,4 +70,4 @@ typings/
 src/assets/uploads/*
 
 # .gitignore content
-package-lock.json
+ package-lock.json
