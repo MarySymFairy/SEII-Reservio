@@ -8,16 +8,14 @@ function validateReservationDay(reservationDay, reservationMonth, reservationYea
     const maxDays = isLeapYear(reservationYear) ? 29 : 28;
     if (reservationDay < 1 || reservationDay > maxDays) {
       return {
-        code: 400,
-        error: `Invalid reservation day for February: ${reservationDay}. Max allowed: ${maxDays}.`,
+        code: 400, error: `Invalid reservation day for February: ${reservationDay}. Max allowed: ${maxDays}.`,
       };
     }
   } else {
     const daysInMonth = new Date(reservationYear, reservationMonth, 0).getDate();
     if (reservationDay < 1 || reservationDay > daysInMonth) {
       return {
-        message: `Invalid reservation day. Expected a number between 1 and ${daysInMonth}.`,
-        errorCode: 'validation.error',
+        message: `Invalid reservation day. Expected a number between 1 and ${daysInMonth}.`,errorCode: 'validation.error',
       };
     }
   }
@@ -42,8 +40,7 @@ exports.addReservation = function (body, userId, businessId) {
         typeof body.numberOfPeople !== 'number' || body.numberOfPeople <= 0 || typeof userId !== 'number' || typeof businessId !== 'number'
       ) {
         return reject({
-          message: 'Invalid data types or values.',
-          code: 400,
+          message: 'Invalid data types or values.',code: 400,
         });
       }
 
@@ -51,8 +48,7 @@ exports.addReservation = function (body, userId, businessId) {
       const timeRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
       if (!timeRegex.test(reservationTime)) {
         return reject({
-          message: 'Invalid time format. Expected HH:mm.',
-          errorCode: 'validation.error',
+          message: 'Invalid time format. Expected HH:mm.', errorCode: 'validation.error',
         });
       }
 
@@ -63,8 +59,7 @@ exports.addReservation = function (body, userId, businessId) {
 
       if (reservationDateUTC < todayUTC) {
         return reject({
-          code: 409,
-          message: 'Cannot reserve a date in the past.',
+          code: 409, message: 'Cannot reserve a date in the past.',
         });
       }
 
@@ -76,24 +71,15 @@ exports.addReservation = function (body, userId, businessId) {
 
       // Create the reservation
       const newReservation = {
-        reservationId: body.reservationId,
-        userId: userId,
-        businessId: businessId,
-        reservationTime,
-        reservationDay,
-        reservationMonth,
-        reservationYear,
-        numberOfPeople: body.numberOfPeople,
-        username: body.username,
-        businessName: body.businessName,
+        reservationId: body.reservationId, userId: userId, businessId: businessId, reservationTime, reservationDay,
+        reservationMonth, reservationYear, numberOfPeople: body.numberOfPeople, username: body.username,businessName: body.businessName,
       };
 
       resolve(newReservation);
     } catch (error) {
       console.error('Error in reservation logic:', error);
       reject({
-        message: 'Internal server error',
-        errorCode: 'server.error',
+        message: 'Internal server error', errorCode: 'server.error',
       });
     }
   });
@@ -121,8 +107,7 @@ exports.modifyReservation = function (body, userId, reservationId) {
         (body.reservationYear && isNaN(reservationYear)) || (body.numberOfPeople && (typeof body.numberOfPeople !== 'number' || body.numberOfPeople <= 0))
       ) {
         return reject({
-          message: 'Invalid data types or values.',
-          code: 400,
+          message: 'Invalid data types or values.', code: 400,
         });
       }
 
@@ -131,8 +116,7 @@ exports.modifyReservation = function (body, userId, reservationId) {
         const timeRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
         if (!timeRegex.test(reservationTime)) {
           return reject({
-            message: 'Invalid time format. Expected HH:mm.',
-            errorCode: 'validation.error',
+            message: 'Invalid time format. Expected HH:mm.', errorCode: 'validation.error',
           });
         }
       }
@@ -145,8 +129,7 @@ exports.modifyReservation = function (body, userId, reservationId) {
 
         if (reservationDateUTC < todayUTC) {
           return reject({
-            code: 409,
-            message: 'Cannot modify a reservation to a date in the past.',
+            code: 409, message: 'Cannot modify a reservation to a date in the past.',
           });
         }
 
@@ -159,22 +142,13 @@ exports.modifyReservation = function (body, userId, reservationId) {
 
       // Fetch the existing reservation (mocked here; replace with actual logic to retrieve reservations)
       const existingReservation = {
-        reservationId: 0,
-        userId: 6,
-        reservationTime: '12:00',
-        businessName: 'businessName',
-        reservationYear: 2025,
-        reservationDay: 5,
-        businessId: 1,
-        reservationMonth: 5,
-        numberOfPeople: 7,
-        username: 'username',
+        reservationId: 0, userId: 6, reservationTime: '12:00', businessName: 'businessName',reservationYear: 2025,
+        reservationDay: 5, businessId: 1, reservationMonth: 5, numberOfPeople: 7, username: 'username',
       }; // Mock data
 
       if (!existingReservation) {
         return reject({
-          code: 404,
-          message: 'Reservation not found.',
+          code: 404, message: 'Reservation not found.',
         });
       }
 
@@ -192,8 +166,7 @@ exports.modifyReservation = function (body, userId, reservationId) {
     } catch (error) {
       console.error('Error in modifying reservation:', error);
       reject({
-        message: 'Internal server error',
-        errorCode: 'server.error',
+        message: 'Internal server error', errorCode: 'server.error',
       });
     }
   });
@@ -209,23 +182,14 @@ exports.deleteReservation = function (userId, reservationId) {
     // Validate input types
     if (typeof userId !== "number" || typeof reservationId !== "number") {
       return reject({
-        code: 400,
-        message: "Invalid data types. userId and reservationId must be numbers.",
+        code: 400, message: "Invalid data types. userId and reservationId must be numbers.",
       });
     }
 
     var examples = {};
     examples['application/json'] = {
-      "reservationId" : 0,
-      "userId" : 6,
-      "reservationTime" : "12:00",
-      "businessName" : "businessName",
-      "reservationYear" : 2025,
-      "reservationDay" : 5,
-      "businessId" : 1,
-      "reservationMonth" : 5,
-      "numberOfPeople" : 7,
-      "username" : "username"
+      "reservationId" : 0, "userId" : 6, "reservationTime" : "12:00", "businessName" : "businessName", "reservationYear" : 2025,
+      "reservationDay" : 5, "businessId" : 1, "reservationMonth" : 5, "numberOfPeople" : 7,"username" : "username"
     };
 
     const reservation = Object.values(examples).find(reservation => reservation.reservationId === reservationId);
@@ -237,8 +201,7 @@ exports.deleteReservation = function (userId, reservationId) {
       });
     } else{
       return reject ({
-        code: 404,
-        message: "Reservation not found.",
+        code: 404, message: "Reservation not found.",
       });
     }
   });
