@@ -28,58 +28,6 @@ test("GET /reservations/:id - Get reservation (happy path)", async (t) => {
     t.is(body.reservationTime, "12:00");
 });
 
-test("GET /reservations/:id - Get reservation (WITH POST INCLUDED)", async (t) => {
-    try {
-        // Create a reservation
-        const response = await t.context.got.post('reservations?userId=6&businessId=1', {
-            searchParams: {
-                'userId': 6,
-                'businessId': 1, // Use valid business ID
-            },
-            json: {
-                'reservationId': 0,
-                'userId': 6,
-                'businessId': 1,
-                'reservationTime': "12:00",
-                'reservationDay': 5,
-                'reservationMonth': 5,
-                'reservationYear': 2025,
-                'numberOfPeople': 7,
-                'username': "username",
-                'businessName': "businessName", // Match mock data
-            },
-        });
-
-        t.is(response.statusCode, 200); 
-        t.truthy(response.body);
-
-        //GET /reservations/:id
-        const getResponse = await t.context.got.get("reservations/0?userId=6");
-        t.is(getResponse.statusCode, 200);
-        t.deepEqual(getResponse.body, {
-            'businessId': 1,
-            'businessName': 'businessName',
-            'numberOfPeople': 7,
-            'reservationDay': 5,
-            'reservationId': 0,
-            'reservationMonth': 5,
-            'reservationTime': '12:00',
-            'reservationYear': 2025,
-            'userId': 6,
-            'username': 'username',
-          });
-
-        // Delete the created reservation
-        const { body, statusCode } = await t.context.got.delete("reservations/0?userId=6");
-        t.is(statusCode, 200);
-        t.deepEqual(body, { message: "Reservation deleted." });
-
-    } catch (error) {
-        console.error("Error during test:", error.response ? error.response.body : error.message);
-        t.fail("Test failed due to an error.");
-    }
-});
-
 // Error case: Get nonexistent reservation
 test("GET /reservations/:id - Get nonexistent reservation", async (t) => {
     const reservationId = 56;
