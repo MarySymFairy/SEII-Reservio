@@ -19,36 +19,18 @@ test.after.always(t => {
 test('POST /reservations - successful case', async t => {
     try {
         const response = await t.context.got.post('reservations?userId=0&businessId=2', {
-            searchParams: {
-                'userId': 0,
-                'businessId': 2, // Use valid business ID
+            searchParams: {'userId': 0,'businessId': 2, // Use valid business ID
             },
             json: {
-                'reservationId': 0,
-                'userId': 0,
-                'businessId': 2,
-                'reservationTime': "20:00",
-                'reservationDay': 25,
-                'reservationMonth': 12,
-                'reservationYear': 2025,
-                'numberOfPeople': 3,
-                'username': "username",
-                'businessName': "Cafe Central", // Match mock data
+                'reservationId': 0, 'userId': 0,'businessId': 2,'reservationTime': "20:00", 'reservationDay': 25, 'reservationMonth': 12, 
+                'reservationYear': 2025, 'numberOfPeople': 3, 'username': "username",'businessName': "Cafe Central", // Match mock data
             },
         });
 
         t.is(response.statusCode, 200);
         t.deepEqual(response.body, {
-            'reservationId': 0,
-            'userId': 0,
-            'businessId': 2,
-            'reservationTime': "20:00",
-            'reservationDay': 25,
-            'reservationMonth': 12,
-            'reservationYear': 2025,
-            'numberOfPeople': 3,
-            'username': "username",
-            'businessName': "Cafe Central",
+            'reservationId': 0,'userId': 0,'businessId': 2, 'reservationTime': "20:00", 'reservationDay': 25,
+            'reservationMonth': 12, 'reservationYear': 2025,'numberOfPeople': 3,'username': "username",'businessName': "Cafe Central",
         });
     } catch (error) {
         console.error('Error:', error.response ? error.response.body : error.message);
@@ -60,20 +42,11 @@ test('POST /reservations - successful case', async t => {
 test('POST /reservations - missing userId', async t => {
     try {
         await t.context.got.post('reservations?businessId=101', {
-            searchParams: {
-                'businessId': 101 // Missing 'userId'
+            searchParams: {'businessId': 101 // Missing 'userId'
             },
             json: {
-                'reservationId': 0,
-                'userId': 1,
-                'businessId': 101,
-                'reservationTime': "12:00",
-                'reservationDay': 5,
-                'reservationMonth': 11,
-                'reservationYear': 2024,
-                'numberOfPeople': 3,
-                'username': "username",
-                'businessName': "Cafe Central"
+                'reservationId': 0,'userId': 1,'businessId': 101,'reservationTime': "12:00",'reservationDay': 5,
+                'reservationMonth': 11,'reservationYear': 2024,'numberOfPeople': 3,'username': "username",'businessName': "Cafe Central"
             },
         });
         t.fail('Request should have failed');
@@ -87,19 +60,11 @@ test('POST /reservations - missing userId', async t => {
 test('POST /reservations - missing businessId', async t => {
     try {
         await t.context.got.post('reservations?userId=1', {
-            searchParams: {
-                'userId': 1 // Missing 'businessId'
+            searchParams: {'userId': 1 // Missing 'businessId'
             },
             json: {
-                'reservationId': 0,
-                'userId': 1,
-                'reservationTime': "12:00",
-                'reservationDay': 5,
-                'reservationMonth': 11,
-                'reservationYear': 2024,
-                'numberOfPeople': 3,
-                'username': "username",
-                'businessName': "Cafe Central"
+                'reservationId': 0,'userId': 1,'reservationTime': "12:00",'reservationDay': 5,'reservationMonth': 11,
+                'reservationYear': 2024,'numberOfPeople': 3,'username': "username",'businessName': "Cafe Central"
             },
         });
         t.fail('Request should have failed');
@@ -115,21 +80,11 @@ test('POST /reservations - missing businessId', async t => {
 test('POST /reservations - missing reservationTime', async t => {
     try {
         await t.context.got.post('reservations?userId=1&businessId=101', {
-            searchParams: {
-                'userId': 1,
-                'businessId': 101
-            },
+            searchParams: {'userId': 1,'businessId': 101},
             json: {
-                'reservationId': 0,
-                'userId': 1,
-                'businessId': 101,
-                // 'reservationTime' is missing
-                'reservationDay': 5,
-                'reservationMonth': 11,
-                'reservationYear': 2024,
-                'numberOfPeople': 3,
-                'username': "username",
-                'businessName': "Cafe Central"
+                'reservationId': 0,'userId': 1,'businessId': 101,// 'reservationTime' is missing
+                'reservationDay': 5,'reservationMonth': 11,'reservationYear': 2024,
+                'numberOfPeople': 3,'username': "username",'businessName': "Cafe Central"
             },
         });
         t.fail('Request should have failed');
@@ -144,21 +99,11 @@ test('POST /reservations - missing reservationTime', async t => {
 test('POST /reservations - invalid reservationTime format', async t => {
     try {
         await t.context.got.post('reservations?userId=1&businessId=101', {
-            searchParams: {
-                'userId': 1,
-                'businessId': 101
-            },
+            searchParams: {'userId': 1,'businessId': 101},
             json: {
-                'reservationId': 0,
-                'userId': 1,
-                'businessId': 101,
-                'reservationTime': "25:00", // Invalid time
-                'reservationDay': 5,
-                'reservationMonth': 11,
-                'reservationYear': 2024,
-                'numberOfPeople': 3,
-                'username': "username",
-                'businessName': "Cafe Central"
+                'reservationId': 0,'userId': 1,'businessId': 101,'reservationTime': "25:00", // Invalid time
+                'reservationDay': 5,'reservationMonth': 11,'reservationYear': 2024,
+                'numberOfPeople': 3,'username': "username",'businessName': "Cafe Central"
             },
         });
         t.fail('Request should have failed');
@@ -172,21 +117,10 @@ test('POST /reservations - invalid reservationTime format', async t => {
 test('POST /reservations - invalid reservationDay', async t => {
     try {
         await t.context.got.post('reservations?userId=1&businessId=101', {
-            searchParams: {
-                'userId': 1,
-                'businessId': 101
-            },
+            searchParams: {'userId': 1,'businessId': 101},
             json: {
-                'reservationId': 0,
-                'userId': 1,
-                'businessId': 101,
-                'reservationTime': "12:00",
-                'reservationDay': 32, // Invalid day
-                'reservationMonth': 11,
-                'reservationYear': 2024,
-                'numberOfPeople': 3,
-                'username': "username",
-                'businessName': "Cafe Central"
+                'reservationId': 0,'userId': 1,'businessId': 101,'reservationTime': "12:00",'reservationDay': 32, // Invalid day
+                'reservationMonth': 11,'reservationYear': 2024,'numberOfPeople': 3,'username': "username",'businessName': "Cafe Central"
             },
         });
         t.fail('Request should have failed');
@@ -200,21 +134,10 @@ test('POST /reservations - invalid reservationDay', async t => {
 test('POST /reservations - invalid reservationMonth', async t => {
     try {
         await t.context.got.post('reservations?userId=1&businessId=101', {
-            searchParams: {
-                'userId': 1,
-                'businessId': 101
-            },
+            searchParams: {'userId': 1,'businessId': 101},
             json: {
-                'reservationId': 0,
-                'userId': 1,
-                'businessId': 101,
-                'reservationTime': "12:00",
-                'reservationDay': 5,
-                'reservationMonth': 13, // Invalid month
-                'reservationYear': 2024,
-                'numberOfPeople': 3,
-                'username': "username",
-                'businessName': "Cafe Central"
+                'reservationId': 0,'userId': 1,'businessId': 101,'reservationTime': "12:00",'reservationDay': 5,'reservationMonth': 13, // Invalid month
+                'reservationYear': 2024,'numberOfPeople': 3,'username': "username",'businessName': "Cafe Central"
             },
         });
         t.fail('Request should have failed');
@@ -228,21 +151,11 @@ test('POST /reservations - invalid reservationMonth', async t => {
 test('POST /reservations - invalid reservationYear', async t => {
     try {
         await t.context.got.post('reservations?userId=1&businessId=101', {
-            searchParams: {
-                'userId': 1,
-                'businessId': 101
-            },
+            searchParams: {'userId': 1,'businessId': 101},
             json: {
-                'reservationId': 0,
-                'userId': 1,
-                'businessId': 101,
-                'reservationTime': "12:00",
-                'reservationDay': 5,
-                'reservationMonth': 11,
-                'reservationYear': 'aB', // Invalid year format
-                'numberOfPeople': 3,
-                'username': "username",
-                'businessName': "Cafe Central"
+                'reservationId': 0,'userId': 1,'businessId': 101,'reservationTime': "12:00",
+                'reservationDay': 5,'reservationMonth': 11,'reservationYear': 'aB', // Invalid year format
+                'numberOfPeople': 3,'username': "username",'businessName': "Cafe Central"
             },
         });
         t.fail('Request should have failed');
@@ -253,27 +166,15 @@ test('POST /reservations - invalid reservationYear', async t => {
     }
 });
 
-
-
 //Unhappy Scenario: Invalid Data Type of numberOfPeople
 test('POST /reservations - invalid numberOfPeople type', async t => {
     try {
         await t.context.got.post('reservations?userId=1&businessId=101', {
-            searchParams: {
-                'userId': 1,
-                'businessId': 101
-            },
+            searchParams: {'userId': 1,'businessId': 101},
             json: {
-                'reservationId': 0,
-                'userId': 1,
-                'businessId': 101,
-                'reservationTime': "12:00",
-                'reservationDay': "5", // Invalid type: should be an integer
-                'reservationMonth': 11,
-                'reservationYear': 2024,
-                'numberOfPeople': "three", // Invalid type: should be an integer
-                'username': "username",
-                'businessName': "Cafe Central"
+                'reservationId': 0,'userId': 1,'businessId': 101,'reservationTime': "12:00",'reservationDay': "5", // Invalid type: should be an integer
+                'reservationMonth': 11,'reservationYear': 2024,'numberOfPeople': "three", // Invalid type: should be an integer
+                'username': "username",'businessName': "Cafe Central"
             },
         });
         t.fail('Request should have failed');
@@ -288,21 +189,12 @@ test('POST /reservations - invalid numberOfPeople type', async t => {
 test('POST /reservations - reservation date in the past', async t => {
     try {
         await t.context.got.post('reservations?userId=1&businessId=101', {
-            searchParams: {
-                'userId': 1,
-                'businessId': 101
+            searchParams: {'userId': 1,'businessId': 101
             },
             json: {
-                'reservationId': 0,
-                'userId': 1,
-                'businessId': 101,
-                'reservationTime': "12:00",
-                'reservationDay': 1,
-                'reservationMonth': 1,
-                'reservationYear': 2020, // Past date
-                'numberOfPeople': 3,
-                'username': "username",
-                'businessName': "Cafe Central"
+                'reservationId': 0,'userId': 1,'businessId': 101,'reservationTime': "12:00",
+                'reservationDay': 1,'reservationMonth': 1,'reservationYear': 2020, // Past date
+                'numberOfPeople': 3,'username': "username",'businessName': "Cafe Central"
             },
         });
         t.fail('Request should have failed');
@@ -317,21 +209,12 @@ test('POST /reservations - reservation date in the past', async t => {
 test('POST /reservations - numberOfPeople is zero or negative', async t => {
     try {
         await t.context.got.post('reservations?userId=1&businessId=101', {
-            searchParams: {
-                'userId': 1,
-                'businessId': 101
+            searchParams: {'userId': 1,'businessId': 101
             },
             json: {
-                'reservationId': 0,
-                'userId': 1,
-                'businessId': 101,
-                'reservationTime': "12:00",
-                'reservationDay': 5,
-                'reservationMonth': 11,
-                'reservationYear': 2024,
-                'numberOfPeople': 0, // Invalid value
-                'username': "username",
-                'businessName': "Cafe Central"
+                'reservationId': 0,'userId': 1,'businessId': 101,'reservationTime': "12:00",
+                'reservationDay': 5,'reservationMonth': 11,'reservationYear': 2024,'numberOfPeople': 0, // Invalid value
+                'username': "username",'businessName': "Cafe Central"
             },
         });
         t.fail('Request should have failed');
@@ -345,21 +228,12 @@ test('POST /reservations - numberOfPeople is zero or negative', async t => {
 test('POST /reservations - invalid day for February (non-leap year)', async t => {
     try {
         await t.context.got.post('reservations?userId=0&businessId=2', {
-            searchParams: {
-                'userId': 0,
-                'businessId': 2,
-            },
+            searchParams: {'userId': 0,'businessId': 2,},
             json: {
-                'reservationId': 16,
-                'userId': 0,
-                'businessId': 2,
-                'reservationTime': "12:00",
-                'reservationDay': 30, // Invalid day
-                'reservationMonth': 2, // February
-                'reservationYear': 2026, // Non-leap year
-                'numberOfPeople': 3,
-                'username': "username",
-                'businessName': "Cafe Central",
+                'reservationId': 16,'userId': 0,'businessId': 2,'reservationTime': "12:00",
+                'reservationDay': 30,  'reservationMonth': 2, 
+                'reservationYear': 2026, //Invalid day February Non-leap year
+                'numberOfPeople': 3,'username': "username",'businessName': "Cafe Central",
             },
         });
         console.log('here');
