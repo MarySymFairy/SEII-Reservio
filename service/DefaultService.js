@@ -1,5 +1,34 @@
 'use strict';
 
+/**
+ * Validates the reservation day for February and other months.
+ * @param {number} reservationDay - The day of the reservation.
+ * @param {number} reservationMonth - The month of the reservation.
+ * @param {number} reservationYear - The year of the reservation.
+ * @returns {Object|undefined} - Returns an error object if validation fails, otherwise undefined.
+ */
+function validateReservationDay(reservationDay, reservationMonth, reservationYear) {
+  const isLeapYear = (year) => (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+
+  // Validate February days
+  if (reservationMonth === 2) {
+    const maxDays = isLeapYear(reservationYear) ? 29 : 28;
+    if (reservationDay < 1 || reservationDay > maxDays) {
+      return {
+        code: 400,
+        error: `Invalid reservation day for February: ${reservationDay}. Max allowed: ${maxDays}.`,
+      };
+    }
+  } else {
+    const daysInMonth = new Date(reservationYear, reservationMonth, 0).getDate();
+    if (reservationDay < 1 || reservationDay > daysInMonth) {
+      return {
+        message: `Invalid reservation day. Expected a number between 1 and ${daysInMonth}.`,
+        errorCode: 'validation.error',
+      };
+    }
+  }
+}
 
 /**
  * FR4: The logged in user must be able to set his reservation details in the selected business. FR6: The logged in user must be able to submit his reservation in the system. FR5: The logged in user must be able to select an available hour for his reservation. 
@@ -56,42 +85,17 @@ exports.addReservation = function (body, userId, businessId) {
         });
       }
 
-      // Validate February days
-      const daysInMonth = new Date(reservationYear, reservationMonth, 0).getDate();
-
-      // Validate February days
-      const isLeapYear = (year) => {
-        (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0)
-      };
-
-      if (reservationMonth === 2) {
-        const maxDays = isLeapYear(reservationYear) ? 29 : 28;
-        if (reservationDay < 1 || reservationDay > maxDays) {
-          return reject({
-            code: 400,
-            error: `Invalid reservation day for February: ${reservationDay}. Max allowed: ${maxDays}.`,
-          });
-        }
-      } else if (reservationDay < 1 || reservationDay > daysInMonth) {
-        return reject({
-          message: `Invalid reservation day. Expected a number between 1 and ${daysInMonth}.`,
-          errorCode: 'validation.error',
-        });
+      // Validate reservation day
+      const dayValidationError = validateReservationDay(reservationDay, reservationMonth, reservationYear);
+      if (dayValidationError) {
+        return reject(dayValidationError);
       }
-
-      // Validate time availability
-      // if (!Availability[businessId]?.includes(reservationTime)) {
-      //   return reject({
-      //     status: 409,
-      //     message: 'Reservation time is not available.',
-      //   });
-      // }
 
       // Create the reservation
       const newReservation = {
-        'reservationId': body['reservationId'],
-        'userId': userId,
-        'businessId': businessId,
+        reservationId: body.reservationId,
+        userId: userId,
+        businessId: businessId,
         reservationTime,
         reservationDay,
         reservationMonth,
@@ -101,13 +105,7 @@ exports.addReservation = function (body, userId, businessId) {
         businessName: body.businessName,
       };
 
-      // if (!UserReservations[userId]) {
-      //   UserReservations[userId] = [];
-      // }
-      // UserReservations[userId].push(newReservation);
-
       resolve(newReservation);
-
     } catch (error) {
       console.error('Error in reservation logic:', error);
       reject({
@@ -118,10 +116,110 @@ exports.addReservation = function (body, userId, businessId) {
   });
 };
 
+/**
+ * Modifies a single reservation based on the reservationId supplied
+ * FR7 - The logged-in user must be able to modify his reservation 
+ *
+ * body Reservation Reservation to be modified (numberOfPeople, date, time)
+ * userId Integer Retrieve the ID of the user
+ * reservationId Long ID of the reservation to modify
+ * returns List
+ **/
+exports.modifyReservation = function (body, userId, reservationId) {
+  return new Promise(function (resolve, reject) {
+    try {
+      const reservationTime = body.reservationTime ? body.reservationTime.trim() : '';
+      const reservationDay = parseInt(body.reservationDay, 10);
+      const reservationMonth = parseInt(body.reservationMonth, 10);
+      const reservationYear = parseInt(body.reservationYear, 10);
 
+      // Validate inputs
+      if (
+        isNaN(reservationId) || typeof reservationId !== 'number' || typeof userId !== 'number' ||
+        (body.reservationTime && typeof reservationTime !== 'string') || reservationId < 0 || userId < 0 ||
+        (body.reservationDay && isNaN(reservationDay)) ||
+        (body.reservationMonth && isNaN(reservationMonth)) ||
+        (body.reservationYear && isNaN(reservationYear)) ||
+        (body.numberOfPeople && (typeof body.numberOfPeople !== 'number' || body.numberOfPeople <= 0))
+      ) {
+        return reject({
+          message: 'Invalid data types or values.',
+          code: 400,
+        });
+      }
 
+      // Validate time format if provided
+      if (body.reservationTime) {
+        const timeRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
+        if (!timeRegex.test(reservationTime)) {
+          return reject({
+            message: 'Invalid time format. Expected HH:mm.',
+            errorCode: 'validation.error',
+          });
+        }
+      }
 
+      // Validate date fields if provided
+      if (body.reservationDay || body.reservationMonth || body.reservationYear) {
+        const today = new Date();
+        const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+        const reservationDateUTC = Date.UTC(reservationYear, reservationMonth - 1, reservationDay);
 
+        if (reservationDateUTC < todayUTC) {
+          return reject({
+            code: 409,
+            message: 'Cannot modify a reservation to a date in the past.',
+          });
+        }
+
+        // Validate reservation day
+        const dayValidationError = validateReservationDay(reservationDay, reservationMonth, reservationYear);
+        if (dayValidationError) {
+          return reject(dayValidationError);
+        }
+      }
+
+      // Fetch the existing reservation (mocked here; replace with actual logic to retrieve reservations)
+      const existingReservation = {
+        reservationId: 0,
+        userId: 6,
+        reservationTime: '12:00',
+        businessName: 'businessName',
+        reservationYear: 2025,
+        reservationDay: 5,
+        businessId: 1,
+        reservationMonth: 5,
+        numberOfPeople: 7,
+        username: 'username',
+      }; // Mock data
+
+      if (!existingReservation) {
+        return reject({
+          code: 404,
+          message: 'Reservation not found.',
+        });
+      }
+
+      // Modify the reservation with provided data
+      const updatedReservation = {
+        ...existingReservation,
+        reservationTime: reservationTime || existingReservation.reservationTime,
+        reservationDay: reservationDay || existingReservation.reservationDay,
+        reservationMonth: reservationMonth || existingReservation.reservationMonth,
+        reservationYear: reservationYear || existingReservation.reservationYear,
+        numberOfPeople: body.numberOfPeople || existingReservation.numberOfPeople,
+      };
+
+      resolve(updatedReservation);
+    } catch (error) {
+      console.error('Error in modifying reservation:', error);
+      reject({
+        message: 'Internal server error',
+        errorCode: 'server.error',
+      });
+    }
+  });
+};
 
 
 
@@ -172,25 +270,6 @@ exports.deleteReservation = function (userId, reservationId) {
     }
   });
 };
-
-
-  // var examples = {};
-  // examples['application/json'] = { 
-  //   "message" : 'Reservation deleted.'
-  // };
-    // if (Object.keys(examples).length > 0) {
-    //   resolve(examples[Object.keys(examples)[0]]);
-    // } else {
-    //   resolve();
-    // }
-  // });
-// }
-
-
-
-
-
-
 
 
 /**
@@ -343,142 +422,6 @@ exports.getBusinessesByCategory = function(categoryName) {
 
   });
 }
-
-
-/**
- * Modifies a single reservation based on the reservationId supplied
- * FR7 - The logged-in user must be able to modify his reservation 
- *
- * body Reservation Reservation to be modified (numberOfPeople, date, time)
- * userId Integer Retrieve the ID of the user
- * reservationId Long ID of the reservation to modify
- * returns List
- **/
-exports.modifyReservation = function (body, userId, reservationId) {
-  return new Promise(function (resolve, reject) {
-    try {
-      const reservationTime = body.reservationTime ? body.reservationTime.trim() : '';
-      const reservationDay = parseInt(body.reservationDay, 10);
-      const reservationMonth = parseInt(body.reservationMonth, 10);
-      const reservationYear = parseInt(body.reservationYear, 10);
-
-      // Validate inputs
-      if (
-        isNaN(reservationId) || typeof reservationId !== 'number' || typeof userId !== 'number' ||
-        (body.reservationTime && typeof reservationTime !== 'string') || reservationId < 0 || userId < 0 ||
-        (body.reservationDay && isNaN(reservationDay)) ||
-        (body.reservationMonth && isNaN(reservationMonth)) ||
-        (body.reservationYear && isNaN(reservationYear)) ||
-        (body.numberOfPeople && (typeof body.numberOfPeople !== 'number' || body.numberOfPeople <= 0))
-      ) {
-        return reject({
-          message: 'Invalid data types or values.',
-          code: 400,
-        });
-      }
-
-      // Validate time format if provided
-      if (body.reservationTime) {
-        const timeRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
-        if (!timeRegex.test(reservationTime)) {
-          return reject({
-            message: 'Invalid time format. Expected HH:mm.',
-            errorCode: 'validation.error',
-          });
-        }
-      }
-
-      // Validate date fields if provided
-      if (body.reservationDay || body.reservationMonth || body.reservationYear) {
-        const today = new Date();
-        const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-        const reservationDateUTC = Date.UTC(reservationYear, reservationMonth - 1, reservationDay);
-
-        if (reservationDateUTC < todayUTC) {
-          return reject({
-            code: 409,
-            message: 'Cannot modify a reservation to a date in the past.',
-          });
-        }
-
-        // Validate February days
-        const daysInMonth = new Date(reservationYear, reservationMonth, 0).getDate();
-        const isLeapYear = (year) =>
-          (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-
-        if (reservationMonth === 2) {
-          const maxDays = isLeapYear(reservationYear) ? 29 : 28;
-          if (reservationDay < 1 || reservationDay > maxDays) {
-            return reject({
-              code: 400,
-              error: `Invalid reservation day for February: ${reservationDay}. Max allowed: ${maxDays}.`,
-            });
-          }
-        } else if (reservationDay < 1 || reservationDay > daysInMonth) {
-          return reject({
-            message: `Invalid reservation day. Expected a number between 1 and ${daysInMonth}.`,
-            errorCode: 'validation.error',
-          });
-        }
-      }
-
-      // Fetch the existing reservation (mocked here; replace with actual logic to retrieve reservations)
-      // const existingReservation = UserReservations[userId]?.find(r => r.reservationId === reservationId);
-      const existingReservation = {
-        reservationId: 0,
-        userId: 6,
-        reservationTime: '12:00',
-        businessName: 'businessName',
-        reservationYear: 2025,
-        reservationDay: 5,
-        businessId: 1,
-        reservationMonth: 5,
-        numberOfPeople: 7,
-        username: 'username'
-      }; // Mock data
-
-      // Fetch availability
-      // const availableTimes = await exports.getAvailability(businessId, reservationDay, reservationMonth, reservationYear, numberOfPeople);
-
-      // // Check if the chosen reservationTime is valid
-      // if (!availableTimes.includes(reservationTime)) {
-      //     return res.status(400).json({ message: `Invalid reservationTime. Available times are: ${availableTimes.join(", ")}.` });
-      // }
-      
-      console.log("CHECKME");
-      console.log("USER=6",userId, "RESERVATION=0", reservationId);
-      if (!existingReservation) {
-        return reject({
-          code: 404,
-          message: 'Reservation not found.',
-        });
-      }
-
-      // Modify the reservation with provided data
-      const updatedReservation = {
-        ...existingReservation,
-        reservationTime: reservationTime || existingReservation.reservationTime,
-        reservationDay: reservationDay || existingReservation.reservationDay,
-        reservationMonth: reservationMonth || existingReservation.reservationMonth,
-        reservationYear: reservationYear || existingReservation.reservationYear,
-        numberOfPeople: body.numberOfPeople || existingReservation.numberOfPeople,
-      };
-
-      // Save the updated reservation (mocked here; replace with actual save logic)
-      // const index = UserReservations[userId].findIndex(r => r.reservationId === reservationId);
-      // UserReservations[userId][index] = updatedReservation;
-
-      resolve(updatedReservation);
-
-    } catch (error) {
-      console.error('Error in modifying reservation:', error);
-      reject({
-        message: 'Internal server error',
-        errorCode: 'server.error',
-      });
-    }
-  });
-};
 
 
 
