@@ -23,14 +23,11 @@ function validateReservationDay(reservationDay, reservationMonth, reservationYea
   }
 }
 
-/**
- * FR4: The logged in user must be able to set his reservation details in the selected business. FR6: The logged in user must be able to submit his reservation in the system. FR5: The logged in user must be able to select an available hour for his reservation. 
- *
+/** FR4: The logged in user must be able to set his reservation details in the selected business. FR6: The logged in user must be able to submit his reservation in the system. FR5: The logged in user must be able to select an available hour for his reservation. 
  * body Reservation Submit reservation to the system
  * userId Integer UserId of the logged in user that made the reservation
  * businessId Integer BusinessId of the business that the reservation is made for
- * returns Reservation
- **/
+ * returns Reservation**/
 exports.addReservation = function (body, userId, businessId) {
   return new Promise(function (resolve, reject) {
     try {
@@ -102,15 +99,12 @@ exports.addReservation = function (body, userId, businessId) {
   });
 };
 
-/**
- * Modifies a single reservation based on the reservationId supplied
- * FR7 - The logged-in user must be able to modify his reservation 
- *
+/** Modifies a single reservation based on the reservationId supplied
+ * FR7 - The logged-in user must be able to modify his reservation
  * body Reservation Reservation to be modified (numberOfPeople, date, time)
  * userId Integer Retrieve the ID of the user
  * reservationId Long ID of the reservation to modify
- * returns List
- **/
+ * returns List**/
 exports.modifyReservation = function (body, userId, reservationId) {
   return new Promise(function (resolve, reject) {
     try {
@@ -205,16 +199,11 @@ exports.modifyReservation = function (body, userId, reservationId) {
   });
 };
 
-
-
-/**
- * Deletes a single reservation based on the reservationID supplied
+/** Deletes a single reservation based on the reservationID supplied
  * FR8 - The logged in user must be able to cancel his existing reservation 
- *
  * userId Integer Retrieve the ID of the user
  * reservationId Integer ID of reservation to delete
- * returns Reservation deleted.
- **/
+ * returns Reservation deleted.**/
 exports.deleteReservation = function (userId, reservationId) {
   return new Promise((resolve, reject) => {
     // Validate input types
