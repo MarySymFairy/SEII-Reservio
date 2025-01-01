@@ -8,6 +8,7 @@ var DefaultReservation = require('../service/ReservationService');
 var DefaultBusiness = require('../service/BusinessService');
 var DefaultAvailability = require('../service/AvailabilityService');
 var DefaultNotification = require('../service/NotificationService');
+var DefaultViewReservation = require('../service/ViewReservationService');
 
 // Add a new reservation
 module.exports.addReservation = function addReservation(_, res, next, body, userId, businessId) {
@@ -104,7 +105,7 @@ module.exports.searchBusinessByKeyword = function searchBusinessByKeyword(_, res
 
 // View a specific reservation
 module.exports.viewAReservation = function viewAReservation(_, res, next, reservationId, userId) {
-  DefaultReservation.viewAReservation(reservationId, userId)
+  DefaultViewReservation.viewAReservation(reservationId, userId)
     .then(function (response) {
       utils.writeJson(res, response, response.code);
       next();
@@ -117,7 +118,7 @@ module.exports.viewAReservation = function viewAReservation(_, res, next, reserv
 
 // View all reservations for a specific business
 module.exports.viewBusinessReservations = function viewBusinessReservations(_, res, next, ownerId, businessId, day, month, year) {
-  DefaultBusiness.viewBusinessReservations(ownerId, businessId, day, month, year)
+  DefaultViewReservation.viewBusinessReservations(ownerId, businessId, day, month, year)
     .then(function (response) {
       utils.writeJson(res, response, response.code);
       next();
@@ -143,7 +144,7 @@ module.exports.viewBusinessStatistics = function viewBusinessStatistics(_, res, 
 
 // View reservations for a specific user
 module.exports.viewReservations = function viewReservations(_, res, next, userId) {
-  DefaultReservation.viewReservations(userId)
+  DefaultViewReservation.viewReservations(userId)
     .then(function (response) {
       utils.writeJson(res, response, response.code);
       next();
