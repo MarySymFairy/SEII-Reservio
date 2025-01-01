@@ -41,15 +41,8 @@ exports.addReservation = function (body, userId, businessId) {
 
       // Validate inputs
       if (
-        !reservationTime ||
-        typeof reservationTime !== 'string' ||
-        isNaN(reservationDay) ||
-        isNaN(reservationMonth) ||
-        isNaN(reservationYear) ||
-        typeof body.numberOfPeople !== 'number' ||
-        body.numberOfPeople <= 0 ||
-        typeof userId !== 'number' ||
-        typeof businessId !== 'number'
+        !reservationTime || typeof reservationTime !== 'string' || isNaN(reservationDay) || isNaN(reservationMonth) || isNaN(reservationYear) || 
+        typeof body.numberOfPeople !== 'number' || body.numberOfPeople <= 0 || typeof userId !== 'number' || typeof businessId !== 'number'
       ) {
         return reject({
           message: 'Invalid data types or values.',
@@ -130,10 +123,8 @@ exports.modifyReservation = function (body, userId, reservationId) {
       if (
         isNaN(reservationId) || typeof reservationId !== 'number' || typeof userId !== 'number' ||
         (body.reservationTime && typeof reservationTime !== 'string') || reservationId < 0 || userId < 0 ||
-        (body.reservationDay && isNaN(reservationDay)) ||
-        (body.reservationMonth && isNaN(reservationMonth)) ||
-        (body.reservationYear && isNaN(reservationYear)) ||
-        (body.numberOfPeople && (typeof body.numberOfPeople !== 'number' || body.numberOfPeople <= 0))
+        (body.reservationDay && isNaN(reservationDay)) || (body.reservationMonth && isNaN(reservationMonth)) ||
+        (body.reservationYear && isNaN(reservationYear)) || (body.numberOfPeople && (typeof body.numberOfPeople !== 'number' || body.numberOfPeople <= 0))
       ) {
         return reject({
           message: 'Invalid data types or values.',
