@@ -30,14 +30,13 @@ function validateTimeFormat(time) {
   return timeRegex.test(time);
 }
 
-// Validate the input data for a reservation
-function validateInputs(body, userId, businessId) {
+// Common validation logic for reservation inputs
+function validateCommonInputs(body, userId, businessId) {
   const reservationTime = body.reservationTime ? body.reservationTime.trim() : '';
   const reservationDay = parseInt(body.reservationDay, 10);
   const reservationMonth = parseInt(body.reservationMonth, 10);
   const reservationYear = parseInt(body.reservationYear, 10);
 
-  // Check for invalid data types or values
   if (
     !reservationTime || typeof reservationTime !== 'string' || isNaN(reservationDay) || isNaN(reservationMonth) || isNaN(reservationYear) || 
     typeof body.numberOfPeople !== 'number' || body.numberOfPeople <= 0 || typeof userId !== 'number' || typeof businessId !== 'number'
@@ -50,7 +49,6 @@ function validateInputs(body, userId, businessId) {
     };
   }
 
-  // Validate time format
   if (!validateTimeFormat(reservationTime)) {
     return {
       valid: false,
@@ -64,7 +62,6 @@ function validateInputs(body, userId, businessId) {
   const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
   const reservationDateUTC = Date.UTC(reservationYear, reservationMonth - 1, reservationDay);
 
-  // Check if the reservation date is in the past
   if (reservationDateUTC < todayUTC) {
     return {
       valid: false,
@@ -74,7 +71,6 @@ function validateInputs(body, userId, businessId) {
     };
   }
 
-  // Validate the reservation day
   const dayValidationError = validateReservationDay(reservationDay, reservationMonth, reservationYear);
   if (dayValidationError) {
     return {
@@ -113,7 +109,7 @@ function findReservationById(reservationId) {
 exports.addReservation = function (body, userId, businessId) {
   return new Promise(function (resolve, reject) {
     try {
-      const validation = validateInputs(body, userId, businessId);
+      const validation = validateCommonInputs(body, userId, businessId);
       if (!validation.valid) {
         return reject(validation.error);
       }
@@ -142,7 +138,6 @@ exports.modifyReservation = function (body, userId, reservationId) {
       const reservationMonth = parseInt(body.reservationMonth, 10);
       const reservationYear = parseInt(body.reservationYear, 10);
 
-      // Validate input data
       if (
         isNaN(reservationId) || typeof reservationId !== 'number' || typeof userId !== 'number' ||
         (body.reservationTime && typeof reservationTime !== 'string') || reservationId < 0 || userId < 0 ||
@@ -154,14 +149,12 @@ exports.modifyReservation = function (body, userId, reservationId) {
         });
       }
 
-      // Validate time format
       if (body.reservationTime && !validateTimeFormat(reservationTime)) {
         return reject({
           message: 'Invalid time format. Expected HH:mm.', errorCode: 'validation.error',
         });
       }
 
-      // Validate reservation date
       if (body.reservationDay || body.reservationMonth || body.reservationYear) {
         const today = new Date();
         const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
@@ -187,7 +180,6 @@ exports.modifyReservation = function (body, userId, reservationId) {
         });
       }
 
-      // Update the reservation with new values
       const updatedReservation = {
         ...existingReservation,
         reservationTime: reservationTime || existingReservation.reservationTime,
