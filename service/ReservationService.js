@@ -1,8 +1,10 @@
 'use strict';
 
-function validateReservationDay(reservationDay, reservationMonth, reservationYear) {
-  const isLeapYear = (year) => (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+function isLeapYear(year) {
+  return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+}
 
+function validateReservationDay(reservationDay, reservationMonth, reservationYear) {
   if (reservationMonth === 2) {
     const maxDays = isLeapYear(reservationYear) ? 29 : 28;
     if (reservationDay < 1 || reservationDay > maxDays) {
@@ -14,10 +16,15 @@ function validateReservationDay(reservationDay, reservationMonth, reservationYea
     const daysInMonth = new Date(reservationYear, reservationMonth, 0).getDate();
     if (reservationDay < 1 || reservationDay > daysInMonth) {
       return {
-        message: `Invalid reservation day. Expected a number between 1 and ${daysInMonth}.`,errorCode: 'validation.error',
+        message: `Invalid reservation day. Expected a number between 1 and ${daysInMonth}.`, errorCode: 'validation.error',
       };
     }
   }
+}
+
+function validateTimeFormat(time) {
+  const timeRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
+  return timeRegex.test(time);
 }
 
 function validateInputs(body, userId, businessId) {
@@ -38,8 +45,7 @@ function validateInputs(body, userId, businessId) {
     };
   }
 
-  const timeRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
-  if (!timeRegex.test(reservationTime)) {
+  if (!validateTimeFormat(reservationTime)) {
     return {
       valid: false,
       error: {
@@ -90,16 +96,10 @@ const examples = {
   ]
 };
 
-// Function to find reservations
 function findReservationById(reservationId) {
   return examples['application/json'].find(reservation => reservation.reservationId === reservationId);
 }
 
-/** FR4: The logged in user must be able to set his reservation details in the selected business. FR6: The logged in user must be able to submit his reservation in the system. FR5: The logged in user must be able to select an available hour for his reservation. 
- * body Reservation Submit reservation to the system
- * userId Integer UserId of the logged in user that made the reservation
- * businessId Integer BusinessId of the business that the reservation is made for
- * returns Reservation**/
 exports.addReservation = function (body, userId, businessId) {
   return new Promise(function (resolve, reject) {
     try {
@@ -110,7 +110,7 @@ exports.addReservation = function (body, userId, businessId) {
 
       const newReservation = {
         reservationId: body.reservationId, userId: userId, businessId: businessId, reservationTime: body.reservationTime.trim(), reservationDay: parseInt(body.reservationDay, 10),
-        reservationMonth: parseInt(body.reservationMonth, 10), reservationYear: parseInt(body.reservationYear, 10), numberOfPeople: body.numberOfPeople, username: body.username,businessName: body.businessName,
+        reservationMonth: parseInt(body.reservationMonth, 10), reservationYear: parseInt(body.reservationYear, 10), numberOfPeople: body.numberOfPeople, username: body.username, businessName: body.businessName,
       };
 
       resolve(newReservation);
@@ -123,12 +123,6 @@ exports.addReservation = function (body, userId, businessId) {
   });
 };
 
-/** Modifies a single reservation based on the reservationId supplied
- * FR7 - The logged-in user must be able to modify his reservation
- * body Reservation Reservation to be modified (numberOfPeople, date, time)
- * userId Integer Retrieve the ID of the user
- * reservationId Long ID of the reservation to modify
- * returns List**/
 exports.modifyReservation = function (body, userId, reservationId) {
   return new Promise(function (resolve, reject) {
     try {
@@ -148,13 +142,10 @@ exports.modifyReservation = function (body, userId, reservationId) {
         });
       }
 
-      if (body.reservationTime) {
-        const timeRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
-        if (!timeRegex.test(reservationTime)) {
-          return reject({
-            message: 'Invalid time format. Expected HH:mm.', errorCode: 'validation.error',
-          });
-        }
+      if (body.reservationTime && !validateTimeFormat(reservationTime)) {
+        return reject({
+          message: 'Invalid time format. Expected HH:mm.', errorCode: 'validation.error',
+        });
       }
 
       if (body.reservationDay || body.reservationMonth || body.reservationYear) {
@@ -201,11 +192,6 @@ exports.modifyReservation = function (body, userId, reservationId) {
   });
 };
 
-/** Deletes a single reservation based on the reservationID supplied
- * FR8 - The logged in user must be able to cancel his existing reservation 
- * userId Integer Retrieve the ID of the user
- * reservationId Integer ID of reservation to delete
- * returns Reservation deleted.**/
 exports.deleteReservation = function (userId, reservationId) {
   return new Promise((resolve, reject) => {
     if (typeof userId !== "number" || typeof reservationId !== "number") {
@@ -220,8 +206,8 @@ exports.deleteReservation = function (userId, reservationId) {
       return resolve({
         message: "Reservation deleted.",
       });
-    } else{
-      return reject ({
+    } else {
+      return reject({
         code: 404, message: "Reservation not found.",
       });
     }
