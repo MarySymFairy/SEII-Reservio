@@ -1,5 +1,20 @@
 'use strict';
 
+function validateInputs(userId, reservationId) {
+  if (typeof userId !== "number" || typeof reservationId !== "number" || 
+    userId < 0 || reservationId < 0 || isNaN(userId) || isNaN(reservationId) || 
+    !Number.isInteger(userId) || !Number.isInteger(reservationId)) {
+      return {
+        valid: false,
+        error: {
+          code: 400,
+          message: "Invalid data types. userId and reservationId must be numbers.",
+        }
+      };
+  }
+  return { valid: true };
+}
+
 /**
  * FR9: The system must be able to notify the logged in user for his reservation at the reservation date.
  *
@@ -9,13 +24,9 @@
  **/
 exports.notifyUser = function(userId,reservationId) {
   return new Promise(function(resolve, reject) {
-    if (typeof userId !== "number" || typeof reservationId !== "number" || 
-      userId < 0 || reservationId < 0 || isNaN(userId) || isNaN(reservationId) || 
-      !Number.isInteger(userId) || !Number.isInteger(reservationId)) {
-        return reject({
-          code: 400,
-          message: "Invalid data types. userId and reservationId must be numbers.",
-        });
+    const validation = validateInputs(userId, reservationId);
+    if (!validation.valid) {
+      return reject(validation.error);
     }
 
     var examples = {};

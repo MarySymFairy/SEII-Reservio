@@ -1,5 +1,47 @@
 'use strict';
 
+function validateCategoryName(categoryName) {
+  const allowedCategories = ["breakfast", "brunch", "lunch", "dinner", "drinks"];
+  if (!allowedCategories.includes(categoryName.toLowerCase())) {
+    return {
+      valid: false,
+      error: {
+        statusCode: 400, 
+        message: "categoryName should be equal to one of the allowed values: breakfast, brunch, lunch, dinner, drinks"
+      }
+    };
+  }
+  return { valid: true };
+}
+
+function validateKeyword(keyword) {
+  if (typeof keyword !== 'string') {
+    return {
+      valid: false,
+      error: {
+        code: 400,
+        message: "Invalid keyword."
+      }
+    };
+  }
+  return { valid: true };
+}
+
+function validateOwnerAndBusinessId(ownerId, businessId) {
+  if (!Number.isInteger(ownerId) || typeof ownerId !== "number" || 
+    typeof businessId !== "number" || !Number.isInteger(businessId) || 
+    ownerId < 0 || businessId < 0) {
+      return {
+        valid: false,
+        error: {
+          code: 400,
+          message: "Invalid data types. userId and reservationId must be numbers.",
+        }
+      };
+  }
+  return { valid: true };
+}
+
 /**
  * FR1: The logged in user must be able to view the businesses that are included in the system divided by categories. 
  *
@@ -8,6 +50,11 @@
  **/
 exports.getBusinessesByCategory = function(categoryName) {
   return new Promise(function(resolve, reject) {
+    const validation = validateCategoryName(categoryName);
+    if (!validation.valid) {
+      return reject(validation.error);
+    }
+
     var examples = {};
     examples['application/json'] = [ {
       "ownerId" : 6,
@@ -50,6 +97,11 @@ exports.getBusinessesByCategory = function(categoryName) {
  **/
 exports.searchBusinessByKeyword = function(keyword) {
   return new Promise(function(resolve, reject) {
+    const validation = validateKeyword(keyword);
+    if (!validation.valid) {
+      return reject(validation.error);
+    }
+
     var examples = {};
     examples['application/json'] = [ {
       "ownerId" : 6,
@@ -65,13 +117,6 @@ exports.searchBusinessByKeyword = function(keyword) {
       "businessId" : 0
     } ];
 
-    if (typeof keyword !== 'string') {
-      return reject({
-        code: 400,
-        message: "Invalid keyword."
-      });
-    }
-    
     const filteredBusinesses = examples['application/json'].filter(
       b => b.keyword === keyword
     );
@@ -98,13 +143,9 @@ exports.searchBusinessByKeyword = function(keyword) {
  **/
 exports.viewBusinessStatistics = function(businessId, ownerId) {
   return new Promise(function(resolve, reject) {
-    if (!Number.isInteger(ownerId) || typeof ownerId !== "number" || 
-      typeof businessId !== "number" || !Number.isInteger(businessId) || 
-      ownerId < 0 || businessId < 0) {
-        return reject({
-          code: 400,
-          message: "Invalid data types. userId and reservationId must be numbers.",
-        });
+    const validation = validateOwnerAndBusinessId(ownerId, businessId);
+    if (!validation.valid) {
+      return reject(validation.error);
     }
 
     var examples = {};
@@ -120,9 +161,6 @@ exports.viewBusinessStatistics = function(businessId, ownerId) {
       "businessId" : 8
     } ];
 
-    console.log("CHECKME");
-    console.log("OWNER",ownerId, "BUSINESS",businessId);
-    // filter if ownerId and businessId exist (in mock data)
     const filtStat = examples['application/json'].filter(
       b => b.ownerId === ownerId && b.businessId === businessId
     );
