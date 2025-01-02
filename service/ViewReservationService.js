@@ -1,13 +1,47 @@
 'use strict';
 
-// Common validation function
-function validateId(id, name) {
-  if (isNaN(id) || typeof id !== "number" || !Number.isInteger(id) || id < 0) {
-    throw {
+// Validation functions
+function validateUserId(userId) {
+  if (isNaN(userId) || typeof userId !== "number" || !Number.isInteger(userId) || userId < 0) {
+    return {
       code: 400,
-      message: `Invalid ${name} format.`,
+      message: "Invalid user ID format.",
     };
   }
+  return null;
+}
+
+function validateReservationId(reservationId) {
+  if (isNaN(reservationId) || typeof reservationId !== "number" || !Number.isInteger(reservationId) || reservationId < 0) {
+    return {
+      code: 400,
+      message: "Invalid reservation ID format.",
+    };
+  }
+  return null;
+}
+
+function validateOwnerIdAndBusinessId(ownerId, businessId) {
+  if (typeof ownerId !== "number" || typeof businessId !== "number" || 
+    !Number.isInteger(ownerId) || !Number.isInteger(businessId) || 
+    ownerId < 0 || businessId < 0) {
+    return {
+      code: 400,
+      message: "Invalid data types. userId and reservationId must be numbers.",
+    };
+  }
+  return null;
+}
+
+function validateDate(day, month, year) {
+  if (typeof day !== "number" || typeof month !== "number" || typeof year !== "number" || 
+    day < 0 || month < 0 || year < 0 || day > 31 || month > 12 || year < 2024) {
+    return {
+      code: 400,
+      message: "Invalid data types. day, month, and year must be numbers.",
+    };
+  }
+  return null;
 }
 
 /**
@@ -19,13 +53,12 @@ function validateId(id, name) {
  **/
 exports.viewAReservation = function(userId, reservationId) {
   return new Promise(function(resolve, reject) {
-    try {
-      validateId(userId, "user ID");
-      validateId(reservationId, "reservation ID");
-    } catch (error) {
-      return reject(error);
-    }
-    
+    const userIdError = validateUserId(userId);
+    if (userIdError) return reject(userIdError);
+
+    const reservationIdError = validateReservationId(reservationId);
+    if (reservationIdError) return reject(reservationIdError);
+  
     var examples = {};
     examples['application/json'] = [{
       "reservationId" : 0,
@@ -47,12 +80,12 @@ exports.viewAReservation = function(userId, reservationId) {
 
     if (reservation) {
       return resolve(reservation);
-    } else {
+    }else {
       return reject({
         code: 404,
         message: "Reservation not found.",
-      });
-    }
+      })    
+    } 
   });
 };
 
@@ -64,14 +97,11 @@ exports.viewAReservation = function(userId, reservationId) {
  **/
 exports.viewReservations = function(userId) {
   return new Promise(function(resolve, reject) {
-    try {
-      validateId(userId, "user ID");
-    } catch (error) {
-      return reject(error);
-    }
-    
+    const userIdError = validateUserId(userId);
+    if (userIdError) return reject(userIdError);
+  
     var examples = {};
-    examples['application/json'] = [{
+    examples['application/json'] = [ {
       "reservationId" : 0,
       "userId" : 6,
       "reservationTime" : "12:00",
@@ -93,14 +123,14 @@ exports.viewReservations = function(userId) {
       "reservationMonth" : 5,
       "numberOfPeople" : 7,
       "username" : "username"
-    }];
+    } ];
 
     const userReservations = examples['application/json'].filter(reservation => reservation.userId === userId);
 
     if (userReservations.length > 0) {
-      return resolve(userReservations);
+        return resolve(userReservations);
     } else {
-      return resolve([]); // Return empty array if no reservations are found
+        return resolve([]); // Return empty array if no reservations are found
     }
   });
 };
@@ -116,18 +146,14 @@ exports.viewReservations = function(userId) {
  **/
 exports.viewBusinessReservations = function(ownerId, businessId, day, month, year) {
   return new Promise(function(resolve, reject) {
-    try {
-      validateId(ownerId, "owner ID");
-      validateId(businessId, "business ID");
-      validateId(day, "day");
-      validateId(month, "month");
-      validateId(year, "year");
-    } catch (error) {
-      return reject(error);
-    }
+    const ownerIdAndBusinessIdError = validateOwnerIdAndBusinessId(ownerId, businessId);
+    if (ownerIdAndBusinessIdError) return reject(ownerIdAndBusinessIdError);
+
+    const dateError = validateDate(day, month, year);
+    if (dateError) return reject(dateError);
     
     var examples = {};
-    examples['application/json'] = [{
+    examples['application/json'] = [ {
       "reservationId" : 0,
       "userId" : 6,
       "ownerId" : 7,
@@ -151,19 +177,22 @@ exports.viewBusinessReservations = function(ownerId, businessId, day, month, yea
       "people" : 2,
       "reservationMonth" : 5,
       "username" : "username"
-    }];
+    } ];
 
-    // Filter if business reservations exist (in mock data)
+    console.log("CHECKME");
+    console.log(ownerId, businessId, day, month, year);
+
+    //Filter if business reservations exist (in mock data)
     const filtered = examples['application/json'].filter(
       (r) => r.ownerId === ownerId && r.businessId === businessId && r.reservationDay === day && r.reservationMonth === month && r.reservationYear === year
     );
     
     if (filtered.length > 0) {
       resolve(filtered);
-    } else {
+    } else{
       reject({code: 404, message: "No business reservations found."});
     }
   });
-};
+}
 
 

@@ -72,6 +72,29 @@ function validateInputs(body, userId, businessId) {
   return { valid: true };
 }
 
+// Mock data for reservations
+const examples = {
+  'application/json': [
+    {
+      "reservationId": 0,
+      "userId": 6,
+      "reservationTime": "12:00",
+      "businessName": "businessName",
+      "reservationYear": 2025,
+      "reservationDay": 5,
+      "businessId": 1,
+      "reservationMonth": 5,
+      "numberOfPeople": 7,
+      "username": "username"
+    }
+  ]
+};
+
+// Function to find reservations
+function findReservationById(reservationId) {
+  return examples['application/json'].find(reservation => reservation.reservationId === reservationId);
+}
+
 /** FR4: The logged in user must be able to set his reservation details in the selected business. FR6: The logged in user must be able to submit his reservation in the system. FR5: The logged in user must be able to select an available hour for his reservation. 
  * body Reservation Submit reservation to the system
  * userId Integer UserId of the logged in user that made the reservation
@@ -151,10 +174,7 @@ exports.modifyReservation = function (body, userId, reservationId) {
         }
       }
 
-      const existingReservation = {
-        reservationId: 0, userId: 6, reservationTime: '12:00', businessName: 'businessName',reservationYear: 2025,
-        reservationDay: 5, businessId: 1, reservationMonth: 5, numberOfPeople: 7, username: 'username',
-      };
+      const existingReservation = findReservationById(reservationId);
 
       if (!existingReservation) {
         return reject({
@@ -194,13 +214,7 @@ exports.deleteReservation = function (userId, reservationId) {
       });
     }
 
-    var examples = {};
-    examples['application/json'] = {
-      "reservationId" : 0, "userId" : 6, "reservationTime" : "12:00", "businessName" : "businessName", "reservationYear" : 2025,
-      "reservationDay" : 5, "businessId" : 1, "reservationMonth" : 5, "numberOfPeople" : 7,"username" : "username"
-    };
-
-    const reservation = Object.values(examples).find(reservation => reservation.reservationId === reservationId);
+    const reservation = findReservationById(reservationId);
 
     if (reservation) {
       return resolve({

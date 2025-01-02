@@ -1,5 +1,22 @@
 'use strict';
 
+// Common validation function
+function validateAvailabilityInputs(businessId, reservationDay, reservationMonth, reservationYear, numberOfPeople) {
+  if (
+    typeof businessId !== 'number' || typeof reservationDay !== 'number' ||
+    typeof reservationMonth !== 'number' || typeof reservationYear !== 'number' ||
+    typeof numberOfPeople !== 'number' || businessId < 0 || reservationDay <= 0 ||
+    reservationMonth <= 0 || reservationYear < 2024 || numberOfPeople <= 0 || 
+    numberOfPeople > 100 || !Number.isInteger(numberOfPeople) || !Number.isInteger(businessId) ||
+    !Number.isInteger(reservationDay) || !Number.isInteger(reservationMonth) || !Number.isInteger(reservationYear)
+  ) {
+    throw {
+      code: 400,
+      message: "Invalid businessId, reservationDay, reservationMonth, reservationYear, or numberOfPeople."
+    };
+  }
+}
+
 /**
  * In order to have the available hours for the specific reservation you want to create.  FR3: The logged in user must be able to start a reservation process by selecting a business  FR5: The logged in user must be able to select an available hour for his reservation. 
  *
@@ -12,6 +29,12 @@
  **/
 exports.getAvailability = async function(businessId, reservationDay, reservationMonth, reservationYear, numberOfPeople) {
   return new Promise(function(resolve, reject) {
+    try {
+      validateAvailabilityInputs(businessId, reservationDay, reservationMonth, reservationYear, numberOfPeople);
+    } catch (error) {
+      return reject(error);
+    }
+
     const availableHours = [ "18:00", "20:00" ]; // Define all possible reservation times
 
     // Mock existing reservations data
@@ -56,24 +79,6 @@ exports.getAvailability = async function(businessId, reservationDay, reservation
         username: "username3"
       }
     ];
-
-    // Input Validation
-    if (
-      typeof businessId !== 'number' || typeof reservationDay !== 'number' ||
-      typeof reservationMonth !== 'number' || typeof reservationYear !== 'number' ||
-      typeof numberOfPeople !== 'number' || businessId < 0 || reservationDay <= 0 ||
-      reservationMonth <= 0 || reservationYear < 2024 || numberOfPeople <= 0 || 
-      numberOfPeople > 100 || !Number.isInteger(numberOfPeople) || !Number.isInteger(businessId) ||
-      !Number.isInteger(reservationDay) || !Number.isInteger(reservationMonth) || !Number.isInteger(reservationYear)
-    ) {
-      return reject({
-        code: 400,
-        message: "Invalid businessId, reservationDay, reservationMonth, reservationYear, or numberOfPeople."
-      });
-    }
-
-    //     console.log("CHECKME");
-//     console.log("BUSINESSID",businessId,"DAY", reservationDay,"MONTH", reservationMonth, "YEAR",reservationYear, "PEOPLE",numberOfPeople);
 
     // Fetch reservations for the specified business and date
     const existingReservations = businessReservations.filter(reservation => 
