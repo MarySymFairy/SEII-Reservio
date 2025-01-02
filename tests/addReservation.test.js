@@ -4,6 +4,7 @@ const got = require("got");
 
 const app = require('../index.js');
 
+// Setup the server before tests
 test.before(async (t) => {
     t.context.server = http.createServer(app);
     const server = t.context.server.listen();
@@ -11,10 +12,12 @@ test.before(async (t) => {
     t.context.got = got.extend({responseType: 'json', prefixUrl: `http://localhost:${port}`});
 });
 
+// Close the server after tests
 test.after.always(t => {
     t.context.server.close();
 });
 
+// Helper function to post a reservation
 const postReservation = async (t, searchParams, json) => {
     return await t.context.got.post('reservations', {
         searchParams,
@@ -22,6 +25,7 @@ const postReservation = async (t, searchParams, json) => {
     });
 };
 
+// Helper function to assert error responses
 const assertErrorResponse = (t, error, statusCode, messageRegex) => {
     t.is(error.response.statusCode, statusCode);
     t.regex(error.response.body.message, messageRegex);
