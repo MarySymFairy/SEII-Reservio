@@ -1,6 +1,6 @@
 {
   "name": "reservio-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The backend of Reservio for SE-II AUTH course",
   "repository": "github:MarySymFairy/Reservio-II",
   "main": "index.js",
@@ -8,10 +8,15 @@
     "prestart": "npm install",
     "start": "node index.js",
     "dev": "nodemon index.js --watch .",
-    "test": "c8 ava"
+    "test": "c8 ava",
+    "audit": "npm audit --production --json",
+    "lint": "eslint . --ext .js,.ts",
+    "security-check": "npx snyk test"
   },
   "keywords": [
-    "swagger"
+    "swagger",
+    "secure",
+    "api"
   ],
   "license": "Unlicense",
   "private": true,
@@ -20,7 +25,7 @@
     "verbose": true
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "devDependencies": {
     "@iamnapo/prettier-config": "^1.0.3",
@@ -29,30 +34,33 @@
     "cypress": "^12.0.0",
     "eslint": "^8.34.0",
     "eslint-config-iamnapo": "^28.2.0",
+    "eslint-plugin-security": "^2.0.1",
     "got": "^11.8.3",
     "nodemon": "^2.0.20",
     "test-listen": "^1.1.0"
   },
   "dependencies": {
-    "@sendgrid/mail": "^7.7.0",
-    "@sentry/node": "^7.38.0",
+    "@sendgrid/mail": "^7.9.0",
+    "@sentry/node": "^7.44.0",
     "bcryptjs": "^2.4.3",
     "chalk": "^5.2.0",
     "compression": "^1.7.4",
     "connect": "^3.2.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
-    "dotenv": "^16.0.3",
+    "dotenv-safe": "^8.2.0",
     "express": "^4.18.2",
-    "helmet": "^6.0.1",
-    "js-yaml": "^3.3.0",
-    "jsonwebtoken": "^9.0.0",
-    "mongoose": "^6.9.2",
+    "express-rate-limit": "^6.7.0",
+    "helmet": "^6.1.0",
+    "hsts": "^2.2.0",
+    "js-yaml": "^4.1.0",
+    "jsonwebtoken": "^9.1.0",
+    "mongoose": "^6.10.0",
     "mongoose-lean-defaults": "^2.2.1",
     "morgan": "^1.10.0",
     "oas3-tools": "^2.2.3",
-    "ramda": "^0.28.0",
+    "ramda": "^0.29.0",
     "serve-favicon": "^2.5.0",
-    "yup": "^1.0.0"
+    "yup": "^1.1.1"
   }
 }
