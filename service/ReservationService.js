@@ -82,6 +82,32 @@ function validateCommonInputs(body, userId, businessId) {
   return { valid: true };
 }
 
+// Common date validation logic
+function validateDate(reservationDay, reservationMonth, reservationYear) {
+  const today = new Date();
+  const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const reservationDateUTC = Date.UTC(reservationYear, reservationMonth - 1, reservationDay);
+
+  if (reservationDateUTC < todayUTC) {
+    return {
+      valid: false,
+      error: {
+        code: 409, message: 'Cannot reserve a date in the past.',
+      }
+    };
+  }
+
+  const dayValidationError = validateReservationDay(reservationDay, reservationMonth, reservationYear);
+  if (dayValidationError) {
+    return {
+      valid: false,
+      error: dayValidationError
+    };
+  }
+
+  return { valid: true };
+}
+
 // Mock data for reservations
 const examples = {
   'application/json': [
@@ -156,19 +182,9 @@ exports.modifyReservation = function (body, userId, reservationId) {
       }
 
       if (body.reservationDay || body.reservationMonth || body.reservationYear) {
-        const today = new Date();
-        const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-        const reservationDateUTC = Date.UTC(reservationYear, reservationMonth - 1, reservationDay);
-
-        if (reservationDateUTC < todayUTC) {
-          return reject({
-            code: 409, message: 'Cannot modify a reservation to a date in the past.',
-          });
-        }
-
-        const dayValidationError = validateReservationDay(reservationDay, reservationMonth, reservationYear);
-        if (dayValidationError) {
-          return reject(dayValidationError);
+        const dateValidation = validateDate(reservationDay, reservationMonth, reservationYear);
+        if (!dateValidation.valid) {
+          return reject(dateValidation.error);
         }
       }
 
