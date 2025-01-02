@@ -1,7 +1,7 @@
+// Import necessary modules
 const http = require("http");
 const test = require("ava");
 const got = require("got");
-
 const app = require('../index.js');
 
 // Setup the server before tests
@@ -31,7 +31,7 @@ const assertErrorResponse = (t, error, statusCode, messageRegex) => {
     t.regex(error.response.body.message, messageRegex);
 };
 
-// Happy Scenario
+// Happy Scenario: Successful reservation
 test('POST /reservations - successful case', async t => {
     try {
         const response = await postReservation(t, {userId: 0, businessId: 2}, {
@@ -50,7 +50,9 @@ test('POST /reservations - successful case', async t => {
     }
 });
 
-// Unhappy Scenarios
+// Unhappy Scenarios: Various validation errors
+
+// Missing userId
 test('POST /reservations - missing userId', async t => {
     try {
         await postReservation(t, {businessId: 101}, {
@@ -63,6 +65,7 @@ test('POST /reservations - missing userId', async t => {
     }
 });
 
+// Missing businessId
 test('POST /reservations - missing businessId', async t => {
     try {
         await postReservation(t, {userId: 1}, {
@@ -75,6 +78,7 @@ test('POST /reservations - missing businessId', async t => {
     }
 });
 
+// Missing reservationTime
 test('POST /reservations - missing reservationTime', async t => {
     try {
         await postReservation(t, {userId: 1, businessId: 101}, {
@@ -87,6 +91,7 @@ test('POST /reservations - missing reservationTime', async t => {
     }
 });
 
+// Invalid reservationTime format
 test('POST /reservations - invalid reservationTime format', async t => {
     try {
         await postReservation(t, {userId: 1, businessId: 101}, {
@@ -99,6 +104,7 @@ test('POST /reservations - invalid reservationTime format', async t => {
     }
 });
 
+// Invalid reservationDay
 test('POST /reservations - invalid reservationDay', async t => {
     try {
         await postReservation(t, {userId: 1, businessId: 101}, {
@@ -111,6 +117,7 @@ test('POST /reservations - invalid reservationDay', async t => {
     }
 });
 
+// Invalid reservationMonth
 test('POST /reservations - invalid reservationMonth', async t => {
     try {
         await postReservation(t, {userId: 1, businessId: 101}, {
@@ -123,6 +130,7 @@ test('POST /reservations - invalid reservationMonth', async t => {
     }
 });
 
+// Invalid reservationYear
 test('POST /reservations - invalid reservationYear', async t => {
     try {
         await postReservation(t, {userId: 1, businessId: 101}, {
@@ -135,6 +143,7 @@ test('POST /reservations - invalid reservationYear', async t => {
     }
 });
 
+// Invalid numberOfPeople type
 test('POST /reservations - invalid numberOfPeople type', async t => {
     try {
         await postReservation(t, {userId: 1, businessId: 101}, {
@@ -147,6 +156,7 @@ test('POST /reservations - invalid numberOfPeople type', async t => {
     }
 });
 
+// Reservation date in the past
 test('POST /reservations - reservation date in the past', async t => {
     try {
         await postReservation(t, {userId: 1, businessId: 101}, {
@@ -159,6 +169,7 @@ test('POST /reservations - reservation date in the past', async t => {
     }
 });
 
+// Number of people is zero or negative
 test('POST /reservations - numberOfPeople is zero or negative', async t => {
     try {
         await postReservation(t, {userId: 1, businessId: 101}, {
@@ -171,6 +182,7 @@ test('POST /reservations - numberOfPeople is zero or negative', async t => {
     }
 });
 
+// Invalid day for February (non-leap year)
 test('POST /reservations - invalid day for February (non-leap year)', async t => {
     try {
         await postReservation(t, {userId: 0, businessId: 2}, {
