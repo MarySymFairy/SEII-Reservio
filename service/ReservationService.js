@@ -31,6 +31,25 @@ function validateReservationDay(reservationDay, reservationMonth, reservationYea
   }
 }
 
+function validateTimeFormat(reservationTime) {
+  const timeRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
+  if (!timeRegex.test(reservationTime)) {
+    return { message: 'Invalid time format. Expected HH:mm.', errorCode: 'validation.error' };
+  }
+  return null;
+}
+
+function validateDateNotInPast(reservationYear, reservationMonth, reservationDay) {
+  const today = new Date();
+  const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const reservationDateUTC = Date.UTC(reservationYear, reservationMonth - 1, reservationDay);
+
+  if (reservationDateUTC < todayUTC) {
+    return { code: 409, message: 'Cannot reserve a date in the past.' };
+  }
+  return null;
+}
+
 function validateInputs(body, userId, businessId) {
   const reservationTime = body.reservationTime ? body.reservationTime.trim() : '';
   const reservationDay = parseInt(body.reservationDay, 10);
@@ -42,17 +61,14 @@ function validateInputs(body, userId, businessId) {
     return { message: 'Invalid data types or values.', code: 400 };
   }
 
-  const timeRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
-  if (!timeRegex.test(reservationTime)) {
-    return { message: 'Invalid time format. Expected HH:mm.', errorCode: 'validation.error' };
+  const timeFormatError = validateTimeFormat(reservationTime);
+  if (timeFormatError) {
+    return timeFormatError;
   }
 
-  const today = new Date();
-  const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-  const reservationDateUTC = Date.UTC(reservationYear, reservationMonth - 1, reservationDay);
-
-  if (reservationDateUTC < todayUTC) {
-    return { code: 409, message: 'Cannot reserve a date in the past.' };
+  const datePastError = validateDateNotInPast(reservationYear, reservationMonth, reservationDay);
+  if (datePastError) {
+    return datePastError;
   }
 
   const dayValidationError = validateReservationDay(reservationDay, reservationMonth, reservationYear);
@@ -123,12 +139,9 @@ exports.modifyReservation = function (body, userId, reservationId) {
       }
 
       if (body.reservationTime) {
-        const timeRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
-        if (!timeRegex.test(body.reservationTime.trim())) {
-          return reject({
-            message: 'Invalid time format. Expected HH:mm.',
-            errorCode: 'validation.error',
-          });
+        const timeFormatError = validateTimeFormat(body.reservationTime.trim());
+        if (timeFormatError) {
+          return reject(timeFormatError);
         }
       }
 
