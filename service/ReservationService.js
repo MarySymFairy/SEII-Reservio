@@ -4,13 +4,6 @@ function isLeapYear(year) {
   return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
 }
 
-/**
- * Validates the reservation day for February and other months.
- * @param {number} reservationDay - The day of the reservation.
- * @param {number} reservationMonth - The month of the reservation.
- * @param {number} reservationYear - The year of the reservation.
- * @returns {Object|undefined} - Returns an error object if validation fails, otherwise undefined.
- */
 function validateReservationDay(reservationDay, reservationMonth, reservationYear) {
   if (reservationMonth === 2) {
     const maxDays = isLeapYear(reservationYear) ? 29 : 28;
@@ -119,15 +112,12 @@ exports.addReservation = function (body, userId, businessId) {
   });
 };
 
-/**
- * Modifies a single reservation based on the reservationId supplied
+/** Modifies a single reservation based on the reservationId supplied
  * FR7 - The logged-in user must be able to modify his reservation 
- *
  * body Reservation Reservation to be modified (numberOfPeople, date, time)
  * userId Integer Retrieve the ID of the user
  * reservationId Long ID of the reservation to modify
- * returns List
- **/
+ * returns List**/
 exports.modifyReservation = function (body, userId, reservationId) {
   return new Promise(function (resolve, reject) {
     try {
@@ -194,14 +184,11 @@ exports.modifyReservation = function (body, userId, reservationId) {
   });
 };
 
-/**
- * Deletes a single reservation based on the reservationID supplied
+/** Deletes a single reservation based on the reservationID supplied
  * FR8 - The logged in user must be able to cancel his existing reservation 
- *
  * userId Integer Retrieve the ID of the user
  * reservationId Integer ID of reservation to delete
- * returns Reservation deleted.
- **/
+ * returns Reservation deleted.**/
 exports.deleteReservation = function (userId, reservationId) {
   return new Promise((resolve, reject) => {
     // Validate input types
