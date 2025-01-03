@@ -5,23 +5,14 @@ function isLeapYear(year) {
 }
 
 function validateReservationDay(reservationDay, reservationMonth, reservationYear) {
-  if (reservationMonth === 2) {
-    const maxDays = isLeapYear(reservationYear) ? 29 : 28;
-    if (reservationDay < 1 || reservationDay > maxDays) {
-      return {
-        code: 400,
-        error: `Invalid reservation day for February: ${reservationDay}. Max allowed: ${maxDays}.`,
-      };
-    }
-  } else {
-    const daysInMonth = new Date(reservationYear, reservationMonth, 0).getDate();
-    if (reservationDay < 1 || reservationDay > daysInMonth) {
-      return {
-        message: `Invalid reservation day. Expected a number between 1 and ${daysInMonth}.`,
-        errorCode: 'validation.error',
-      };
-    }
+  const maxDays = reservationMonth === 2 ? (isLeapYear(reservationYear) ? 29 : 28) : new Date(reservationYear, reservationMonth, 0).getDate();
+  if (reservationDay < 1 || reservationDay > maxDays) {
+    return {
+      code: 400,
+      error: `Invalid reservation day. Expected a number between 1 and ${maxDays}.`,
+    };
   }
+  return null;
 }
 
 function validateTimeFormat(reservationTime) {
@@ -33,10 +24,8 @@ function validateTimeFormat(reservationTime) {
 }
 
 function validateDateNotInPast(reservationYear, reservationMonth, reservationDay) {
-  const today = new Date();
-  const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const todayUTC = Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
   const reservationDateUTC = Date.UTC(reservationYear, reservationMonth - 1, reservationDay);
-
   if (reservationDateUTC < todayUTC) {
     return { code: 409, message: 'Cannot reserve a date in the past.' };
   }
@@ -44,32 +33,15 @@ function validateDateNotInPast(reservationYear, reservationMonth, reservationDay
 }
 
 function validateInputs(body, userId, businessId) {
-  const reservationTime = body.reservationTime ? body.reservationTime.trim() : '';
-  const reservationDay = parseInt(body.reservationDay, 10);
-  const reservationMonth = parseInt(body.reservationMonth, 10);
-  const reservationYear = parseInt(body.reservationYear, 10);
-
-  if (!reservationTime || typeof reservationTime !== 'string' || isNaN(reservationDay) || isNaN(reservationMonth) || isNaN(reservationYear) ||
-      typeof body.numberOfPeople !== 'number' || body.numberOfPeople <= 0 || typeof userId !== 'number' || typeof businessId !== 'number') {
+  const { reservationTime, reservationDay, reservationMonth, reservationYear, numberOfPeople } = body;
+  if (!reservationTime || isNaN(reservationDay) || isNaN(reservationMonth) || isNaN(reservationYear) ||
+      typeof numberOfPeople !== 'number' || numberOfPeople <= 0 || typeof userId !== 'number' || typeof businessId !== 'number') {
     return { message: 'Invalid data types or values.', code: 400 };
   }
 
-  const timeFormatError = validateTimeFormat(reservationTime);
-  if (timeFormatError) {
-    return timeFormatError;
-  }
-
-  const datePastError = validateDateNotInPast(reservationYear, reservationMonth, reservationDay);
-  if (datePastError) {
-    return datePastError;
-  }
-
-  const dayValidationError = validateReservationDay(reservationDay, reservationMonth, reservationYear);
-  if (dayValidationError) {
-    return dayValidationError;
-  }
-
-  return null;
+  return validateTimeFormat(reservationTime.trim()) ||
+         validateDateNotInPast(reservationYear, reservationMonth, reservationDay) ||
+         validateReservationDay(reservationDay, reservationMonth, reservationYear);
 }
 
 /**
@@ -128,18 +100,9 @@ exports.modifyReservation = function (body, userId, reservationId) {
         });
       }
 
-      if (body.reservationTime) {
-        const timeFormatError = validateTimeFormat(body.reservationTime.trim());
-        if (timeFormatError) {
-          return reject(timeFormatError);
-        }
-      }
-
-      if (body.reservationDay || body.reservationMonth || body.reservationYear) {
-        const validationError = validateInputs(body, userId, reservationId);
-        if (validationError) {
-          return reject(validationError);
-        }
+      const validationError = validateInputs(body, userId, reservationId);
+      if (validationError) {
+        return reject(validationError);
       }
 
       // Fetch the existing reservation (mocked here; replace with actual logic to retrieve reservations)
@@ -199,18 +162,19 @@ exports.deleteReservation = function (userId, reservationId) {
       });
     }
 
-    var examples = {};
-    examples['application/json'] = {
-      "reservationId" : 0,
-      "userId" : 6,
-      "reservationTime" : "12:00",
-      "businessName" : "businessName",
-      "reservationYear" : 2025,
-      "reservationDay" : 5,
-      "businessId" : 1,
-      "reservationMonth" : 5,
-      "numberOfPeople" : 7,
-      "username" : "username"
+    const examples = {
+      "application/json": {
+        reservationId: 0,
+        userId: 6,
+        reservationTime: "12:00",
+        businessName: "businessName",
+        reservationYear: 2025,
+        reservationDay: 5,
+        businessId: 1,
+        reservationMonth: 5,
+        numberOfPeople: 7,
+        username: "username"
+      }
     };
 
     const reservation = Object.values(examples).find(reservation => reservation.reservationId === reservationId);
@@ -220,8 +184,8 @@ exports.deleteReservation = function (userId, reservationId) {
       return resolve({
         message: "Reservation deleted.",
       });
-    } else{
-      return reject ({
+    } else {
+      return reject({
         code: 404,
         message: "Reservation not found.",
       });
